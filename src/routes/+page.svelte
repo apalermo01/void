@@ -1,2 +1,16 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<script>
+	import WelcomeAnim from '$lib/components/WelcomeAnim.svelte';
+</script>
+
+<div class="main view">
+	<WelcomeAnim />
+</div>
+
+<style>
+	.view {
+		background-color: #16181f;
+		width: 100%;
+		margin: 0;
+		padding: 0;
+	}
+</style>
