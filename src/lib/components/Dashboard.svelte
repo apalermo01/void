@@ -5,9 +5,14 @@
 		{ id: 'plugin1', name: 'clock' },
 		{ id: 'plugin2', name: 'quote' }
 	]);
-	async function loadPlugin(plugname) {
-		let elem = await import(`./plugins/${plugname}.svelte`);
-		return elem.default;
+	async function loadDashboardPlugin(plugname) {
+		try {
+			const module = await import(`./plugins/${plugname}.svelte`);
+			return module.default;
+		} catch (error) {
+			console.error(`Failed to load plugin ${plugname}:`, error);
+			return null;
+		}
 	}
 </script>
 
@@ -20,13 +25,17 @@
 		{#each plugins as plugin}
 			<div class="plugin-card">
 				<h2>{plugin.name}</h2>
-				{#await loadPlugin(plugin.name) then loadedPlugin}
-					{@render loadPlugin?.(plugin.name)}
+				{#await loadDashboardPlugin(plugin.name) then Component}
+					{#if Component}
+						<Component />
+					{/if}
 				{/await}
 			</div>
 		{/each}
 	</div>
 </div>
+``
 
 <style>
+	/* Add your styles here */
 </style>
