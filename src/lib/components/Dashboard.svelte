@@ -1,5 +1,6 @@
 <script>
 	import DashboardNameForm from './DashboardNameForm.svelte';
+	import { fade } from 'svelte/transition';
 	export const name = $state('');
 	const plugins = $state([
 		{ id: 'plugin1', name: 'clock' },
@@ -23,19 +24,34 @@
 	<h1>Добро пожаловать, {name}</h1>
 	<div class="plugins-container">
 		{#each plugins as plugin}
-			<div class="plugin-card">
-				<h2>{plugin.name}</h2>
-				{#await loadDashboardPlugin(plugin.name) then Component}
-					{#if Component}
+			{#await loadDashboardPlugin(plugin.name) then Component}
+				{#if Component}
+					<div class="card">
 						<Component />
-					{/if}
-				{/await}
-			</div>
+					</div>
+				{/if}
+			{/await}
 		{/each}
 	</div>
 </div>
 ``
 
 <style>
-	/* Add your styles here */
+	.plugins-container {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin: 5%;
+		max-width: 90%;
+		flex-wrap: wrap;
+	}
+	.card {
+		padding: 50px;
+		min-width: 10%;
+		border-radius: 15%;
+		border: 1px solid #ccc;
+	}
+	.card:hover {
+		box-shadow: 10px 10px 50px gray;
+	}
 </style>
