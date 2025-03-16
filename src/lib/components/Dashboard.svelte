@@ -1,11 +1,17 @@
 <script>
 	import DashboardNameForm from './DashboardNameForm.svelte';
-	import { fade } from 'svelte/transition';
-	export const name = $state('');
+	import { invoke } from '@tauri-apps/api/core';
+	import { onMount } from 'svelte';
+
+	let name = $state('unset');
+
+	console.log();
+
 	const plugins = $state([
 		{ id: 'plugin1', name: 'clock' },
 		{ id: 'plugin2', name: 'quote' }
 	]);
+
 	async function loadDashboardPlugin(plugname) {
 		try {
 			const module = await import(`./plugins/${plugname}.svelte`);
@@ -15,26 +21,28 @@
 			return null;
 		}
 	}
+
+	onMount(async () => (name = await invoke('get_env', { ename: 'NAME' })));
 </script>
 
 {#if name === ''}
-	<DashboardNameForm />
-{/if}
-<div class="main-dashboard-container">
-	<h1>Добро пожаловать, {name}</h1>
-	<div class="plugins-container">
-		{#each plugins as plugin}
-			{#await loadDashboardPlugin(plugin.name) then Component}
-				{#if Component}
-					<div class="card">
-						<Component />
-					</div>
-				{/if}
-			{/await}
-		{/each}
+	<DashboardNameForm bind:name />
+{:else}
+	<div class="main-dashboard-container">
+		<h1>Добро пожаловать, {name}</h1>
+		<div class="plugins-container">
+			{#each plugins as plugin}
+				{#await loadDashboardPlugin(plugin.name) then Component}
+					{#if Component}
+						<div class="card">
+							<Component />
+						</div>
+					{/if}
+				{/await}
+			{/each}
+		</div>
 	</div>
-</div>
-``
+{/if}
 
 <style>
 	.plugins-container {

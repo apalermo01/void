@@ -1,6 +1,7 @@
 <script>
 	import { slide } from 'svelte/transition';
-	import { AnimShow } from './store';
+	import { invoke } from '@tauri-apps/api/core';
+	let { show = $bindable() } = $props();
 	let welcome_info = [
 		'Добро пожаловать в mindbreaker, путник!',
 		'Это мое новое творение которое я создал как сайд-проект.',
@@ -11,8 +12,8 @@
 	let current_info = $state(0);
 
 	function lessgo() {
-		AnimShow.update((state) => !state);
-		console.log('penis: ', $AnimShow);
+		invoke('set_env', { name: 'false', ename: 'FIRST_RUN' });
+		show = false;
 	}
 </script>
 
