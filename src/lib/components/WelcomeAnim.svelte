@@ -46,7 +46,7 @@
 		justify-content: center;
 		align-items: center;
 		min-height: 100vh;
-		width: 80%;
+		width: 100%;
 		margin: 0 auto;
 		background: radial-gradient(
 			circle at center,

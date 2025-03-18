@@ -2,7 +2,9 @@
 	import DashboardNameForm from './DashboardNameForm.svelte';
 	import { invoke } from '@tauri-apps/api/core';
 	import { onMount } from 'svelte';
+	import { getCurrentWindow } from '@tauri-apps/api/window';
 
+	let { width = $bindable('') } = $props();
 	let name = $state('unset');
 
 	console.log();
@@ -22,14 +24,17 @@
 		}
 	}
 
-	onMount(async () => (name = await invoke('get_env', { ename: 'NAME' })));
+	onMount(async () => {
+		name = await invoke('get_env', { ename: 'NAME' });
+	});
 </script>
 
 {#if name === ''}
 	<DashboardNameForm bind:name />
 {:else}
-	<div class="main-dashboard-container">
+	<div class="main-dashboard-container" style="width: {width}">
 		<h1>Добро пожаловать, {name}</h1>
+		<h2>Основная панель</h2>
 		<div class="plugins-container">
 			{#each plugins as plugin}
 				{#await loadDashboardPlugin(plugin.name) then Component}
@@ -45,17 +50,51 @@
 {/if}
 
 <style>
+	.main-dashboard-container {
+		color: white;
+		font-family: 'Roboto';
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		min-height: 95vh;
+		overflow-y: scroll;
+		border-radius: 10px;
+		background-color: rgba(20, 20, 20, 1);
+	}
+
+	.main-dashboard-container h1 {
+		width: 100%;
+		text-align: center;
+		background: radial-gradient(
+			ellipse at bottom,
+			rgba(30, 36, 50, 0.7) 10%,
+			rgba(20, 20, 20, 0.7) 75%
+		);
+		border-radius: 50%;
+		padding-bottom: 1em;
+		background-repeat: no-repeat;
+	}
+	.main-dashboard-container h2 {
+		padding: 0;
+		margin: 0;
+		width: 40%;
+		text-align: center;
+		border-bottom: 1px solid gray;
+		border-radius: 0px 0px 15px 15px;
+	}
+
 	.plugins-container {
 		display: flex;
+		flex-direction: row;
 		justify-content: space-between;
 		align-items: center;
 		margin: 5%;
-		max-width: 90%;
+		width: 100%;
 		flex-wrap: wrap;
 	}
 	.card {
 		padding: 50px;
-		min-width: 10%;
+		width: 1fr;
 		border-radius: 15%;
 		border: 1px solid #ccc;
 	}

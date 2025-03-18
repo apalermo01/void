@@ -19,6 +19,6 @@
 <style>
 	p {
 		color: white;
-		font-size: 5em;
+		font-size: 3em;
 	}
 </style>

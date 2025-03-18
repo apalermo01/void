@@ -1,18 +1,17 @@
-body{
-    background-color: #16181f;
-    margin: 0;
-    padding: 0;
+body {
+	background-color: rgba(20, 20, 20, 0);
+	margin: 0;
+	padding: 0;
 }
 
 .roboto-default {
-    font-family: "Roboto", serif;
-    font-optical-sizing: auto;
-    font-variation-settings:
-      "wdth" 100;
-  }
+	font-family: 'Roboto', serif;
+	font-optical-sizing: auto;
+	font-variation-settings: 'wdth' 100;
+}
 
-html{
-    background-color: #16181f; 
-    font-family: 'Roboto';
-    position: relative;
+html {
+	background-color: rgba(20, 20, 20, 0);
+	font-family: 'Roboto';
+	position: relative;
 }
