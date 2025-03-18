@@ -1,4 +1,4 @@
-![](./src-tauri/icons/128x121@2x.png)
+![alt](https://github.com/WTWB-none/mindbreaker/blob/main/src-tauri/icons/128x128@2x.png?raw=true)
 
 # 🧠 MINDBREAKER 🧠
 
