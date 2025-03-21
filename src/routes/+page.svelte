@@ -2,10 +2,12 @@
 	import WelcomeAnim from '$lib/components/WelcomeAnim.svelte';
 	import Dashboard from '$lib/components/Dashboard.svelte';
 	import Topbar from '$lib/components/Topbar.svelte';
+	import Leftbar from '$lib/components/Leftbar.svelte';
 	import { invoke } from '@tauri-apps/api/core';
 	import { onMount } from 'svelte';
 	let AnimShow = $state('true');
-	let dashboard_width = $state('98%');
+	let name = $state('');
+	let dashboard_width = $state('96%');
 	onMount(() => {
 		invoke('get_env', { ename: 'FIRST_RUN' }).then((data) => {
 			AnimShow = data;
@@ -19,7 +21,10 @@
 	{:else}
 		<Topbar bind:panel={dashboard_width} />
 		<div class="main-dashboard-container">
-			<Dashboard bind:width={dashboard_width} />
+			{#if name !== ''}
+				<Leftbar panel_width={dashboard_width} />
+			{/if}
+			<Dashboard bind:width={dashboard_width} bind:name />
 		</div>
 	{/if}
 </div>
@@ -36,7 +41,7 @@
 		display: flex;
 		width: 99%;
 		justify-content: flex-end;
-		margin-top: 2%;
+		margin-top: 2.5%;
 		margin-right: 1%;
 	}
 </style>

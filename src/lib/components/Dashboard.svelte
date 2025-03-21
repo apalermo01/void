@@ -2,10 +2,8 @@
 	import DashboardNameForm from './DashboardNameForm.svelte';
 	import { invoke } from '@tauri-apps/api/core';
 	import { onMount } from 'svelte';
-	import { getCurrentWindow } from '@tauri-apps/api/window';
 
-	let { width = $bindable('') } = $props();
-	let name = $state('unset');
+	let { width = $bindable(''), name = $bindable('unset') } = $props();
 
 	console.log();
 
@@ -56,10 +54,11 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		min-height: 95vh;
+		min-height: 94vh;
 		overflow-y: scroll;
 		border-radius: 10px;
 		background-color: rgba(20, 20, 20, 1);
+		transition: ease-in 0.2s;
 	}
 
 	.main-dashboard-container h1 {

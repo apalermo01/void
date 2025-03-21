@@ -1,12 +1,15 @@
 <script>
 	import { slide } from 'svelte/transition';
 	import { invoke } from '@tauri-apps/api/core';
+	import { open } from '@tauri-apps/plugin-dialog';
 	let { name = $bindable() } = $props();
 	let fname = $state('');
 	let preload = $state('');
 	async function getname() {
+		const ffolder = await open({ directory: true });
+		await invoke('set_env', { name: ffolder, ename: 'WORKDIR' });
 		if (fname === '') {
-			alert('Как скажете, господин)');
+			let ffolder = alert('Как скажете, господин)');
 			fname = 'Господин';
 			preload = await invoke('set_env', { name: fname, ename: 'NAME' });
 		} else {
