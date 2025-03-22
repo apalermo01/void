@@ -1,4 +1,5 @@
 <script>
+	import Settings from './leftside-plugins/settings.svelte';
 	let props = $props();
 	const plugins = [{ id: 'plugin1', name: 'explorer' }];
 	async function loadPlugin(plugname) {
@@ -13,20 +14,33 @@
 </script>
 
 <div class="left-container" style="width: calc(100% - {props.panel_width})">
-	{#each plugins as plugin}
-		{#await loadPlugin(plugin.name) then Component}
-			{#if Component}
-				<Component mv={props.panel_width} />
-			{/if}
-		{/await}
-	{/each}
+	<div class="plugins-container">
+		{#each plugins as plugin}
+			{#await loadPlugin(plugin.name) then Component}
+				{#if Component}
+					<Component mv={props.panel_width} />
+				{/if}
+			{/await}
+		{/each}
+	</div>
+	<Settings mw={props.panel_width} />
 </div>
 
 <style>
 	.left-container {
-		min-height: 94vh;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
 		transition: ease-in 0.2s;
 		overflow-x: hidden;
 		overflow-y: scroll;
+		user-select: none;
+		-webkit-user-select: none;
+	}
+	.plugins-container {
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		gap: 1em;
 	}
 </style>

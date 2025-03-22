@@ -88,7 +88,7 @@
 		justify-content: space-between;
 		align-items: center;
 		margin: 5%;
-		width: 100%;
+		width: 90%;
 		flex-wrap: wrap;
 	}
 	.card {
