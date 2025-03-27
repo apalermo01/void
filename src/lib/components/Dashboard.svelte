@@ -49,26 +49,22 @@
 
 <style>
 	.main-dashboard-container {
-		color: white;
-		font-family: 'Roboto';
+		color: #e0def4;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		min-height: 94vh;
 		overflow-y: scroll;
 		border-radius: 10px;
-		background-color: rgba(20, 20, 20, 1);
-		transition: ease-in 0.2s;
+		background-color: #1f1d2e;
+		transition: width 0.2s ease-in-out;
 	}
 
 	.main-dashboard-container h1 {
 		width: 100%;
+		color: #eb6f92;
+		font-weight: 400;
 		text-align: center;
-		background: radial-gradient(
-			ellipse at bottom,
-			rgba(30, 36, 50, 0.7) 10%,
-			rgba(20, 20, 20, 0.7) 75%
-		);
 		border-radius: 50%;
 		padding-bottom: 1em;
 		background-repeat: no-repeat;
@@ -95,9 +91,13 @@
 		padding: 50px;
 		width: 1fr;
 		border-radius: 15%;
-		border: 1px solid #ccc;
+		background-color: #1f1d2e;
+		border: 1px solid #eb6f92;
+		transition: background-color 500ms;
+		box-shadow: 0px 0px 10px #eb6f92;
 	}
 	.card:hover {
-		box-shadow: 10px 10px 50px gray;
+		background-color: #26233a;
+		box-shadow: 0px 0px 16px #eb6f92;
 	}
 </style>

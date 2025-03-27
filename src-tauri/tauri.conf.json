@@ -18,7 +18,6 @@
 				"height": 840,
 				"titleBarStyle": "Overlay",
 				"hiddenTitle": true,
-				"transparent": true,
 				"resizable": true,
 				"fullscreen": false
 			}

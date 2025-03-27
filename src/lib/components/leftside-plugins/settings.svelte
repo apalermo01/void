@@ -1,22 +1,28 @@
 <script>
 	import Settings from '../Settings.svelte';
-	let mw = $props();
+	import { invoke } from '@tauri-apps/api/core';
 	let show_component = $state();
+	let settings_list = $state('');
+	async function openSettings() {
+		settings_list = await invoke('get_settings_list');
+		show_component = true;
+		console.log(settings_list);
+	}
 </script>
 
 <div
 	class="settings-container"
 	tabindex="-100000"
 	onkeydown={() => console.log('keydown')}
-	onclick={() => (show_component = true)}
+	onclick={openSettings}
 	aria-label="Настройки"
 	role="button"
 >
 	<img src="settings.png" alt="Settings" class="settings-icon" />
-	<h1 style="width: {mw.mw !== '95%' ? '50%' : '0%'}">Настройки</h1>
+	<h1>Настройки</h1>
 </div>
 {#if show_component}
-	<Settings bind:show={show_component} />
+	<Settings bind:show={show_component} bind:settings={settings_list} />
 {/if}
 
 <style>
@@ -34,7 +40,6 @@
 
 	.settings-icon {
 		width: 40px;
-		height: 40px;
 	}
 
 	.settings-container h1 {

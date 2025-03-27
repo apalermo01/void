@@ -1,11 +1,31 @@
 <script>
 	import { fade } from 'svelte/transition';
-	let { show = $bindable() } = $props();
+	import { invoke } from '@tauri-apps/api/core';
+	import { open } from '@tauri-apps/plugin-dialog';
+	import { onMount } from 'svelte';
+
+	let { show = $bindable(), settings = $bindable() } = $props();
+	let folder = $state('');
+	const settings_list = JSON.parse(settings);
+
 	function handleBackdropClick(event) {
 		if (event.target === event.currentTarget) {
 			show = false;
 		}
 	}
+
+	async function change_dir(name) {
+		let path = await open({
+			directory: true
+		});
+		await invoke('set_env', { ename: name, name: path });
+		folder = path;
+	}
+
+	onMount(async () => {
+		folder = await invoke('get_env', { ename: 'WORKDIR' });
+		console.log(folder);
+	});
 </script>
 
 <div
@@ -19,7 +39,23 @@
 >
 	<div class="settings-container">
 		<h1>Settings</h1>
-		<div class="switcher-panel"></div>
+		<div class="switcher-panel">
+			{#each settings_list.settings as setting}
+				{#if setting.type === 'path'}
+					<h2>{setting.name}</h2>
+					<div class="path-container">
+						<div class="property-field">
+							{#await invoke('get_env', { ename: setting.env }) then path}
+								{folder}
+							{/await}
+						</div>
+						<button class="property-btn" onclick={async () => change_dir(setting.env)}
+							>Сменить директорию</button
+						>
+					</div>
+				{/if}
+			{/each}
+		</div>
 	</div>
 </div>
 
@@ -43,11 +79,11 @@
 	.settings-container {
 		width: 74%;
 		height: 74vh;
-		background-color: #3a3b3b;
+		background-color: #191724;
 		border-radius: 20px;
 	}
 	.settings-container h1 {
-		color: #ababab;
+		color: #e87084;
 		font-size: 2em;
 		font-weight: 200;
 		width: 100%;
@@ -58,5 +94,41 @@
 		width: 94%;
 		height: 80%;
 		overflow-y: scroll;
+		color: #ababab;
+	}
+
+	h2 {
+		color: #c4a7e7;
+		font-weight: 200;
+	}
+
+	.path-container {
+		width: 100%;
+		display: flex;
+	}
+	.property-field {
+		width: 80%;
+		font-size: 1em;
+		border: 1px solid #c4a7e7;
+		color: #ebbcba;
+		padding-left: 2em;
+		text-decoration: underline;
+		padding-top: 0.5em;
+		padding-bottom: 0.5em;
+		border-radius: 20px 0px 0px 20px;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		padding-right: 2em;
+	}
+	.property-btn {
+		background-color: #c4a7e7;
+		outline: none;
+		color: #223a4b;
+		font-size: 0.8em;
+		font-weight: 600;
+		border: none;
+		border-radius: 0px 20px 20px 0px;
+		width: 20%;
+		cursor: pointer;
 	}
 </style>

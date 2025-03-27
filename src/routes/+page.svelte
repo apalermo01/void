@@ -7,11 +7,18 @@
 	import { onMount } from 'svelte';
 	let AnimShow = $state('true');
 	let name = $state('');
-	let dashboard_width = $state('96%');
+	let dashboard_width = $state('');
 	onMount(() => {
 		invoke('get_env', { ename: 'FIRST_RUN' }).then((data) => {
 			AnimShow = data;
 		});
+
+		const updateWidth = () => {
+			dashboard_width = window.innerWidth > 1700 ? '98%' : '96%';
+		};
+		updateWidth(); // Установить начальное значение
+		window.addEventListener('resize', updateWidth);
+		return () => window.removeEventListener('resize', updateWidth);
 	});
 </script>
 
@@ -20,7 +27,7 @@
 		<WelcomeAnim bind:show={AnimShow} />
 	{:else}
 		<Topbar bind:panel={dashboard_width} />
-		<div class="main-dashboard-container">
+		<div class="dashboard-container">
 			{#if name !== ''}
 				<Leftbar panel_width={dashboard_width} />
 			{/if}
@@ -37,11 +44,11 @@
 		margin: 0;
 		padding: 0;
 	}
-	.main-dashboard-container {
+	.dashboard-container {
 		display: flex;
 		width: 99%;
 		justify-content: flex-end;
-		margin-top: 2.5%;
+		margin-top: 4vh;
 		margin-right: 1%;
 	}
 </style>

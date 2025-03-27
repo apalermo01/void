@@ -1,8 +1,10 @@
 body {
-	background-color: rgba(20, 20, 20, 0);
+	background: #191724;
 	margin: 0;
 	padding: 0;
 	overflow-y: hidden;
+	-webkit-user-select: none;
+	user-select: none;
 }
 
 .roboto-default {
@@ -12,7 +14,6 @@ body {
 }
 
 html {
-	background-color: rgba(20, 20, 20, 0);
 	font-family: 'Roboto';
 	position: relative;
 }

@@ -1,7 +1,13 @@
 <script>
 	let { panel = $bindable('') } = $props();
 	function opensidepanel() {
-		panel = panel === '96%' ? '80%' : '96%';
+		if (window.innerWidth > 1600) {
+			panel = panel === '98%' ? '90%' : '98%';
+		} else if (window.innerWidth < 768) {
+			panel = panel;
+		} else {
+			panel = panel === '96%' ? '80%' : '96%';
+		}
 	}
 </script>
 

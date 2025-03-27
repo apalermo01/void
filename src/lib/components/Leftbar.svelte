@@ -1,5 +1,6 @@
 <script>
 	import Settings from './leftside-plugins/settings.svelte';
+	import { fly } from 'svelte/transition';
 	let props = $props();
 	const plugins = [{ id: 'plugin1', name: 'explorer' }];
 	async function loadPlugin(plugname) {
@@ -18,22 +19,23 @@
 		{#each plugins as plugin}
 			{#await loadPlugin(plugin.name) then Component}
 				{#if Component}
-					<Component mv={props.panel_width} />
+					<Component />
 				{/if}
 			{/await}
 		{/each}
 	</div>
-	<Settings mw={props.panel_width} />
+	<Settings />
 </div>
 
 <style>
 	.left-container {
+		min-width: 50px;
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
-		transition: ease-in 0.2s;
-		overflow-x: hidden;
+		transition: width 0.2s ease-in-out;
 		overflow-y: scroll;
+		overflow-x: hidden;
 		user-select: none;
 		-webkit-user-select: none;
 	}
