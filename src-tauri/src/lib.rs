@@ -5,12 +5,13 @@ use commands::*;
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
-        // .plugin(tauri_plugin_shell::init()) // uncomment to use shell
+        .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
-            set_env,
             get_env,
+            set_env,
+            get_entry_list,
             get_settings_list,
-            get_entry_list
+            get_file
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

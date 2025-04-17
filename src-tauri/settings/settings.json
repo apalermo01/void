@@ -1,9 +1,0 @@
-{
-        "settings": [{
-            "name": "Рабочая директория",
-            "placeholder": "Сменить папку",
-            "type": "path",
-            "allow_user": true,
-            "env": "WORKDIR" 
-        }]
-}

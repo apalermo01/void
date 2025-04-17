@@ -1,27 +1,27 @@
 [package]
-name = "app"
-version = "1.0.0"
-description = "A simple desktop application template combining Tauri 2 with Svelte 5 and shadcn-svelte with a basic ci/cd implemented."
-authors = ["Alysonhower Veras Vieira"]
-license = "MIT"
-edition = "2021"
-rust-version = "1.77.2"
+name = "mindbreaker-desk"
+version = "0.1.0"
+description = "A Tauri App"
+authors = ["you"]
+edition = "2024"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
-name = "app_lib"
+# The `_lib` suffix may seem redundant but it is necessary
+# to make the lib name unique and wouldn't conflict with the bin name.
+# This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
+name = "mindbreaker_desk_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
-tauri-build = { version = "2.0.6", features = [] }
+tauri-build = { version = "2", features = [] }
 
 [dependencies]
-tauri = { version = "2.3.1", features = ["macos-private-api"] }
-# tauri-plugin-shell = "2" # uncomment to use shell
-serde_json = "1.0.140"
-serde = { version = "1.0.219", features = ["derive"] }
+tauri = { version = "2", features = ["macos-private-api"] }
+tauri-plugin-opener = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
 dotenvy = "0.15.7"
-glob = "0.3.2"
-window-vibrancy = "0.6.0"
-tauri-plugin-dialog = "2.2.0"
+tauri-plugin-dialog = "2"
+
