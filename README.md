@@ -38,7 +38,7 @@ bun run tauri dev
 
 ## 🧑‍💻 Используемый стек
 
-- **Frontend**: Svelte, JavaScript
+- **Frontend**: Vue.js, TypeScript
 - **Backend**: Rust, Tauri
 - **Database**: SurrealDB(опционально для некоторых плагинов)
 
