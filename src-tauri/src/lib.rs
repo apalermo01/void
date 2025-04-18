@@ -11,7 +11,8 @@ pub fn run() {
             set_env,
             get_entry_list,
             get_settings_list,
-            get_file
+            get_file,
+            open_neovim
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

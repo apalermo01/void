@@ -1,1 +1,1 @@
-export const pluginRegistry: string[] = ["Home", "Explorer", "Graph"];
+export const pluginRegistry: string[] = ["Home", "Explorer", "Graph", "Code"];
