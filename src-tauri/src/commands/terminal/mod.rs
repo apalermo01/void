@@ -2,7 +2,7 @@ use portable_pty::{CommandBuilder, PtySize, native_pty_system};
 use std::io::{Read, Write};
 use std::sync::Mutex;
 use std::sync::mpsc::{self, Sender};
-use std::{default, thread};
+use std::thread;
 use tauri::{AppHandle, Emitter, State};
 
 #[derive(Default)]
@@ -11,6 +11,7 @@ pub struct PtyState(Mutex<Option<PtyController>>);
 pub enum PtyCommand {
     Write(String),
     Resize(u16, u16),
+    #[allow(dead_code)]
     Stop,
 }
 

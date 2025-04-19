@@ -55,6 +55,10 @@ onMounted(async () => {
         term.write('🧠 MindBreaker Terminal ready 🚀\r\n');
         invoke('open_neovim', { cols, rows });
 
+        term.onData((data) => {
+            invoke('send_to_neovim', { line: data });
+        });
+
         let resizeTimeout: NodeJS.Timeout | null = null;
         window.addEventListener('resize', () => {
             if (resizeTimeout) clearTimeout(resizeTimeout);
