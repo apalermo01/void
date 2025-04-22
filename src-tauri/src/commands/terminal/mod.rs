@@ -1,3 +1,4 @@
+use base64::{Engine as _, engine::general_purpose};
 use portable_pty::{CommandBuilder, PtySize, native_pty_system};
 use std::io::{Read, Write};
 use std::sync::Mutex;
@@ -34,22 +35,23 @@ impl PtyController {
                 })
                 .unwrap();
 
-            let mut child = pair
-                .slave
-                .spawn_command(CommandBuilder::new("nvim"))
-                .unwrap();
+            let mut command = CommandBuilder::new("nvim");
+            command.env("TERM", "xterm-256colour");
+
+            let mut child = pair.slave.spawn_command(command).unwrap();
             let mut reader = pair.master.try_clone_reader().unwrap();
             let mut writer = pair.master.take_writer().unwrap();
 
             let app_clone = app.clone();
             thread::spawn(move || {
                 let mut buffer = [0u8; 1024];
+
                 while let Ok(n) = reader.read(&mut buffer) {
                     if n == 0 {
                         break;
                     }
-                    let output = String::from_utf8_lossy(&buffer[..n]).to_string();
-                    let _ = app_clone.emit("nvim-data", output);
+                    let encoded = general_purpose::STANDARD.encode(&buffer[..n]);
+                    let _ = app_clone.emit("nvim-data", encoded);
                 }
             });
 
