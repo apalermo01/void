@@ -19,13 +19,7 @@ onMounted(async () => {
 </script>
 <template>
   <main>
-    <RouterView v-slot="{ Component }">
-      <Transition :name="$route.meta.transition || 'none'" :duration="250" mode="out-in">
-        <div :key="$route.fullPath">
-          <component :is="Component"></component>
-        </div>
-      </Transition>
-    </RouterView>
+    <RouterView />
   </main>
 </template>
 <style>

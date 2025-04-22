@@ -24,25 +24,16 @@ onMounted(() => {
     <div class="app-container">
         <SidebarProvider :defaultOpen="showPanel.get('sidebar:state')">
             <SidePanel />
-            <SidebarTrigger
-                class="sidepanel-trigger top-1"
-                v-if="showTrigger"
-            />
+            <SidebarTrigger class="sidepanel-trigger top-1" v-if="showTrigger" />
             <div class="fixed right-[1%] top-1 flex gap-1">
-                <ChevronLeft
-                    color="#c4a7e7"
-                    v-if="showTrigger"
-                    @click="$router.back()"
-                />
-                <ChevronRight
-                    color="#c4a7e7"
-                    v-if="showTrigger"
-                    @click="$router.forward()"
-                />
+                <ChevronLeft color="#c4a7e7" v-if="showTrigger" @click="$router.back()" />
+                <ChevronRight color="#c4a7e7" v-if="showTrigger" @click="$router.forward()" />
             </div>
         </SidebarProvider>
         <div class="content-view">
-            <RouterView />
+            <Transition name="fade" duration="100" mode="out-in">
+                <RouterView />
+            </Transition>
         </div>
     </div>
 </template>

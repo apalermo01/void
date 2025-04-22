@@ -16,7 +16,10 @@ const terminalContainer = ref<HTMLDivElement | null>(null);
 const term = new Terminal({
     fontFamily: 'JetBrains, monospace',
     fontSize: 14,
-    allowProposedApi: true
+    allowProposedApi: true,
+    theme: {
+        background: '#232137',
+    }
 });
 
 listen<string>('nvim-data', (event) => {
