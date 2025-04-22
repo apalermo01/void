@@ -202,3 +202,8 @@
         @apply bg-rosepine-base text-foreground;
     }
 }
+
+@font-face {
+    font-family: "JetBrains";
+    src: url("../JetBrainsMonoNerdFontMono-Regular.ttf") format('truetype');
+}

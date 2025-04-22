@@ -1,8 +1,10 @@
 mod environment;
 mod explorer;
-mod settings;
 mod filesystem;
+mod settings;
+mod terminal;
 pub use environment::*;
 pub use explorer::*;
-pub use settings::*;
 pub use filesystem::*;
+pub use settings::*;
+pub use terminal::*;

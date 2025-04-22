@@ -4,6 +4,7 @@ import WelcomeAnimation from "../views/WelcomeAnimation.vue";
 import WelcomeSetup from "@/views/WelcomeSetup.vue";
 import Settings from "@/views/Settings.vue";
 import Home from "@/views/Home.vue";
+import Terminal from "@/views/Terminal.vue";
 
 const routes = [
   {
@@ -22,6 +23,11 @@ const routes = [
         component: Home,
         meta: { transition: "fade" },
       },
+      {
+        path: "code",
+        component: Terminal,
+        meta: { transition: "fade" },
+      }
     ],
   },
   { path: "/welcome", component: WelcomeAnimation },
