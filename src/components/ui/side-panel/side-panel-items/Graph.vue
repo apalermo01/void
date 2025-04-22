@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { Spline } from "lucide-vue-next";
+import { RouterLink } from "vue-router";
 </script>
 <template>
-    <a href="#">
+    <RouterLink to="#">
         <Spline color="#c4a7e7" fill="#c4a7e7" />
         <span class="text-lg">Граф</span>
-    </a>
+    </RouterLink>
 </template>
