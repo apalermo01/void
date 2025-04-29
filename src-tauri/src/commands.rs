@@ -1,10 +1,10 @@
+mod database;
 mod environment;
-mod explorer;
 mod filesystem;
 mod settings;
 mod terminal;
+pub use database::*;
 pub use environment::*;
-pub use explorer::*;
 pub use filesystem::*;
 pub use settings::*;
 pub use terminal::*;

@@ -6,8 +6,8 @@ import router from './router/index'
 import { RouterView } from 'vue-router';
 
 onMounted(async () => {
-  let firstrun = await invoke('get_env', { ename: 'FIRST_RUN' });
-  let uname = await invoke('get_env', { ename: 'NAME' });
+  let firstrun = await invoke('get_env', { ename: 'first_run' });
+  let uname = await invoke('get_env', { ename: 'name' });
   if (firstrun == "true") {
     router.push('/welcome');
   }

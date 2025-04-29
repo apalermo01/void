@@ -3,12 +3,12 @@ import { open } from "@tauri-apps/plugin-dialog";
 import { Router } from "vue-router";
 
 async function setup(name: string, router: Router) {
-  await invoke('set_env', { ename: 'NAME', name: name });
+  await invoke('set_env', { ename: 'name', name: name });
   const folder = await open({
     multiple: false,
     directory: true
   })
-  await invoke('set_env', { ename: 'WORKDIR', name: folder });
+  await invoke('set_env', { ename: 'workdir', name: folder });
   router.push('/');
 }
 

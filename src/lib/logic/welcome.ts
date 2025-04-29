@@ -19,6 +19,6 @@ export function set_bounds(): Object {
 }
 
 export async function move_to_account(router: Router) {
-  await invoke('set_env', { ename: 'FIRST_RUN', name: 'false' });
+  await invoke('set_env', { ename: 'first_run', name: 'false' });
   router.push('/setup');
 }

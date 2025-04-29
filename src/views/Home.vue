@@ -3,7 +3,8 @@ import { invoke } from "@tauri-apps/api/core";
 import { onMounted, ref } from "vue";
 let username = ref("");
 onMounted(async () => {
-    username.value = await invoke("get_env", { ename: "NAME" });
+    username.value = await invoke("get_env", { ename: "name" });
+    console.log(username.value);
 });
 </script>
 <template>
