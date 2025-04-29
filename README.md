@@ -27,20 +27,20 @@ git clone https://github.com/WTWB-none/mindbreaker.git
 - установить зависимости
 
 ```
-cd mindbreaker && bun install
+cd mindbreaker && npm install
 ```
 
 - запустить проект в dev режиме
 
 ```
-bun run tauri dev
+npm run tauri dev
 ```
 
 ## 🧑‍💻 Используемый стек
 
 - **Frontend**: Vue.js, TypeScript
 - **Backend**: Rust, Tauri
-- **Database**: SurrealDB(опционально для некоторых плагинов)
+- **Database**: SurrealDB(конфигурация и возможно пользовательские бд)
 
 ## 🗺️ Roadmap
 
