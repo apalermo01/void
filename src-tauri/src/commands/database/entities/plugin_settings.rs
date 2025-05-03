@@ -1,17 +1,17 @@
+use std::clone;
+
 use super::{EntityControl, EntityError};
 
 pub enum PluginSettingsFields {
     Name(String),
-    Ui(bool),
-    SidePanel(bool),
+    Type(String),
     UiSize(i8),
     Other(String),
 }
 
 pub struct PluginSettings {
     name: String,
-    ui: bool,
-    side_panel: bool,
+    ui_type: String,
     ui_size: i8,
     other: String,
 }
@@ -34,25 +34,16 @@ impl EntityControl<PluginSettingsFields, PluginSettings> for PluginSettings {
                 ));
             }
         };
-        let ui = match input.get(1) {
-            Some(PluginSettingsFields::Ui(ui)) => *ui,
+        let ui_type = match input.get(1) {
+            Some(PluginSettingsFields::Type(t)) => t.clone(),
             _ => {
                 return Err(PluginSettings::throw_error(
-                    app,
-                    "Ошибка при инициализации поля Ui",
+                    app.clone(),
+                    "Ошибка при инициализации поля Type",
                 ));
             }
         };
-        let side_panel = match input.get(2) {
-            Some(PluginSettingsFields::SidePanel(side_panel)) => *side_panel,
-            _ => {
-                return Err(PluginSettings::throw_error(
-                    app,
-                    "Ошибка при инициализации поля SidePanel",
-                ));
-            }
-        };
-        let ui_size = match input.get(3) {
+        let ui_size = match input.get(2) {
             Some(PluginSettingsFields::UiSize(size)) => *size,
             _ => {
                 return Err(PluginSettings::throw_error(
@@ -61,7 +52,7 @@ impl EntityControl<PluginSettingsFields, PluginSettings> for PluginSettings {
                 ));
             }
         };
-        let other = match input.get(4) {
+        let other = match input.get(3) {
             Some(PluginSettingsFields::Other(other)) => other.clone(),
             _ => {
                 return Err(PluginSettings::throw_error(
@@ -73,8 +64,7 @@ impl EntityControl<PluginSettingsFields, PluginSettings> for PluginSettings {
 
         Ok(PluginSettings {
             name,
-            ui,
-            side_panel,
+            ui_type,
             ui_size,
             other,
         })
@@ -83,8 +73,7 @@ impl EntityControl<PluginSettingsFields, PluginSettings> for PluginSettings {
     fn get_value_by_key(&self, key: String, app: tauri::AppHandle) -> Result<String, EntityError> {
         match key.as_str() {
             "name" => Ok(self.name.clone()),
-            "ui" => Ok(self.ui.clone().to_string()),
-            "side_panel" => Ok(self.side_panel.to_string().clone()),
+            "type" => Ok(self.ui_type.clone()),
             "ui_size" => Ok(self.ui_size.to_string().clone()),
             "other" => Ok(self.other.clone()),
             _ => Err(PluginSettings::throw_error(app.clone(), "NotFound")),

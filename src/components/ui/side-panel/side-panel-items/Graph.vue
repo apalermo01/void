@@ -4,7 +4,7 @@ import { RouterLink } from "vue-router";
 </script>
 <template>
     <RouterLink to="#">
-        <Spline color="#c4a7e7" fill="#c4a7e7" />
+        <Spline />
         <span class="text-lg">Граф</span>
     </RouterLink>
 </template>

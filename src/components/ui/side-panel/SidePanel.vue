@@ -23,7 +23,7 @@ const loadedPlugins = plugins.reduce((acc, name) => {
 }, {});
 </script>
 <template>
-    <Sidebar collapsible="icon" variant="floating" class="h-[95vh] mt-10">
+    <Sidebar collapsible="icon" variant="floating" class="h-[95vh] mt-10 text-sidebar-primary">
         <SidebarHeader />
         <SidebarContent class="px-2">
             <SidebarGroupLabel>Артефакты</SidebarGroupLabel>
@@ -42,7 +42,7 @@ const loadedPlugins = plugins.reduce((acc, name) => {
                 <SidebarMenuItem>
                     <SidebarMenuButton asChild>
                         <a @click="showSettings($router)">
-                            <Settings color="#c4a7e7" />
+                            <Settings />
                             <span class="text-lg">Настройки</span>
                         </a>
                     </SidebarMenuButton>

@@ -1,3 +1,4 @@
+use super::DB;
 use base64::{Engine as _, engine::general_purpose};
 use portable_pty::{CommandBuilder, PtySize, native_pty_system};
 use std::io::{Read, Write};
@@ -21,7 +22,7 @@ pub struct PtyController {
 }
 
 impl PtyController {
-    pub fn start(app: AppHandle, cols: u16, rows: u16) -> Self {
+    pub fn start(app: AppHandle, cols: u16, rows: u16, path: String) -> Self {
         let (tx, rx) = mpsc::channel::<PtyCommand>();
 
         thread::spawn(move || {
@@ -35,7 +36,7 @@ impl PtyController {
                 })
                 .unwrap();
 
-            let mut command = CommandBuilder::new("nvim");
+            let mut command = CommandBuilder::new(path);
             command.env("TERM", "xterm-256colour");
 
             let mut child = pair.slave.spawn_command(command).unwrap();
@@ -82,8 +83,8 @@ impl PtyController {
 }
 
 #[tauri::command]
-pub fn open_neovim(app: AppHandle, state: State<PtyState>, cols: u16, rows: u16) {
-    let controller = PtyController::start(app, cols, rows);
+pub fn open_neovim(app: AppHandle, state: State<PtyState>, cols: u16, rows: u16, path: String) {
+    let controller = PtyController::start(app, cols, rows, path);
     let mut lock = state.0.lock().unwrap();
     *lock = Some(controller);
 }

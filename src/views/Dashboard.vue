@@ -22,12 +22,12 @@ onMounted(() => {
 </script>
 <template>
     <div class="app-container">
-        <SidebarProvider :defaultOpen="showPanel.get('sidebar:state')">
+        <SidebarProvider :defaultOpen="showPanel.get('sidebar:state')" class="max-w-[5em]">
             <SidePanel />
             <SidebarTrigger class="sidepanel-trigger top-1" v-if="showTrigger" />
-            <div class="fixed right-[1%] top-1 flex gap-1">
-                <ChevronLeft color="#c4a7e7" v-if="showTrigger" @click="$router.back()" />
-                <ChevronRight color="#c4a7e7" v-if="showTrigger" @click="$router.forward()" />
+            <div class="text-sidebar-primary fixed right-[1%] top-1 flex gap-1">
+                <ChevronLeft v-if="showTrigger" @click="$router.back()" />
+                <ChevronRight v-if="showTrigger" @click="$router.forward()" />
             </div>
         </SidebarProvider>
         <div class="content-view">
@@ -53,10 +53,11 @@ onMounted(() => {
 .content-view {
     margin-top: 3rem;
     margin-right: 1rem;
-    width: 1100em;
+    width: 100%;
     height: 93vh;
-    border: 1px solid var(--color-rosepine-love);
+    border: 1px solid var(--border);
     border-radius: 15.5px;
-    background-color: var(--color-rosepine-surface);
+    background-color: var(--card);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15), inset 0 0 1px rgba(0, 0, 0, 0.05);
 }
 </style>

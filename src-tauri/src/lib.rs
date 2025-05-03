@@ -25,7 +25,8 @@ pub fn run() {
             open_neovim,
             resize_neovim,
             send_to_neovim,
-            create_first_database
+            create_first_database,
+            get_theme,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

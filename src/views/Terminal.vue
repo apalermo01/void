@@ -66,7 +66,8 @@ onMounted(async () => {
         console.log(term.rows, term.cols);
         const { cols, rows } = term;
         term.write('🧠 MindBreaker Terminal ready 🚀\r\n');
-        invoke('open_neovim', { cols, rows });
+        const nvim_path = await invoke("get_env", { ename: "nvim_path" });
+        invoke('open_neovim', { cols: cols, rows: rows, path: nvim_path });
 
         term.onData((data) => {
             invoke('send_to_neovim', { line: data });

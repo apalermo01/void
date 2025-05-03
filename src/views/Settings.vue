@@ -1,42 +1,40 @@
 <script setup lang="ts">
-import Input from "@/components/ui/input/Input.vue";
-import Button from "@/components/ui/button/Button.vue";
 import Card from "@/components/ui/profile/Card.vue";
-import { changeWorkdir, getUsername, getWorkdir } from "@/lib/logic/settings";
+import Global from "./Global.vue";
+import SettingsSelector from "./SettingsSelector.vue";
 import { onMounted, ref } from "vue";
-import { get_file_content, checkShowable } from "@/lib/logic/utils";
-let workdir = ref("");
+import { getUsername, getWorkdir } from "@/lib/logic/settings";
+import { checkShowable, get_file_content } from "@/lib/logic/utils";
 let uname = ref("");
 let pic = ref();
 let showCard = ref(true);
+let workdir = ref("");
+let settings_type = ref('');
+
 onMounted(async () => {
-    workdir.value = await getWorkdir();
     uname.value = await getUsername();
+    workdir.value = await getWorkdir();
+    showCard.value = checkShowable();
     let profile_pic = workdir.value + "/profile.png";
     pic.value = await get_file_content(profile_pic, "image/png");
-    showCard.value = checkShowable();
-    window.addEventListener("resize", () => {
-        showCard.value = checkShowable();
-    });
 });
 </script>
 <template>
     <div class="settings-container">
-        <h1 class="text-4xl text-center text-rosepine-love mt-2">Настройки</h1>
-        <div class="flex w-[65%] px-10 py-10 items-center gap-1.5 settings-field">
-            <Input class="placeholder:text-rosepine-rose bg-rosepine-overlay border-rosepine-overlay" type="text"
-                :placeholder="workdir" :disabled="true" />
-            <Button class="bg-rosepine-base hover:bg-rosepine-love" type="button"
-                @click="async () => (workdir = await changeWorkdir())">
-                Изменить
-            </Button>
-        </div>
-        <div class="user-3d fixed right-[5%]" v-if="showCard">
+        <Global v-if="settings_type == '' || settings_type == 'Global'" />
+        <div class="user-3d fixed right-[5%] top-[20%]" v-if="showCard">
             <Card :uname="uname" :pic="pic" />
+        </div>
+        <div class="fixed right-[5%] top-[15%] w-[25%]">
+            <SettingsSelector v-model="settings_type" />
         </div>
     </div>
 </template>
 <style scoped>
+h1 {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
 .settings-container {
     overflow-y: scroll;
 }

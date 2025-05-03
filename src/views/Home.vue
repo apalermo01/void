@@ -8,7 +8,12 @@ onMounted(async () => {
 });
 </script>
 <template>
-    <h1 class="text-4xl text-rosepine-love text-center pt-[1%]">
+    <h1 class="text-4xl text-accent text-center pt-[1%]">
         Добро пожаловать, {{ username }}
     </h1>
 </template>
+<style scoped>
+h1 {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+</style>

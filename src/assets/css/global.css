@@ -199,11 +199,16 @@
     }
 
     body {
-        @apply bg-rosepine-base text-foreground;
+        @apply bg-background;
     }
 }
 
 @font-face {
     font-family: "JetBrains";
     src: url("../JetBrainsMonoNerdFontMono-Regular.ttf") format('truetype');
+}
+
+@font-face {
+    font-family: "Spectral";
+    src: url("../Spectral-Regular.ttf") format('truetype');
 }

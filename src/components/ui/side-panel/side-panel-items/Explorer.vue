@@ -4,7 +4,7 @@ import { RouterLink } from "vue-router";
 </script>
 <template>
     <RouterLink to="#">
-        <Folder color="#c4a7e7" fill="#c4a7e7" />
+        <Folder />
         <span class="text-lg">Проводник</span>
     </RouterLink>
 </template>

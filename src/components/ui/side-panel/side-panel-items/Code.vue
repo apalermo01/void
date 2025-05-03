@@ -4,7 +4,7 @@ import { RouterLink } from "vue-router";
 </script>
 <template>
     <RouterLink to="/code">
-        <Terminal color="#c4a7e7" />
+        <Terminal />
         <span class="text-lg">Neovim</span>
     </RouterLink>
 </template>

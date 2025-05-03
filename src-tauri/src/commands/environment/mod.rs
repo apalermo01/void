@@ -1,5 +1,6 @@
+use tauri::Emitter;
+
 use crate::commands::database::{DB, EntityError, MainConfig};
-use std::fs;
 
 use super::EntityControl;
 
