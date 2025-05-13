@@ -29,3 +29,4 @@ base64 = "0.22.1"
 surrealdb = { version = "2.2.2", features = ["kv-rocksdb"] }
 thiserror = "2.0.12"
 once_cell = "1.21.3"
+rust-fetch = "0.1.0"

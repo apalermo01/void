@@ -26,7 +26,7 @@ pub async fn set_env(ename: String, name: String) -> Result<(), String> {
     match DB
         .get()
         .unwrap()
-        .update("singletone", "main_config", ename, name)
+        .update("singletone".to_string(), "main_config", ename, name)
         .await
     {
         Ok(_) => Ok(()),

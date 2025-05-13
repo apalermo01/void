@@ -1,3 +1,5 @@
+use std::fmt::Debug;
+
 use serde::{Deserialize, Serialize};
 use surrealdb::{Surreal, engine::local::Db};
 
@@ -17,7 +19,7 @@ impl DbRepo {
         input: Vec<B>,
         app: tauri::AppHandle,
         db_name: &'static str,
-        name: &'static str,
+        name: &str,
     ) -> Result<(), EntityError>
     where
         for<'de> T: Deserialize<'de> + Serialize + 'static + EntityControl<B, T>,
@@ -31,7 +33,7 @@ impl DbRepo {
         Ok(())
     }
 
-    pub async fn get<T>(&self, name: &'static str, db_name: &'static str) -> Result<T, EntityError>
+    pub async fn get<T>(&self, name: &str, db_name: &'static str) -> Result<T, EntityError>
     where
         for<'de> T: Deserialize<'de> + 'static,
     {
@@ -39,9 +41,20 @@ impl DbRepo {
         result.ok_or(EntityError::NotFound)
     }
 
+    pub async fn get_all_members<T>(&self, db_name: &'static str) -> Result<Vec<T>, EntityError>
+    where
+        for<'de> T: Deserialize<'de> + Debug + 'static,
+    {
+        let result = self.database.select::<Vec<T>>(db_name).await.map_err(|e| {
+            println!("{}", e);
+            EntityError::NotFound
+        })?;
+        Ok(result)
+    }
+
     pub async fn update(
         &self,
-        name: &'static str,
+        name: String,
         db_name: &'static str,
         key: String,
         value: String,
@@ -54,7 +67,7 @@ impl DbRepo {
             .bind(("name", name))
             .bind(("value", value))
             .await
-            .map_err(|_| EntityError::DbQueryError);
+            .map_err(|_| EntityError::DbQueryError)?;
         Ok(())
     }
 

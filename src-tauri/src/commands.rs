@@ -1,12 +1,14 @@
 mod database;
 mod environment;
 mod filesystem;
+mod plugin_builder;
 mod settings;
 mod terminal;
 mod themes;
 pub use database::*;
 pub use environment::*;
 pub use filesystem::*;
+pub use plugin_builder::*;
 pub use settings::*;
 pub use terminal::*;
 pub use themes::*;
