@@ -21,7 +21,6 @@ function download(key: string) {
 				<img class="w-[80%] h-[40%] border-card-border" src="https://shadow.png">
 				<p class="text-xs">{{ object.theme_author }}</p>
 				<Button class="w-[80%]" @click="download(object.theme_name)">Скачать</Button>
-				<p>{{ object.theme_link }}</p>
 			</div>
 		</div>
 	</div>

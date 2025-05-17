@@ -25,3 +25,14 @@ pub async fn get_repos_list() -> Result<Vec<SideRepo>, String> {
         .await
         .map_err(|e| e.to_string())
 }
+
+#[tauri::command]
+pub async fn delete_repo(link: String) -> Result<(), String> {
+    let db = DB.get().unwrap();
+    let result = db
+        .delete("side_repo", "link", link)
+        .await
+        .map_err(|e| e.to_string());
+    println!("{:#?}", result);
+    Ok(())
+}

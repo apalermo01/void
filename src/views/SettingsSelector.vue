@@ -21,7 +21,7 @@ import SelectValue from '@/components/ui/select/SelectValue.vue';
                 <SelectItem value="Plugins">
                     Плагины
                 </SelectItem>
-                <SelectItem value="Themes">
+                <SelectItem value="SideRepos">
                     Кастомные репозитории
                 </SelectItem>
             </SelectGroup>

@@ -3,12 +3,12 @@
     <SettingsHeader value="изменить рабочую директорию" />
     <SettingsComposition>
         <SettingsField :placeholder="workdir" />
-        <SettingsButton @click="async () => (workdir = await changeWorkdir())" />
+        <SettingsButton @click="async () => (workdir = await changeWorkdir())" name="Изменить" />
     </SettingsComposition>
     <SettingsHeader value="изменить тему" />
     <SettingsComposition>
         <SettingsSelector selectorPlaceholder="Темы" :currentVal="theme" :valList="list_of_themes" v-model="theme" />
-        <SettingsButton @click="get_themes_marketplace" />
+        <SettingsButton @click="get_themes_marketplace" name="Скачать темы" />
     </SettingsComposition>
     <SettingsPopup v-if="showpopup" :object_list="objects" v-model="showpopup" />
 
@@ -40,8 +40,13 @@ onMounted(async () => {
     workdir.value = await getWorkdir();
     let theme_store = useThemeStore();
     theme.value = theme_store.current;
-    list_of_themes.value = await get_installed_themes_list();
-    list_of_themes.value.push('lotm');
+    if (theme.value === '') {
+        theme.value = 'lotm';
+    }
+    let themes_arr = [];
+    themes_arr = await get_installed_themes_list();
+    themes_arr.push('lotm');
+    list_of_themes.value = themes_arr;
 });
 
 </script>

@@ -74,16 +74,17 @@ impl DbRepo {
     pub async fn delete(
         &self,
         db_name: &'static str,
-        name: &'static str,
+        key: &'static str,
+        value: String,
     ) -> Result<(), EntityError> {
         if db_name == "main_config" {
             return Err(EntityError::NotAllowed);
         }
+        let query = format!("DELETE FROM {} WHERE {} = $value", db_name, key);
         let _ = &self
             .database
-            .query("DELETE FROM $table WHERE name = $name")
-            .bind(("table", db_name))
-            .bind(("name", name))
+            .query(query)
+            .bind(("value", value))
             .await
             .map_err(|_| EntityError::DbQueryError)?;
         Ok(())
