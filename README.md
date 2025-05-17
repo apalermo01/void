@@ -56,4 +56,4 @@ npm run tauri dev
 Каждый человек поддержавший проект будет указан на официальном сайте проекта а также в разделе "Спонсоры" в приложении.
 
 ---
-С этого момента репозиторий переезжает с github на radicle. Обновлений больше здесь не будет. Для получения последних актуальных апдейтов можете найти этот проект на [radicle](https://app.radicle.xyz/nodes/seed.radicle.garden/rad:zfSogXcYR9FEDSFGxQiSf82QYAB5)
+С этого момента репозиторий доступен на radicle! Обновлять буду и там и там, на случай если внезапно github перестанет быть доступен для всех желающих. [radicle](https://app.radicle.xyz/nodes/seed.radicle.garden/rad:zfSogXcYR9FEDSFGxQiSf82QYAB5)
