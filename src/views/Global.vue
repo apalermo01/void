@@ -7,10 +7,11 @@
     </SettingsComposition>
     <SettingsHeader value="изменить тему" />
     <SettingsComposition>
-        <SettingsSelector selectorPlaceholder="Темы" :currentVal="theme" :valList="list_of_themes" />
+        <SettingsSelector selectorPlaceholder="Темы" :currentVal="theme" :valList="list_of_themes" v-model="theme" />
         <SettingsButton @click="get_themes_marketplace" />
     </SettingsComposition>
     <SettingsPopup v-if="showpopup" :object_list="objects" v-model="showpopup" />
+
 </template>
 
 <script setup lang="ts">
@@ -42,4 +43,5 @@ onMounted(async () => {
     list_of_themes.value = await get_installed_themes_list();
     list_of_themes.value.push('lotm');
 });
+
 </script>

@@ -30,7 +30,9 @@ pub fn run() {
             get_list_of_themes,
             read_plugin,
             create_themes_table,
-            clone_theme
+            clone_theme,
+            add_repo,
+            get_repos_list
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

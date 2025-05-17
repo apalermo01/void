@@ -7,7 +7,7 @@ pub enum SideRepoField {
     Link(String),
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct SideRepo {
     repo_type: String,
     link: String,
@@ -36,6 +36,15 @@ impl EntityControl<SideRepoField, SideRepo> for SideRepo {
             "type" => Ok(self.repo_type.clone()),
             "link" => Ok(self.link.clone()),
             _ => Err(EntityError::NotFound),
+        }
+    }
+}
+
+impl Clone for SideRepo {
+    fn clone(&self) -> Self {
+        Self {
+            link: self.link.clone(),
+            repo_type: self.repo_type.clone(),
         }
     }
 }

@@ -10,7 +10,11 @@ export type Theme = {
   theme_version: string,
   theme_link: string,
   is_installed: string,
+}
 
+export type SideRepo = {
+  repo_type: string,
+  link: string,
 }
 
 export function showSettings(router: Router) {
@@ -42,26 +46,21 @@ export async function getUsername(): Promise<string> {
 }
 
 export async function set_theme(theme_name: string) {
-  if (await invoke('get_env', { ename: 'first_run' }) != 'true' && theme_name != 'lotm') {
+  const theme_store = useThemeStore();
+
+  const existing = document.getElementById("custom_theme");
+  if (existing) existing.remove();
+
+  if (theme_name !== 'lotm') {
     const css = await invoke<string>("get_theme", { name: theme_name });
-    if (document.getElementById("custom_theme") == null) {
-      let style_el = document.createElement('style');
-      style_el.innerHTML = css;
-      style_el.id = "custom_theme";
-      document.head.appendChild(style_el);
-    }
-    else if (theme_name == 'lotm') {
-      let style_el = document.getElementById("custom_theme");
-      style_el?.remove();
-      const theme_store = useThemeStore();
-      theme_store.change_theme(theme_name);
-    }
-    else {
-      document.getElementById("custom_theme").innerHTML = css;
-    }
-    const theme_store = useThemeStore();
-    theme_store.change_theme(theme_name);
+
+    const style_el = document.createElement('style');
+    style_el.id = "custom_theme";
+    style_el.innerHTML = css;
+    document.head.appendChild(style_el);
   }
+
+  theme_store.change_theme(theme_name);
 }
 
 export function get_themes_marketplace(object: any[]): any[] {
@@ -104,4 +103,10 @@ export async function get_themes_to_download(): Promise<Theme[]> {
 export async function add_themes_repo(link: string) {
   link = link.replace('https://', '');
   await invoke('create_themes_table', { link: link });
+}
+
+export async function get_repos(): Promise<SideRepo[]> {
+  let repos: any[] = await invoke("get_repos_list");
+  console.log(repos);
+  return repos;
 }

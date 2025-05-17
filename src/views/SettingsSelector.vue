@@ -22,7 +22,7 @@ import SelectValue from '@/components/ui/select/SelectValue.vue';
                     Плагины
                 </SelectItem>
                 <SelectItem value="Themes">
-                    Внешний вид
+                    Кастомные репозитории
                 </SelectItem>
             </SelectGroup>
         </SelectContent>

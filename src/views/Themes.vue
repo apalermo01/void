@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import Input from '@/components/ui/input/Input.vue';
 import SettingsButton from '@/components/ui/settings/SettingsButton.vue';
-import { add_themes_repo } from '@/lib/logic/settings';
-import { ref } from 'vue';
+import { add_themes_repo, get_repos } from '@/lib/logic/settings';
+import { onMounted, ref } from 'vue';
 let link = ref('');
 
 async function import_repo(link: string) {
     await add_themes_repo(link);
 }
+
+onMounted(async () => {
+    get_repos();
+})
 </script>
 <template>
     <h1 class="text-4xl text-center text-accent mt-2">Внешний вид</h1>

@@ -25,7 +25,9 @@ onMounted(async () => {
   let firstrun = await invoke('get_env', { ename: 'first_run' });
   let uname = await invoke('get_env', { ename: 'name' });
   let theme = localStorage.getItem('mindbreaker:theme');
-  await set_theme(theme);
+  if (theme != 'lotm') {
+    await set_theme(theme);
+  }
   if (firstrun == "true") {
     router.push('/welcome');
   }

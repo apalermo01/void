@@ -1,4 +1,7 @@
-use super::{DB, EntityControl, EntityError, MainConfig, ThemeRepo, ThemeRepoField, get_env};
+use super::{
+    DB, EntityControl, EntityError, MainConfig, SideRepo, SideRepoField, ThemeRepo, ThemeRepoField,
+    add_repo, get_env,
+};
 use rust_fetch::reqwest;
 use serde::Deserialize;
 use std::{collections::HashMap, fs, vec};
@@ -63,6 +66,7 @@ pub async fn get_list_of_themes(
 #[tauri::command]
 pub async fn create_themes_table(link: String, app: tauri::AppHandle) {
     let db = DB.get().unwrap();
+    add_repo("Theme".to_string(), link.clone(), app.clone()).await;
     let linkparts = link.split('/').collect::<Vec<&str>>();
     let client = reqwest::Client::new();
     let response = client
@@ -85,6 +89,7 @@ pub async fn create_themes_table(link: String, app: tauri::AppHandle) {
             linkparts.get(2).unwrap(),
             key
         );
+        println!("{}", link);
         let input: Vec<ThemeRepoField> = vec![
             ThemeRepoField::Name(theme.name.clone()),
             ThemeRepoField::Author(theme.author.clone()),
