@@ -19,10 +19,12 @@ onMounted(() => {
         showTrigger.value = checkShowable();
     });
 });
+let hidden_class = "max-w-[0px]";
 </script>
 <template>
     <div class="app-container">
-        <SidebarProvider :defaultOpen="showPanel.get('sidebar:state')" class="max-w-[5em]">
+        <SidebarProvider :defaultOpen="showPanel.get('sidebar:state')"
+            :class="showTrigger ? 'max-w-[3em]' : hidden_class">
             <SidePanel />
             <SidebarTrigger class="sidepanel-trigger top-1" v-if="showTrigger" />
             <div class="text-sidebar-primary fixed right-[1%] top-1 flex gap-1">
@@ -42,6 +44,7 @@ onMounted(() => {
 .app-container {
     width: 100%;
     display: flex;
+    gap: 1rem;
 }
 
 .sidepanel-trigger {

@@ -5,6 +5,7 @@ use super::{
 use rust_fetch::reqwest;
 use serde::Deserialize;
 use std::{collections::HashMap, fs, vec};
+use tauri::Emitter;
 
 #[derive(Deserialize, Debug)]
 struct ThemeManifestMember {
@@ -151,6 +152,31 @@ pub async fn clone_theme(key: String, app: tauri::AppHandle) -> Result<(), Strin
         }
         None => return Err(EntityError::NotFound.to_string()),
     }
+    app.emit("theme_downloaded", "").unwrap();
+    Ok(())
+}
 
+#[tauri::command]
+pub async fn check_theme_update(theme_name: String, app: tauri::AppHandle) -> Result<(), String> {
+    let db = DB.get().unwrap();
+    let theme = db
+        .get::<ThemeRepo>(&theme_name, "themes_repo")
+        .await
+        .map_err(|e| e.to_string())?;
+    let fetch_client = reqwest::Client::new();
+    let css = fetch_client
+        .get(
+            theme
+                .get_value_by_key("link".to_string(), app.clone())
+                .unwrap(),
+        )
+        .send()
+        .await
+        .unwrap()
+        .text()
+        .await
+        .unwrap();
+    let prev_theme = get_theme(theme_name, app.clone()).await.unwrap();
+    println!("{}", prev_theme == css);
     Ok(())
 }

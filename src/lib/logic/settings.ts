@@ -3,7 +3,6 @@ import { open } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
 import { useThemeStore } from "./themestore";
 import { Component } from "vue";
-import { strict } from "assert";
 
 export type Theme = {
   theme_name: string,
@@ -115,4 +114,8 @@ export async function get_repos(): Promise<SideRepo[]> {
 export async function delete_repo(link: string) {
   let res = await invoke("delete_repo", { link: link });
   console.log(res);
+}
+
+export async function check_for_updates() {
+  await invoke("check_theme_update", { themeName: "gruvbox" });
 }

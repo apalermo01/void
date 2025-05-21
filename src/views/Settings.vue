@@ -42,7 +42,7 @@ onMounted(async () => {
         <div class=" user-3d fixed right-[5%] top-[20%]" v-if="showCard">
             <Card :uname="uname" :pic="pic" />
         </div>
-        <div class="fixed right-[5%] top-[15%] w-[25%]">
+        <div class="fixed right-[6%] top-[15%]">
             <SettingsSelector v-model="settings_type" />
         </div>
     </div>

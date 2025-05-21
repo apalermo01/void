@@ -12,6 +12,7 @@ function download(key: string) {
 	invoke('clone_theme', { key: key }).then(() => { console.log("Ok") }, (err) => { console.warn(err) });
 }
 
+
 </script>
 <template>
 	<div class="marketplace-backdrop" @click="(event) => (show = closePopup(event))">

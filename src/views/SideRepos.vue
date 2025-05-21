@@ -10,13 +10,14 @@
         <h1>{{ repo.link }}</h1>
         <SettingsButton name="Удалить"
             @click="async () => { await delete_repo(repo.link); repos = await get_repos(); }" />
+        <SettingsButton @click="async () => { await check_for_updates() }" name="Проверить обновления" />
     </div>
 </template>
 <script setup lang="ts">
 import Input from '@/components/ui/input/Input.vue';
 import SettingsButton from '@/components/ui/settings/SettingsButton.vue';
 import SettingsHeader from '@/components/ui/settings/SettingsHeader.vue';
-import { add_themes_repo, delete_repo, get_repos, SideRepo } from '@/lib/logic/settings';
+import { add_themes_repo, check_for_updates, delete_repo, get_repos, SideRepo } from '@/lib/logic/settings';
 import { onMounted, ref } from 'vue';
 let link = ref('');
 let repos = ref<SideRepo[]>([]);
@@ -41,7 +42,7 @@ onMounted(async () => {
 }
 
 .repos-list h1 {
-    width: 70%;
+    width: 60%;
     padding: 0.5em;
     border: 1px solid var(--accent);
     border-radius: 25px;
