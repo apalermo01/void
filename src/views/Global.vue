@@ -1,22 +1,5 @@
-<template>
-    <h1 class="text-4xl text-center text-accent mt-2">Настройки</h1>
-    <SettingsHeader value="изменить рабочую директорию" />
-    <SettingsComposition>
-        <SettingsField :placeholder="workdir" />
-        <SettingsButton @click="async () => (workdir = await changeWorkdir())" name="Изменить" />
-    </SettingsComposition>
-    <SettingsHeader value="изменить тему" />
-    <SettingsComposition>
-        <SettingsSelector selectorPlaceholder="Темы" :currentVal="theme" :valList="list_of_themes" v-model="theme" />
-        <SettingsButton @click="get_themes_marketplace" name="Скачать темы" />
-        <SettingsButton name="Открыть список тем" />
-    </SettingsComposition>
-    <SettingsPopup v-if="showpopup" :object_list="objects" v-model="showpopup" />
-
-</template>
-
 <script setup lang="ts">
-import { Theme, changeWorkdir, getWorkdir, get_installed_themes_list, get_themes_to_download } from "@/lib/logic/settings";
+import { Theme, changeWorkdir, update, getWorkdir, get_installed_themes_list, get_themes_to_download, delete_theme } from "@/lib/logic/settings";
 import { onMounted, ref } from "vue";
 import { useThemeStore } from "@/lib/logic/themestore";
 import SettingsSelector from "../components/ui/settings/SettingsSelector.vue";
@@ -37,7 +20,7 @@ function get_themes_marketplace() {
     get_themes_to_download().then((res: Theme[]) => { objects.value = res; console.log(res); }, () => { console.warn("faild to fetch themes") });
 };
 
-listen("theme_downloaded", async () => {
+listen("theme_changed", async () => {
     let themes_arr = [];
     themes_arr = await get_installed_themes_list();
     themes_arr.push('lotm');
@@ -59,3 +42,38 @@ onMounted(async () => {
 });
 
 </script>
+
+<template>
+    <h1 class="text-4xl text-center text-accent mt-2">Настройки</h1>
+    <SettingsHeader value="изменить рабочую директорию" />
+    <SettingsComposition>
+        <SettingsField :placeholder="workdir" />
+        <SettingsButton @click="async () => (workdir = await changeWorkdir())" name="Изменить" />
+    </SettingsComposition>
+    <SettingsHeader value="изменить тему" />
+    <SettingsComposition>
+        <SettingsSelector selectorPlaceholder="Темы" :currentVal="theme" :valList="list_of_themes" v-model="theme" />
+        <SettingsButton @click="get_themes_marketplace" name="Скачать темы" />
+    </SettingsComposition>
+    <SettingsHeader value="Установленные темы" />
+    <div class="installed-themes-table">
+        <SettingsComposition v-for="theme in list_of_themes">
+            <SettingsField :placeholder="theme" />
+            <SettingsButton v-if="theme != 'lotm'" name="Проверить наличие обновлений"
+                @click="async () => { update(theme) }" />
+            <SettingsButton v-if="theme != 'lotm'" name="Удалить" @click="async () => { await delete_theme(theme) }" />
+        </SettingsComposition>
+    </div>
+    <SettingsPopup v-if="showpopup" :object_list="objects" v-model="showpopup" />
+</template>
+
+<style scoped>
+.installed-themes-table {
+    margin-top: 1em;
+    border: var(--border);
+    margin-left: 3em;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+</style>

@@ -9,16 +9,21 @@ import Alert from './components/ui/alert/Alert.vue';
 import { listen } from '@tauri-apps/api/event';
 import AlertTitle from './components/ui/alert/AlertTitle.vue';
 import AlertDescription from './components/ui/alert/AlertDescription.vue';
-import { OctagonX } from 'lucide-vue-next';
+import { Check, OctagonX } from 'lucide-vue-next';
 import { useThemeStore } from './lib/logic/themestore';
 import { set_theme } from './lib/logic/settings';
 let show_anim = ref(true);
 let error = ref('');
+let notification = ref('');
 
 listen('error', (event) => {
   error.value = event.payload;
   console.log(error.value)
 });
+
+listen('notify', (event) => {
+  notification.value = event.payload;
+})
 
 
 onMounted(async () => {
@@ -49,6 +54,11 @@ onMounted(async () => {
     <AlertTitle>Ошибка!</AlertTitle>
     <AlertDescription>{{ error }}</AlertDescription>
   </Alert>
+  <Alert class="notification" v-if="notification != ''" @click="notification = ''">
+    <Check />
+    <AlertTitle>Уведомление</AlertTitle>
+    <AlertDescription>{{ notification }}</AlertDescription>
+  </Alert>
 </template>
 <style>
 body {
@@ -57,6 +67,7 @@ body {
   min-height: 100vh;
   overflow-y: hidden;
   font-family: Spectral;
+  color: var(--card-foreground)
 }
 
 .fade-enter-active,
@@ -75,5 +86,17 @@ body {
   position: absolute;
   bottom: 10px;
   right: 10px;
+  color: var(--destructive);
+  border: 1px solid var(--destructive);
+}
+
+.notification {
+  z-index: 1000;
+  width: 40%;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  color: var(--primary);
+  border: 1px solid var(--primary);
 }
 </style>

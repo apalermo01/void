@@ -116,6 +116,10 @@ export async function delete_repo(link: string) {
   console.log(res);
 }
 
-export async function check_for_updates() {
-  await invoke("check_theme_update", { themeName: "gruvbox" });
+export async function update(name: string) {
+  await invoke("check_theme_update", { themeName: name });
+}
+
+export async function delete_theme(name: String) {
+  await invoke("delete_theme", { themeName: name });
 }

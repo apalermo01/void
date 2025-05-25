@@ -43,7 +43,8 @@ onMounted(async () => {
             <Card :uname="uname" :pic="pic" />
         </div>
         <div class="fixed right-[6%] top-[15%]">
-            <SettingsSelector v-model="settings_type" />
+            <SettingsSelector onselect="async () => {settingsComponent = await get_settings(settings_type)}"
+                v-model="settings_type" />
         </div>
     </div>
 </template>

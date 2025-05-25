@@ -152,7 +152,7 @@ pub async fn clone_theme(key: String, app: tauri::AppHandle) -> Result<(), Strin
         }
         None => return Err(EntityError::NotFound.to_string()),
     }
-    app.emit("theme_downloaded", "").unwrap();
+    app.emit("theme_changed", "").unwrap();
     Ok(())
 }
 
@@ -176,7 +176,37 @@ pub async fn check_theme_update(theme_name: String, app: tauri::AppHandle) -> Re
         .text()
         .await
         .unwrap();
-    let prev_theme = get_theme(theme_name, app.clone()).await.unwrap();
-    println!("{}", prev_theme == css);
+    let prev_theme = get_theme(theme_name.clone(), app.clone()).await.unwrap();
+    if prev_theme != css {
+        let sp = format!(
+            "{}/.conf/themes/{}/theme.css",
+            get_env("workdir".to_string(), app.clone()).await.unwrap(),
+            theme_name
+        );
+        let theme_path = std::path::Path::new(&sp);
+        std::fs::write(theme_path, css).unwrap();
+    } else {
+        app.emit("notify", "Установлена последняя версия темы")
+            .unwrap();
+    }
+    Ok(())
+}
+
+#[tauri::command]
+pub async fn delete_theme(theme_name: String, app: tauri::AppHandle) -> Result<(), String> {
+    let db = DB.get().unwrap();
+    let workdir = get_env("workdir".to_string(), app.clone()).await?;
+    let theme_dir = format!("{}/.conf/themes/{}", workdir, theme_name);
+    let path = std::path::Path::new(&theme_dir);
+    std::fs::remove_dir_all(path).map_err(|e| e.to_string())?;
+    db.update(
+        theme_name,
+        "themes_repo",
+        "is_installed".to_string(),
+        "false".to_string(),
+    )
+    .await
+    .map_err(|e| e.to_string())?;
+    app.emit("theme_changed", "").unwrap();
     Ok(())
 }
