@@ -1,5 +1,6 @@
 mod database;
 mod environment;
+mod explorer;
 mod filesystem;
 mod plugin_builder;
 mod settings;
@@ -8,6 +9,7 @@ mod terminal;
 mod themes;
 pub use database::*;
 pub use environment::*;
+pub use explorer::*;
 pub use filesystem::*;
 pub use plugin_builder::*;
 pub use settings::*;

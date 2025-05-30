@@ -18,3 +18,7 @@ export function checkShowable(): boolean {
     return true;
   }
 }
+
+export async function get_folder_content(dirname: string): Promise<String[]> {
+  return await invoke("get_directory_content", { dirname: dirname });
+}

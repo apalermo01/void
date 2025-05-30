@@ -32,7 +32,7 @@ let hidden_class = "max-w-[0px]";
                 <ChevronRight v-if="showTrigger" @click="$router.forward()" />
             </div>
         </SidebarProvider>
-        <div class="content-view">
+        <div :class="showPanel.get('sidebar:state') ? 'content-view-with-sidebar' : 'content-view'">
             <Transition name="fade" duration="100" mode="out-in">
                 <RouterView />
             </Transition>
@@ -62,5 +62,18 @@ let hidden_class = "max-w-[0px]";
     border-radius: 15.5px;
     background-color: var(--card);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15), inset 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+.content-view-with-sidebar {
+    margin-top: 3rem;
+    margin-right: 1rem;
+    margin-left: 12rem;
+    width: 90%;
+    height: 93vh;
+    border: 1px solid var(--border);
+    border-radius: 15.5px;
+    background-color: var(--card);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15), inset 0 0 1px rgba(0, 0, 0, 0.05);
+    transition: margin 0.3s ease, width 0.5s ease;
 }
 </style>

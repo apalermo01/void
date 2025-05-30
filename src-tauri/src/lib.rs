@@ -35,7 +35,8 @@ pub fn run() {
             get_repos_list,
             delete_repo,
             check_theme_update,
-            delete_theme
+            delete_theme,
+            get_directory_content
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
