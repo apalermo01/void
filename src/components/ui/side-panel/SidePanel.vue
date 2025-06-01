@@ -18,6 +18,7 @@ import { CollapsibleTrigger } from "reka-ui";
 import SidebarMenuSubItem from "../sidebar/SidebarMenuSubItem.vue";
 import SidebarMenuSub from "../sidebar/SidebarMenuSub.vue";
 import { get_folder_content } from "@/lib/logic/utils";
+import { useExplorerStore } from "@/lib/logic/explorerstore";
 const plugins = pluginRegistry;
 const loadedPlugins = plugins.reduce((acc, name) => {
     acc[name] = defineAsyncComponent(
@@ -29,18 +30,49 @@ const loadedPlugins = plugins.reduce((acc, name) => {
 let dirs = ref([]);
 let files = ref([]);
 
-onMounted(async () => {
-    let entries = await get_folder_content("");
+async function modify_store(dir) {
+    let explorer_store = useExplorerStore();
+    if (dir != '..') {
+        explorer_store.add_path(dir);
+    }
+    else {
+        explorer_store.remove_path();
+    }
+    await strip_content();
+}
+
+async function strip_content() {
+    dirs.value = [];
+    files.value = [];
+    let explorer_store = useExplorerStore();
+    let entries = await get_folder_content(explorer_store.current);
+    if (explorer_store.current != "") {
+        dirs.value.push('..');
+    }
     entries.forEach((entrie) => {
         if (entrie.includes('.') && !entrie.startsWith('.')) {
-            files.value.push(entrie);
+            if (entrie.includes('/')) {
+                files.value.push(entrie.split('/')[entrie.split('/').length]);
+            }
+            else {
+                files.value.push(entrie);
+            }
         }
         else if (!entrie.startsWith('.')) {
-            dirs.value.push(entrie);
+            if (entrie.includes('/')) {
+                dirs.value.push(entrie.split('/')[entrie.split('/').length - 1]);
+            }
+            else {
+                dirs.value.push(entrie);
+            }
         }
         files.value.sort();
         dirs.value.sort();
     })
+}
+
+onMounted(async () => {
+    await strip_content()
 })
 </script>
 <template>
@@ -60,7 +92,8 @@ onMounted(async () => {
                             <CollapsibleContent class="mr-5 overflow-hidden">
                                 <SidebarMenuSub v-for="dir in dirs">
                                     <SidebarMenuSubItem>
-                                        <span class="text-sm cursor-pointer flex gap-1 items-center">
+                                        <span class="text-sm cursor-pointer flex gap-1 items-center select-none"
+                                            @click="async () => { await modify_store(dir) }">
                                             <Folder size="15" />
                                             {{ dir }}
                                         </span>
