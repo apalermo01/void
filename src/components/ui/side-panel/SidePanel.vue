@@ -12,13 +12,19 @@ import SidebarGroupLabel from "../sidebar/SidebarGroupLabel.vue";
 import { showSettings } from "@/lib/logic/settings";
 import { pluginRegistry } from "@/components/ui/side-panel/side-panel-items/index";
 import { defineAsyncComponent, onMounted, ref } from "vue";
-import { CollapsibleContent } from "reka-ui";
+import { CollapsibleContent, TooltipRoot } from "reka-ui";
 import { CollapsibleRoot } from "reka-ui";
 import { CollapsibleTrigger } from "reka-ui";
 import SidebarMenuSubItem from "../sidebar/SidebarMenuSubItem.vue";
 import SidebarMenuSub from "../sidebar/SidebarMenuSub.vue";
 import { get_folder_content } from "@/lib/logic/utils";
 import { useExplorerStore } from "@/lib/logic/explorerstore";
+import Tooltip from "../tooltip/Tooltip.vue";
+import TooltipProvider from "../tooltip/TooltipProvider.vue";
+import TooltipContent from "../tooltip/TooltipContent.vue";
+import TooltipTrigger from "../tooltip/TooltipTrigger.vue";
+import { useSidebar } from "../sidebar";
+import { watch } from "vue";
 const plugins = pluginRegistry;
 const loadedPlugins = plugins.reduce((acc, name) => {
     acc[name] = defineAsyncComponent(
@@ -29,6 +35,14 @@ const loadedPlugins = plugins.reduce((acc, name) => {
 
 let dirs = ref([]);
 let files = ref([]);
+const { state } = useSidebar();
+let expanded = ref(false);
+
+watch(state, (v) => {
+    if (v === 'collapsed') {
+        expanded.value = false;
+    }
+})
 
 async function modify_store(dir) {
     let explorer_store = useExplorerStore();
@@ -72,7 +86,7 @@ async function strip_content() {
 }
 
 onMounted(async () => {
-    await strip_content()
+    await strip_content();
 })
 </script>
 <template>
@@ -81,15 +95,17 @@ onMounted(async () => {
         <SidebarContent class="px-2">
             <SidebarGroupContent>
                 <SidebarMenu>
-                    <CollapsibleRoot :default-open="false" class="group/collapsible">
+                    <CollapsibleRoot :default-open="false" v-bind:open="expanded" class="group/collapsible">
                         <SidebarMenuItem>
                             <CollapsibleTrigger asChild>
                                 <SidebarMenuButton>
                                     <Folder />
-                                    <span class="text-lg cursor-pointer">Проводник</span>
+                                    <span class="text-lg cursor-pointer"
+                                        @click="() => { expanded = !expanded }">Проводник</span>
                                 </SidebarMenuButton>
                             </CollapsibleTrigger>
-                            <CollapsibleContent class="mr-5 overflow-hidden">
+                            <CollapsibleContent
+                                class="mr-5 data-[state=open]:min-h-[15rem] max-h-[15rem] overflow-y-scroll overflow-x-clip">
                                 <SidebarMenuSub v-for="dir in dirs">
                                     <SidebarMenuSubItem>
                                         <span class="text-sm cursor-pointer flex gap-1 items-center select-none"
@@ -102,7 +118,14 @@ onMounted(async () => {
                                 <SidebarMenuSub v-for="file in files">
                                     <SidebarMenuSubItem>
                                         <span class="text-sm cursor-pointer flex gap-1">
-                                            {{ file }}
+                                            <TooltipRoot>
+                                                <TooltipProvider>
+                                                    <TooltipTrigger>
+                                                        <span class="truncate block max-w-[10rem]">{{ file }}</span>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>{{ file }}</TooltipContent>
+                                                </TooltipProvider>
+                                            </TooltipRoot>
                                         </span>
                                     </SidebarMenuSubItem>
                                 </SidebarMenuSub>
