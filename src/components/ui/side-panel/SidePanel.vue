@@ -23,6 +23,7 @@ import Tooltip from "../tooltip/Tooltip.vue";
 import TooltipProvider from "../tooltip/TooltipProvider.vue";
 import TooltipContent from "../tooltip/TooltipContent.vue";
 import TooltipTrigger from "../tooltip/TooltipTrigger.vue";
+import ExplorerMenu from "./side-panel-items/ExplorerMenu.vue";
 import { useSidebar } from "../sidebar";
 import { watch } from "vue";
 const plugins = pluginRegistry;
@@ -106,35 +107,39 @@ onMounted(async () => {
                             </CollapsibleTrigger>
                             <CollapsibleContent
                                 class="mr-5 data-[state=open]:min-h-[15rem] max-h-[15rem] overflow-y-scroll overflow-x-clip">
-                                <SidebarMenuSub v-for="dir in dirs">
-                                    <SidebarMenuSubItem>
-                                        <span class="text-sm cursor-pointer flex gap-1 items-center select-none"
-                                            @click="async () => { await modify_store(dir) }">
-                                            <Folder size="15" />
-                                            {{ dir }}
-                                        </span>
-                                    </SidebarMenuSubItem>
-                                </SidebarMenuSub>
-                                <SidebarMenuSub v-for="file in files">
-                                    <SidebarMenuSubItem>
-                                        <span class="text-sm cursor-pointer flex gap-1">
-                                            <TooltipRoot>
-                                                <TooltipProvider>
-                                                    <TooltipTrigger>
-                                                        <span class="truncate block max-w-[10rem]">{{ file }}</span>
-                                                    </TooltipTrigger>
-                                                    <TooltipContent>{{ file }}</TooltipContent>
-                                                </TooltipProvider>
-                                            </TooltipRoot>
-                                        </span>
-                                    </SidebarMenuSubItem>
-                                </SidebarMenuSub>
+                                <ExplorerMenu v-for="dir in dirs">
+                                    <SidebarMenuSub>
+                                        <SidebarMenuSubItem>
+                                            <span class="text-sm cursor-pointer flex gap-1 items-center select-none"
+                                                @click="async () => { await modify_store(dir) }">
+                                                <Folder size="15" />
+                                                {{ dir }}
+                                            </span>
+                                        </SidebarMenuSubItem>
+                                    </SidebarMenuSub>
+                                </ExplorerMenu>
+                                <ExplorerMenu v-for="file in files">
+                                    <SidebarMenuSub>
+                                        <SidebarMenuSubItem>
+                                            <span class="text-sm cursor-pointer flex gap-1">
+                                                <TooltipRoot>
+                                                    <TooltipProvider>
+                                                        <TooltipTrigger>
+                                                            <span class="truncate block max-w-[10rem]">{{ file }}</span>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>{{ file }}</TooltipContent>
+                                                    </TooltipProvider>
+                                                </TooltipRoot>
+                                            </span>
+                                        </SidebarMenuSubItem>
+                                    </SidebarMenuSub>
+                                </ExplorerMenu>
                             </CollapsibleContent>
                         </SidebarMenuItem>
                     </CollapsibleRoot>
                 </SidebarMenu>
             </SidebarGroupContent>
-            <SidebarGroupLabel>Инструменты</SidebarGroupLabel>
+            <SidebarGroupLabel class="select-none">Инструменты</SidebarGroupLabel>
             <SidebarGroupContent>
                 <SidebarMenu v-for="plugin in plugins" :key="plugin">
                     <SidebarMenuItem>
@@ -148,7 +153,7 @@ onMounted(async () => {
         <SidebarFooter>
             <SidebarMenu>
                 <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
+                    <SidebarMenuButton class="cursor-pointer select-none" asChild>
                         <a @click="showSettings($router)">
                             <Settings />
                             <span class="text-lg">Настройки</span>

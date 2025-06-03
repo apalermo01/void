@@ -1,9 +1,9 @@
 <template>
-    <div ref="terminalContainer" class="w-full h-full rounded-2xl overflow-hidden"></div>
+    <div ref="terminalContainer" class="w-full h-full rounded-2xl overflow-hidden flex flex-col"></div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, nextTick } from 'vue';
+import { onMounted, ref, nextTick, onBeforeUnmount } from 'vue';
 import { Terminal } from '@xterm/xterm';
 import { listen } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/core';
@@ -19,8 +19,33 @@ const term = new Terminal({
     allowProposedApi: true,
     theme: {
         background: '#232137',
-    }
+    },
+    scrollback: 1000,
+    convertEol: true,
+    cursorBlink: true,
+    cursorStyle: 'block',
+    allowTransparency: true
 });
+
+let resizeObserver: ResizeObserver | null = null;
+let resizeTimeout: NodeJS.Timeout | null = null;
+let fitAddon: FitAddon | null = null;
+
+function fitTerminal() {
+    if (!terminalContainer.value) return;
+    if (!fitAddon) {
+        fitAddon = new FitAddon();
+        term.loadAddon(fitAddon);
+    }
+    fitAddon.fit();
+    const { cols, rows } = term;
+    invoke('resize_neovim', { cols, rows });
+}
+
+function handleResize() {
+    if (resizeTimeout) clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(fitTerminal, 50); // Уменьшаем задержку до 50мс
+}
 
 listen<string>('nvim-data', (event) => {
     const cleanedPayload = atob(event.payload);
@@ -29,61 +54,51 @@ listen<string>('nvim-data', (event) => {
     term.write(text);
 });
 
-function waitForContainerSize(container: HTMLElement): Promise<void> {
-    return new Promise((resolve) => {
-        const observer = new ResizeObserver(() => {
-            if (container.offsetWidth > 0 && container.offsetHeight > 0) {
-                observer.disconnect();
-                resolve();
-            }
-        });
-        observer.observe(container);
-    });
-}
-
 onMounted(async () => {
     await nextTick();
-    const auto_fit = new FitAddon();
+    
+    if (!terminalContainer.value) return;
+
     const unicode = new Unicode11Addon();
     const webgl = new WebglAddon();
-    term.loadAddon(auto_fit);
-
+    
     term.loadAddon(unicode);
-    term.loadAddon(webgl)
+    term.loadAddon(webgl);
     term.unicode.activeVersion = "11";
 
-    if (terminalContainer.value) {
-        await waitForContainerSize(terminalContainer.value);
-        await new Promise(resolve => setTimeout(resolve, 100));
+    term.open(terminalContainer.value);
+    
+    // Настраиваем ResizeObserver для отслеживания изменений размера контейнера
+    resizeObserver = new ResizeObserver(handleResize);
+    resizeObserver.observe(terminalContainer.value);
+    
+    // Начальная подгонка размера
+    fitTerminal();
+    
+    const nvim_path = await invoke("get_env", { ename: "nvim_path" });
+    invoke('open_neovim', { 
+        cols: term.cols, 
+        rows: term.rows, 
+        path: nvim_path 
+    });
 
-        if (terminalContainer.value.offsetWidth === 0 || terminalContainer.value.offsetHeight === 0) {
-            console.error("Container has invalid dimensions:", terminalContainer.value.offsetWidth, terminalContainer.value.offsetHeight);
-            return;
-        }
+    term.onData((data) => {
+        invoke('send_to_neovim', { line: data });
+    });
 
-        term.open(terminalContainer.value);
-        auto_fit.fit();
-        console.log(term.rows, term.cols);
-        const { cols, rows } = term;
-        term.write('🧠 MindBreaker Terminal ready 🚀\r\n');
-        const nvim_path = await invoke("get_env", { ename: "nvim_path" });
-        invoke('open_neovim', { cols: cols, rows: rows, path: nvim_path });
+    // Добавляем обработчик изменения размера окна
+    window.addEventListener('resize', handleResize);
+});
 
-        term.onData((data) => {
-            invoke('send_to_neovim', { line: data });
-        });
-
-        let resizeTimeout: NodeJS.Timeout | null = null;
-        window.addEventListener('resize', () => {
-            if (resizeTimeout) clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(() => {
-                auto_fit.fit();
-                const { rows, cols } = term;
-                console.log(cols, rows);
-                invoke('resize_neovim', { cols, rows });
-            }, 200);
-        });
+onBeforeUnmount(() => {
+    if (resizeObserver) {
+        resizeObserver.disconnect();
     }
+    if (resizeTimeout) {
+        clearTimeout(resizeTimeout);
+    }
+    window.removeEventListener('resize', handleResize);
+    term.dispose();
 });
 </script>
 
@@ -91,5 +106,8 @@ onMounted(async () => {
 .term {
     font-family: 'JetBrains', monospace;
     border-radius: 15.5px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 </style>
