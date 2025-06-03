@@ -1,5 +1,5 @@
 <template>
-    <div ref="terminalContainer" class="w-full h-full rounded-2xl overflow-hidden flex flex-col"></div>
+    <div ref="terminalContainer" class="terminal-outer"></div>
 </template>
 
 <script setup lang="ts">
@@ -18,7 +18,7 @@ const term = new Terminal({
     fontSize: 14,
     allowProposedApi: true,
     theme: {
-        background: '#232137',
+        background: 'transparent',
     },
     scrollback: 1000,
     convertEol: true,
@@ -44,7 +44,7 @@ function fitTerminal() {
 
 function handleResize() {
     if (resizeTimeout) clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(fitTerminal, 50); // Уменьшаем задержку до 50мс
+    resizeTimeout = setTimeout(fitTerminal, 50);
 }
 
 listen<string>('nvim-data', (event) => {
@@ -56,37 +56,34 @@ listen<string>('nvim-data', (event) => {
 
 onMounted(async () => {
     await nextTick();
-    
+
     if (!terminalContainer.value) return;
 
     const unicode = new Unicode11Addon();
     const webgl = new WebglAddon();
-    
+
     term.loadAddon(unicode);
     term.loadAddon(webgl);
     term.unicode.activeVersion = "11";
 
     term.open(terminalContainer.value);
-    
-    // Настраиваем ResizeObserver для отслеживания изменений размера контейнера
+
     resizeObserver = new ResizeObserver(handleResize);
     resizeObserver.observe(terminalContainer.value);
-    
-    // Начальная подгонка размера
+
     fitTerminal();
-    
+
     const nvim_path = await invoke("get_env", { ename: "nvim_path" });
-    invoke('open_neovim', { 
-        cols: term.cols, 
-        rows: term.rows, 
-        path: nvim_path 
+    invoke('open_neovim', {
+        cols: term.cols,
+        rows: term.rows,
+        path: nvim_path
     });
 
     term.onData((data) => {
         invoke('send_to_neovim', { line: data });
     });
 
-    // Добавляем обработчик изменения размера окна
     window.addEventListener('resize', handleResize);
 });
 
@@ -103,11 +100,10 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.term {
-    font-family: 'JetBrains', monospace;
-    border-radius: 15.5px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+.terminal-outer {
+    width: calc(100%-1rem);
+    height: 98.5%;
+    margin: 0.5rem;
+    border-radius: 1rem;
 }
 </style>

@@ -27,6 +27,8 @@ impl PtyController {
 
         thread::spawn(move || {
             let pty_system = native_pty_system();
+            let rows = rows + 1;
+            let cols = cols + 1;
             let pair = pty_system
                 .openpty(PtySize {
                     rows,
