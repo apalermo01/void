@@ -70,13 +70,13 @@ impl EntityControl<PluginSettingsFields, PluginSettings> for PluginSettings {
         })
     }
 
-    fn get_value_by_key(&self, key: String, app: tauri::AppHandle) -> Result<String, EntityError> {
+    fn get_value_by_key(&self, key: String) -> Result<String, EntityError> {
         match key.as_str() {
             "name" => Ok(self.name.clone()),
             "type" => Ok(self.ui_type.clone()),
             "ui_size" => Ok(self.ui_size.to_string().clone()),
             "other" => Ok(self.other.clone()),
-            _ => Err(PluginSettings::throw_error(app.clone(), "NotFound")),
+            _ => Err(EntityError::NotFound),
         }
     }
 }

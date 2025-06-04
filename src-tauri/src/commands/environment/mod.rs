@@ -5,14 +5,14 @@ use crate::commands::database::{DB, EntityError, MainConfig};
 use super::EntityControl;
 
 #[tauri::command]
-pub async fn get_env(ename: String, app: tauri::AppHandle) -> Result<String, String> {
+pub async fn get_env(ename: String, _app: tauri::AppHandle) -> Result<String, String> {
     match DB
         .get()
         .unwrap()
         .get::<Option<MainConfig>>("singletone", "main_config")
         .await
     {
-        Ok(Some(data)) => match data.get_value_by_key(ename, app.clone()) {
+        Ok(Some(data)) => match data.get_value_by_key(ename) {
             Ok(str) => return Ok(str),
             Err(e) => return Err(e.to_string()),
         },

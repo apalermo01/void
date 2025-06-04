@@ -33,7 +33,8 @@ let hidden_class = "max-w-[0px]";
             </div>
         </SidebarProvider>
         <Transition name="slide-fade">
-            <div :class="showPanel.get('sidebar:state') ? 'content-view-with-sidebar' : 'content-view'">
+            <div
+                :class="showPanel.get('sidebar:state') && checkShowable() ? 'content-view-with-sidebar' : 'content-view'">
                 <Transition name="fade" duration="100" mode="out-in">
                     <RouterView />
                 </Transition>

@@ -40,11 +40,11 @@ impl EntityControl<PluginListFields, PluginList> for PluginList {
         Ok(PluginList { name, enabled })
     }
 
-    fn get_value_by_key(&self, key: String, app: tauri::AppHandle) -> Result<String, EntityError> {
+    fn get_value_by_key(&self, key: String) -> Result<String, EntityError> {
         match key.as_str() {
             "name" => Ok(self.name.clone()),
             "enabled" => Ok(self.enabled.clone().to_string()),
-            _ => Err(PluginList::throw_error(app.clone(), "NotFound")),
+            _ => Err(EntityError::NotFound),
         }
     }
 }

@@ -10,3 +10,41 @@ pub async fn get_directory_content(dirname: String, app: tauri::AppHandle) -> Ve
         .collect();
     dirs
 }
+
+#[tauri::command]
+pub async fn create_entry(
+    name: String,
+    path: String,
+    flag: String,
+    app: tauri::AppHandle,
+) -> Result<(), String> {
+    let workdir = super::get_env("workdir".to_string(), app.clone()).await?;
+    let path = workdir + path.as_str() + name.as_str();
+    println!("{}", flag);
+    println!("{}", path);
+    let path = std::path::Path::new(&path);
+    match flag.as_str() {
+        "folder" => std::fs::create_dir(path).map_err(|e| e.to_string())?,
+        "file" => std::fs::write(path, "").map_err(|e| e.to_string())?,
+        _ => return Err("нет такого флага".to_string()),
+    }
+    Ok(())
+}
+
+#[tauri::command]
+pub async fn remove(
+    name: String,
+    path: String,
+    flag: String,
+    app: tauri::AppHandle,
+) -> Result<(), String> {
+    let workdir = super::get_env("workdir".to_string(), app.clone()).await?;
+    let path = workdir + path.as_str() + name.as_str();
+    let path = std::path::Path::new(&path);
+    match flag.as_str() {
+        "folder" => std::fs::remove_dir_all(path).map_err(|e| e.to_string())?,
+        "file" => std::fs::remove_file(path).map_err(|e| e.to_string())?,
+        _ => return Err("нет такого флага".to_string()),
+    }
+    Ok(())
+}

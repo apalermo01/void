@@ -22,3 +22,13 @@ export function checkShowable(): boolean {
 export async function get_folder_content(dirname: string): Promise<String[]> {
   return await invoke("get_directory_content", { dirname: dirname });
 }
+
+export async function create_file(name: string, dirname: string) {
+  let res = await invoke("create_entry", { name: name, path: dirname, flag: "file" });
+  console.log(res);
+}
+
+export async function create_folder(name: string, dirname: string) {
+  let res = await invoke("create_entry", { name: name, path: dirname, flag: "folder" });
+  console.log(res);
+}

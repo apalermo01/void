@@ -15,7 +15,7 @@ pub struct SideRepo {
 
 impl EntityControl<SideRepoField, SideRepo> for SideRepo {
     fn new(input: Vec<SideRepoField>, app: tauri::AppHandle) -> Result<SideRepo, EntityError> {
-        let repo_type = match input.get(0) {
+        let repo_type = match input.first() {
             Some(SideRepoField::Type(s)) => s.clone(),
             _ => {
                 SideRepo::throw_error(app.clone(), "Type");
@@ -31,7 +31,7 @@ impl EntityControl<SideRepoField, SideRepo> for SideRepo {
         };
         Ok(SideRepo { repo_type, link })
     }
-    fn get_value_by_key(&self, key: String, app: tauri::AppHandle) -> Result<String, EntityError> {
+    fn get_value_by_key(&self, key: String) -> Result<String, EntityError> {
         match key.as_str() {
             "type" => Ok(self.repo_type.clone()),
             "link" => Ok(self.link.clone()),

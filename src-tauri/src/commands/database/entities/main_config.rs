@@ -20,7 +20,7 @@ impl EntityControl<MainConfigFields, MainConfig> for MainConfig {
         if input.len() != 4 {
             return Err(EntityError::WrongInputLength);
         }
-        let name = match input.get(0) {
+        let name = match input.first() {
             Some(MainConfigFields::Name(name)) => name.clone(),
             _ => {
                 return Err(MainConfig::throw_error(
@@ -66,13 +66,13 @@ impl EntityControl<MainConfigFields, MainConfig> for MainConfig {
         })
     }
 
-    fn get_value_by_key(&self, key: String, app: tauri::AppHandle) -> Result<String, EntityError> {
+    fn get_value_by_key(&self, key: String) -> Result<String, EntityError> {
         match key.as_str() {
             "name" => Ok(self.name.clone()),
             "first_run" => Ok(self.first_run.clone().to_string()),
             "workdir" => Ok(self.workdir.clone()),
             "nvim_path" => Ok(self.nvim_path.clone()),
-            _ => Err(MainConfig::throw_error(app.clone(), "NotFound")),
+            _ => Err(EntityError::NotFound),
         }
     }
 }

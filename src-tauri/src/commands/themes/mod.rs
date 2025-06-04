@@ -15,7 +15,7 @@ struct ThemeManifestMember {
 }
 
 #[tauri::command]
-pub async fn get_theme(name: String, app: tauri::AppHandle) -> Result<String, String> {
+pub async fn get_theme(name: String, _app: tauri::AppHandle) -> Result<String, String> {
     let config = DB
         .get()
         .unwrap()
@@ -23,7 +23,7 @@ pub async fn get_theme(name: String, app: tauri::AppHandle) -> Result<String, St
         .await
         .map_err(|e| e.to_string())?;
     let workdir = config
-        .get_value_by_key("workdir".to_string(), app.clone())
+        .get_value_by_key("workdir".to_string())
         .map_err(|e| e.to_string())?;
     let path = format!("{}/.conf/themes/{}/theme.css", workdir, name);
     let path = std::path::Path::new(&path);
@@ -33,7 +33,7 @@ pub async fn get_theme(name: String, app: tauri::AppHandle) -> Result<String, St
 #[tauri::command]
 pub async fn get_list_of_themes(
     key: String,
-    app: tauri::AppHandle,
+    _app: tauri::AppHandle,
 ) -> Result<Vec<ThemeRepo>, String> {
     let db = DB.get().unwrap();
     let entities = db
@@ -43,19 +43,13 @@ pub async fn get_list_of_themes(
     let fentities = match key.as_str() {
         "installed" => entities
             .iter()
-            .filter(|t| {
-                *t.get_value_by_key("installed".to_string(), app.clone())
-                    .unwrap()
-                    == "true".to_string()
-            })
+            .filter(|t| *t.get_value_by_key("installed".to_string()).unwrap() == "true".to_string())
             .map(|x| x.clone())
             .collect::<Vec<ThemeRepo>>(),
         "not_installed" => entities
             .iter()
             .filter(|t| {
-                *t.get_value_by_key("installed".to_string(), app.clone())
-                    .unwrap()
-                    == "false".to_string()
+                *t.get_value_by_key("installed".to_string()).unwrap() == "false".to_string()
             })
             .map(|x| x.clone())
             .collect::<Vec<ThemeRepo>>(),
@@ -115,7 +109,7 @@ pub async fn clone_theme(key: String, app: tauri::AppHandle) -> Result<(), Strin
     let workdir = get_env("workdir".to_string(), app.clone()).await.unwrap();
     for theme in themes_list {
         if theme
-            .get_value_by_key("name".to_string(), app.clone())
+            .get_value_by_key("name".to_string())
             .map_err(|e| e.to_string())?
             == key
         {
@@ -126,11 +120,7 @@ pub async fn clone_theme(key: String, app: tauri::AppHandle) -> Result<(), Strin
         Some(theme) => {
             let client = reqwest::Client::new();
             let theme_css = client
-                .get(
-                    theme
-                        .get_value_by_key("link".to_string(), app.clone())
-                        .unwrap(),
-                )
+                .get(theme.get_value_by_key("link".to_string()).unwrap())
                 .send()
                 .await
                 .map_err(|e| e.to_string())?;
@@ -165,11 +155,7 @@ pub async fn check_theme_update(theme_name: String, app: tauri::AppHandle) -> Re
         .map_err(|e| e.to_string())?;
     let fetch_client = reqwest::Client::new();
     let css = fetch_client
-        .get(
-            theme
-                .get_value_by_key("link".to_string(), app.clone())
-                .unwrap(),
-        )
+        .get(theme.get_value_by_key("link".to_string()).unwrap())
         .send()
         .await
         .unwrap()

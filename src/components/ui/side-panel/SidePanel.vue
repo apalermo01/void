@@ -3,7 +3,7 @@ import Sidebar from "../sidebar/Sidebar.vue";
 import SidebarHeader from "../sidebar/SidebarHeader.vue";
 import SidebarFooter from "../sidebar/SidebarFooter.vue";
 import SidebarMenuButton from "../sidebar/SidebarMenuButton.vue";
-import { File, Folder, Settings, Spline } from "lucide-vue-next";
+import { File, Folder, Keyboard, Settings, Spline } from "lucide-vue-next";
 import SidebarMenuItem from "../sidebar/SidebarMenuItem.vue";
 import SidebarMenu from "../sidebar/SidebarMenu.vue";
 import SidebarGroupContent from "../sidebar/SidebarGroupContent.vue";
@@ -17,7 +17,7 @@ import { CollapsibleRoot } from "reka-ui";
 import { CollapsibleTrigger } from "reka-ui";
 import SidebarMenuSubItem from "../sidebar/SidebarMenuSubItem.vue";
 import SidebarMenuSub from "../sidebar/SidebarMenuSub.vue";
-import { get_folder_content } from "@/lib/logic/utils";
+import { create_file, create_folder, get_folder_content } from "@/lib/logic/utils";
 import { useExplorerStore } from "@/lib/logic/explorerstore";
 import Tooltip from "../tooltip/Tooltip.vue";
 import TooltipProvider from "../tooltip/TooltipProvider.vue";
@@ -26,6 +26,7 @@ import TooltipTrigger from "../tooltip/TooltipTrigger.vue";
 import ExplorerMenu from "./side-panel-items/ExplorerMenu.vue";
 import { useSidebar } from "../sidebar";
 import { watch } from "vue";
+import { onKeyDown } from "@vueuse/core";
 const plugins = pluginRegistry;
 const loadedPlugins = plugins.reduce((acc, name) => {
     acc[name] = defineAsyncComponent(
@@ -36,8 +37,12 @@ const loadedPlugins = plugins.reduce((acc, name) => {
 
 let dirs = ref([]);
 let files = ref([]);
+let fcreate = ref(false);
+let dcreate = ref(false);
 const { state } = useSidebar();
 let expanded = ref(false);
+let create_type = ref("");
+let name = ref("");
 
 watch(state, (v) => {
     if (v === 'collapsed') {
@@ -86,6 +91,46 @@ async function strip_content() {
     })
 }
 
+function performCreation(flag) {
+    switch (flag) {
+        case 'file':
+            fcreate.value = true;
+            create_type.value = 'file';
+            break;
+
+        case 'folder':
+            dcreate.value = true;
+            create_type.value = 'folder';
+            break;
+    }
+}
+
+onKeyDown('Enter', () => { summon(create_type.value) })
+
+async function summon(flag) {
+    console.log("pis: " + flag);
+    let store = useExplorerStore();
+    let folder = store.current;
+    if ((fcreate.value || dcreate.value) && name.value != "") {
+        switch (flag) {
+            case 'file':
+                await create_file('/' + name.value, folder);
+                create_type.value = "";
+                name.value = "";
+                fcreate.value = false;
+                await strip_content();
+                break;
+            case 'folder':
+                await create_folder('/' + name.value, folder);
+                create_type.value = "";
+                name.value = "";
+                dcreate.value = false;
+                await strip_content();
+                break;
+        }
+    }
+}
+
 onMounted(async () => {
     await strip_content();
 })
@@ -107,7 +152,8 @@ onMounted(async () => {
                             </CollapsibleTrigger>
                             <CollapsibleContent
                                 class="mr-5 data-[state=open]:min-h-[15rem] max-h-[15rem] overflow-y-scroll overflow-x-clip">
-                                <ExplorerMenu v-for="dir in dirs">
+                                <ExplorerMenu @create-file="performCreation('file')"
+                                    @create-folder="performCreation('folder')" v-for="dir in dirs">
                                     <SidebarMenuSub>
                                         <SidebarMenuSubItem>
                                             <span class="text-sm cursor-pointer flex gap-1 items-center select-none"
@@ -118,6 +164,13 @@ onMounted(async () => {
                                         </SidebarMenuSubItem>
                                     </SidebarMenuSub>
                                 </ExplorerMenu>
+                                <SidebarMenuSub v-if="fcreate || dcreate">
+                                    <SidebarMenuSubItem>
+                                        <span class="text-sm cursor-pointer flex gap-1 items-center">
+                                            <input type="text" v-model="name" placeholder="unnamed" />
+                                        </span>
+                                    </SidebarMenuSubItem>
+                                </SidebarMenuSub>
                                 <ExplorerMenu v-for="file in files">
                                     <SidebarMenuSub>
                                         <SidebarMenuSubItem>

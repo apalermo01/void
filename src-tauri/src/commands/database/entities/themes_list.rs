@@ -21,7 +21,7 @@ pub struct ThemeRepo {
 
 impl EntityControl<ThemeRepoField, ThemeRepo> for ThemeRepo {
     fn new(input: Vec<ThemeRepoField>, app: tauri::AppHandle) -> Result<ThemeRepo, EntityError> {
-        let name = match input.get(0) {
+        let name = match input.first() {
             Some(ThemeRepoField::Name(s)) => s.clone(),
             _ => {
                 ThemeRepo::throw_error(app.clone(), "Type");
@@ -68,7 +68,7 @@ impl EntityControl<ThemeRepoField, ThemeRepo> for ThemeRepo {
             is_installed: installed,
         })
     }
-    fn get_value_by_key(&self, key: String, app: tauri::AppHandle) -> Result<String, EntityError> {
+    fn get_value_by_key(&self, key: String) -> Result<String, EntityError> {
         match key.as_str() {
             "name" => Ok(self.theme_name.clone()),
             "author" => Ok(self.theme_author.clone()),
