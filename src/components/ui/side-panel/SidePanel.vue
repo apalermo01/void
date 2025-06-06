@@ -17,7 +17,7 @@ import { CollapsibleRoot } from "reka-ui";
 import { CollapsibleTrigger } from "reka-ui";
 import SidebarMenuSubItem from "../sidebar/SidebarMenuSubItem.vue";
 import SidebarMenuSub from "../sidebar/SidebarMenuSub.vue";
-import { create_file, create_folder, get_folder_content } from "@/lib/logic/utils";
+import { create_file, create_folder, delete_folder, delete_file, get_folder_content } from "@/lib/logic/utils";
 import { useExplorerStore } from "@/lib/logic/explorerstore";
 import Tooltip from "../tooltip/Tooltip.vue";
 import TooltipProvider from "../tooltip/TooltipProvider.vue";
@@ -71,8 +71,10 @@ async function strip_content() {
     }
     entries.forEach((entrie) => {
         if (entrie.includes('.') && !entrie.startsWith('.')) {
+            console.log(entrie);
             if (entrie.includes('/')) {
-                files.value.push(entrie.split('/')[entrie.split('/').length]);
+                console.log(entrie);
+                files.value.push(entrie.split('/')[entrie.split('/').length - 1]);
             }
             else {
                 files.value.push(entrie);
@@ -131,6 +133,18 @@ async function summon(flag) {
     }
 }
 
+async function remove_dir(name) {
+    let path = useExplorerStore().current;
+    await delete_folder('/' + name, path);
+    await strip_content();
+}
+
+async function remove_file(name) {
+    let path = useExplorerStore().current;
+    await delete_file('/' + name, path);
+    await strip_content();
+}
+
 onMounted(async () => {
     await strip_content();
 })
@@ -152,8 +166,16 @@ onMounted(async () => {
                             </CollapsibleTrigger>
                             <CollapsibleContent
                                 class="mr-5 data-[state=open]:min-h-[15rem] max-h-[15rem] overflow-y-scroll overflow-x-clip">
+                                <SidebarMenuSub v-if="fcreate || dcreate">
+                                    <SidebarMenuSubItem>
+                                        <span class="text-sm cursor-pointer flex gap-1 items-center">
+                                            <input type="text" v-model="name" placeholder="unnamed" />
+                                        </span>
+                                    </SidebarMenuSubItem>
+                                </SidebarMenuSub>
                                 <ExplorerMenu @create-file="performCreation('file')"
-                                    @create-folder="performCreation('folder')" v-for="dir in dirs">
+                                    @create-folder="performCreation('folder')"
+                                    @delete="async () => await remove_dir(dir)" v-for="dir in dirs">
                                     <SidebarMenuSub>
                                         <SidebarMenuSubItem>
                                             <span class="text-sm cursor-pointer flex gap-1 items-center select-none"
@@ -164,14 +186,9 @@ onMounted(async () => {
                                         </SidebarMenuSubItem>
                                     </SidebarMenuSub>
                                 </ExplorerMenu>
-                                <SidebarMenuSub v-if="fcreate || dcreate">
-                                    <SidebarMenuSubItem>
-                                        <span class="text-sm cursor-pointer flex gap-1 items-center">
-                                            <input type="text" v-model="name" placeholder="unnamed" />
-                                        </span>
-                                    </SidebarMenuSubItem>
-                                </SidebarMenuSub>
-                                <ExplorerMenu v-for="file in files">
+                                <ExplorerMenu @create-file="performCreation('file')"
+                                    @create-folder="performCreation('folder')"
+                                    @delete="async () => await remove_file(file)" v-for="file in files">
                                     <SidebarMenuSub>
                                         <SidebarMenuSubItem>
                                             <span class="text-sm cursor-pointer flex gap-1">

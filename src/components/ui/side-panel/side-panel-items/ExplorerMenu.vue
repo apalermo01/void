@@ -13,7 +13,7 @@ import ContextMenuSeparator from '../../context-menu/ContextMenuSeparator.vue';
         <ContextMenuContent>
             <ContextMenuItem @click="$emit('create-file')">Создать файл</ContextMenuItem>
             <ContextMenuItem @click="$emit('create-folder')">Создать папку</ContextMenuItem>
-            <ContextMenuItem>Удалить файл/папку</ContextMenuItem>
+            <ContextMenuItem @click="$emit('delete')">Удалить файл/папку</ContextMenuItem>
             <ContextMenuSeparator />
             <ContextMenuItem>Переименовать</ContextMenuItem>
         </ContextMenuContent>

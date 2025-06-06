@@ -32,3 +32,11 @@ export async function create_folder(name: string, dirname: string) {
   let res = await invoke("create_entry", { name: name, path: dirname, flag: "folder" });
   console.log(res);
 }
+
+export async function delete_folder(name: string, dirname: string) {
+  await invoke("remove", { name: name, path: dirname, flag: "folder" });
+}
+
+export async function delete_file(name: string, dirname: string) {
+  await invoke("remove", { name: name, path: dirname, flag: "file" });
+}
