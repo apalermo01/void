@@ -158,11 +158,14 @@ onMounted(async () => {
                     <CollapsibleRoot :default-open="false" v-bind:open="expanded" class="group/collapsible">
                         <SidebarMenuItem>
                             <CollapsibleTrigger asChild>
-                                <SidebarMenuButton>
-                                    <Folder />
-                                    <span class="text-lg cursor-pointer"
-                                        @click="() => { expanded = !expanded }">Проводник</span>
-                                </SidebarMenuButton>
+                                <ExplorerMenu @create-file="performCreation('file')"
+                                    @create-folder="performCreation('folder')">
+                                    <SidebarMenuButton>
+                                        <Folder />
+                                        <span class="text-lg cursor-pointer"
+                                            @click="() => { expanded = !expanded }">Проводник</span>
+                                    </SidebarMenuButton>
+                                </ExplorerMenu>
                             </CollapsibleTrigger>
                             <CollapsibleContent
                                 class="mr-5 data-[state=open]:min-h-[15rem] max-h-[15rem] overflow-y-scroll overflow-x-clip">

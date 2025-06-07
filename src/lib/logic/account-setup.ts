@@ -9,6 +9,7 @@ async function setup(name: string, router: Router) {
     directory: true
   })
   await invoke('set_env', { ename: 'workdir', name: folder });
+  await invoke('setup_config_directory');
   router.push('/');
 }
 

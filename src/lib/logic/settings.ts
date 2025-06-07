@@ -32,6 +32,7 @@ export async function changeWorkdir(): Promise<string> {
     return error;
   }
   await invoke('set_env', { ename: 'workdir', name: directory });
+  await invoke('setup_config_directory')
   localStorage.setItem('mindbreaker:explorer', '');
   return directory;
 }
