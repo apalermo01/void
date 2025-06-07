@@ -32,7 +32,7 @@ onMounted(async () => {
     workdir.value = await getWorkdir();
     let theme_store = useThemeStore();
     theme.value = theme_store.current;
-    if (theme.value === '') {
+    if (theme.value === '' && theme.value != null) {
         theme.value = 'lotm';
     }
     let themes_arr = [];
