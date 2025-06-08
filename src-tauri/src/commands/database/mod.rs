@@ -1,5 +1,7 @@
 mod entities;
 
+use std::process::Command;
+
 pub use entities::*;
 use once_cell::sync::OnceCell;
 use surrealdb::{Surreal, engine::local::RocksDb};
@@ -18,6 +20,8 @@ pub async fn init() {
 #[tauri::command]
 pub async fn create_first_database(app: tauri::AppHandle) -> Result<(), String> {
     init().await;
+    let nvim = Command::new("which").arg("nvim").output().unwrap().stdout;
+    let nvim_path = String::from_utf8(nvim).unwrap();
     match DB
         .get()
         .unwrap()
@@ -30,7 +34,7 @@ pub async fn create_first_database(app: tauri::AppHandle) -> Result<(), String> 
                 MainConfigFields::Name("".to_string()),
                 MainConfigFields::FirstRun("true".to_string()),
                 MainConfigFields::Workdir("".to_string()),
-                MainConfigFields::NvimPath("/opt/homebrew/bin/nvim".to_string()),
+                MainConfigFields::NvimPath(nvim_path.trim().to_string()),
             ];
             DB.get()
                 .unwrap()

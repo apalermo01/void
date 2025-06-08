@@ -1,6 +1,7 @@
 mod commands;
 use commands::*;
 
+#[cfg(target_os = "macos")]
 const MAIN_FOLDER_PREFIX: &str = "../../";
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
