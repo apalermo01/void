@@ -2,7 +2,7 @@
 import { Home } from "lucide-vue-next";
 </script>
 <template>
-    <RouterLink to="/">
+    <RouterLink to="/home">
         <Home />
         <span class="text-lg">Домой</span>
     </RouterLink>

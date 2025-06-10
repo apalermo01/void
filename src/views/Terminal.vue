@@ -1,9 +1,9 @@
 <template>
-    <div ref="terminalContainer" class="terminal-outer"></div>
+    <div ref="terminalContainer" class="w-full h-full rounded-2xl ml-2 mt-0.5"></div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, nextTick, onBeforeUnmount } from 'vue';
+import { onMounted, ref, nextTick, onUnmounted } from 'vue';
 import { Terminal } from '@xterm/xterm';
 import { listen } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/core';
@@ -17,35 +17,16 @@ const term = new Terminal({
     fontFamily: 'JetBrains, monospace',
     fontSize: 14,
     allowProposedApi: true,
+    allowTransparency: true,
     theme: {
-        background: 'transparent',
-    },
-    scrollback: 1000,
-    convertEol: true,
-    cursorBlink: true,
-    cursorStyle: 'block',
-    allowTransparency: true
+        background: 'rgba(0,0,0,0)'
+    }
 });
 
 let resizeObserver: ResizeObserver | null = null;
-let resizeTimeout: NodeJS.Timeout | null = null;
-let fitAddon: FitAddon | null = null;
-
-function fitTerminal() {
-    if (!terminalContainer.value) return;
-    if (!fitAddon) {
-        fitAddon = new FitAddon();
-        term.loadAddon(fitAddon);
-    }
-    fitAddon.fit();
-    const { cols, rows } = term;
-    invoke('resize_neovim', { cols, rows });
-}
-
-function handleResize() {
-    if (resizeTimeout) clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(fitTerminal, 50);
-}
+let auto_fit: FitAddon;
+let animationTimeout: NodeJS.Timeout | null = null;
+let realtimeRafId: number | null = null;
 
 listen<string>('nvim-data', (event) => {
     const cleanedPayload = atob(event.payload);
@@ -54,56 +35,123 @@ listen<string>('nvim-data', (event) => {
     term.write(text);
 });
 
+function waitForContainerSize(container: HTMLElement): Promise<void> {
+    return new Promise((resolve) => {
+        const observer = new ResizeObserver(() => {
+            if (container.offsetWidth > 0 && container.offsetHeight > 0) {
+                observer.disconnect();
+                resolve();
+            }
+        });
+        observer.observe(container);
+    });
+}
+
+function performResize() {
+    if (!auto_fit || !terminalContainer.value) return;
+
+    try {
+        auto_fit.fit();
+        const { rows, cols } = term;
+        console.log('Terminal resized:', cols, rows);
+        invoke('resize_neovim', { cols, rows });
+    } catch (error) {
+        console.error('Resize error:', error);
+    }
+}
+
+function setupTransitionAwareResize() {
+    if (!terminalContainer.value) return;
+
+    const container = terminalContainer.value;
+
+    let isAnimating = false;
+
+    const handleTransitionStart = () => {
+        isAnimating = true;
+        console.log('Animation started');
+    };
+
+    const handleTransitionEnd = () => {
+        isAnimating = false;
+        console.log('Animation ended');
+        setTimeout(performResize, 50);
+    };
+
+    container.addEventListener('transitionstart', handleTransitionStart);
+    container.addEventListener('transitionend', handleTransitionEnd);
+
+    resizeObserver = new ResizeObserver(() => {
+        if (!isAnimating) {
+            performResize();
+        }
+    });
+
+    resizeObserver.observe(container);
+
+    return () => {
+        container.removeEventListener('transitionstart', handleTransitionStart);
+        container.removeEventListener('transitionend', handleTransitionEnd);
+    };
+}
+
 onMounted(async () => {
     await nextTick();
 
-    if (!terminalContainer.value) return;
-
+    auto_fit = new FitAddon();
     const unicode = new Unicode11Addon();
     const webgl = new WebglAddon();
 
+    term.loadAddon(auto_fit);
     term.loadAddon(unicode);
     term.loadAddon(webgl);
     term.unicode.activeVersion = "11";
 
-    term.open(terminalContainer.value);
+    if (terminalContainer.value) {
+        await waitForContainerSize(terminalContainer.value);
+        await new Promise(resolve => setTimeout(resolve, 100));
 
-    resizeObserver = new ResizeObserver(handleResize);
-    resizeObserver.observe(terminalContainer.value);
+        if (terminalContainer.value.offsetWidth === 0 || terminalContainer.value.offsetHeight === 0) {
+            console.error("Container has invalid dimensions:", terminalContainer.value.offsetWidth, terminalContainer.value.offsetHeight);
+            return;
+        }
 
-    fitTerminal();
+        term.open(terminalContainer.value);
+        auto_fit.fit();
+        console.log('Initial terminal size:', term.rows, term.cols);
 
-    const nvim_path = await invoke("get_env", { ename: "nvim_path" });
-    invoke('open_neovim', {
-        cols: term.cols,
-        rows: term.rows,
-        path: nvim_path
-    });
+        const { cols, rows } = term;
+        invoke('open_neovim', { cols, rows });
 
-    term.onData((data) => {
-        invoke('send_to_neovim', { line: data });
-    });
+        term.onData((data) => {
+            invoke('send_to_neovim', { line: data });
+        });
 
-    window.addEventListener('resize', handleResize);
+        const cleanupTransitions = setupTransitionAwareResize();
+    }
 });
 
-onBeforeUnmount(() => {
+onUnmounted(() => {
     if (resizeObserver) {
         resizeObserver.disconnect();
+        resizeObserver = null;
     }
-    if (resizeTimeout) {
-        clearTimeout(resizeTimeout);
+
+    if (animationTimeout) {
+        clearTimeout(animationTimeout);
     }
-    window.removeEventListener('resize', handleResize);
+
+    if (realtimeRafId) {
+        cancelAnimationFrame(realtimeRafId);
+    }
+
     term.dispose();
 });
 </script>
 
 <style scoped>
-.terminal-outer {
-    width: calc(100%-1rem);
-    height: 98.5%;
-    margin: 0.5rem;
-    border-radius: 1rem;
+.term {
+    font-family: 'JetBrains', monospace;
+    border-radius: 15.5px;
 }
 </style>

@@ -17,7 +17,7 @@ import { CollapsibleRoot } from "reka-ui";
 import { CollapsibleTrigger } from "reka-ui";
 import SidebarMenuSubItem from "../sidebar/SidebarMenuSubItem.vue";
 import SidebarMenuSub from "../sidebar/SidebarMenuSub.vue";
-import { create_file, create_folder, delete_folder, delete_file, get_folder_content } from "@/lib/logic/utils";
+import { create_file, create_folder, delete_folder, delete_file, get_folder_content, decide_file_ext } from "@/lib/logic/utils";
 import { useExplorerStore } from "@/lib/logic/explorerstore";
 import Tooltip from "../tooltip/Tooltip.vue";
 import TooltipProvider from "../tooltip/TooltipProvider.vue";
@@ -27,6 +27,7 @@ import ExplorerMenu from "./side-panel-items/ExplorerMenu.vue";
 import { useSidebar } from "../sidebar";
 import { watch } from "vue";
 import { onKeyDown } from "@vueuse/core";
+import router from "@/router";
 const plugins = pluginRegistry;
 const loadedPlugins = plugins.reduce((acc, name) => {
     acc[name] = defineAsyncComponent(
@@ -198,7 +199,9 @@ onMounted(async () => {
                                                 <TooltipRoot>
                                                     <TooltipProvider>
                                                         <TooltipTrigger>
-                                                            <span class="truncate block max-w-[10rem]">{{ file }}</span>
+                                                            <span class="truncate block max-w-[10rem]"
+                                                                @click="() => { decide_file_ext(file, $router) }">{{
+                                                                file }}</span>
                                                         </TooltipTrigger>
                                                         <TooltipContent>{{ file }}</TooltipContent>
                                                     </TooltipProvider>

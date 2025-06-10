@@ -5,6 +5,8 @@ import WelcomeSetup from "@/views/WelcomeSetup.vue";
 import Settings from "@/views/Settings.vue";
 import Home from "@/views/Home.vue";
 import Terminal from "@/views/Terminal.vue";
+import AudioContent from "@/views/AudioContent.vue";
+import ImageContent from "@/views/ImageContent.vue";
 
 const routes = [
   {
@@ -27,6 +29,17 @@ const routes = [
         path: "code",
         component: Terminal,
         meta: { transition: "fade" },
+      },
+      {
+        path: "audio",
+        component: AudioContent,
+        meta: { transition: "fade" },
+      },
+      {
+        path: "image/:url",
+        component: ImageContent,
+        props: true,
+        meta: { transition: "fade" }
       }
     ],
   },
