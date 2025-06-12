@@ -20,7 +20,10 @@ pub async fn init() {
 #[tauri::command]
 pub async fn create_first_database(app: tauri::AppHandle) -> Result<(), String> {
     init().await;
+    #[cfg(target_os = "macos")]
     let nvim = Command::new("which").arg("nvim").output().unwrap().stdout;
+    #[cfg(target_os = "windows")]
+    let nvim = Command::new("where").arg("nvim").output().unwrap().stdout;
     let nvim_path = String::from_utf8(nvim).unwrap();
     match DB
         .get()

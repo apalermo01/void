@@ -5,6 +5,9 @@ use tauri_plugin_fs::FsExt;
 #[cfg(target_os = "macos")]
 const MAIN_FOLDER_PREFIX: &str = "../../";
 
+#[cfg(target_os = "windows")]
+const MAIN_FOLDER_PREFIX: &str = "../../";
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
