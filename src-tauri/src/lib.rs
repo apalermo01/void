@@ -1,5 +1,6 @@
 mod commands;
 use commands::*;
+use tauri_plugin_fs::FsExt;
 
 #[cfg(target_os = "macos")]
 const MAIN_FOLDER_PREFIX: &str = "../../";
@@ -7,10 +8,22 @@ const MAIN_FOLDER_PREFIX: &str = "../../";
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_fs::init())
         .setup(|app| {
             tauri::async_runtime::block_on(async {
                 if let Err(e) = create_first_database(app.handle().clone()).await {
                     eprintln!("Ошибка при инициализации{}", e);
+                }
+                if let Err(e) = get_env("workdir".to_string(), app.handle().clone()).await {
+                    println!("piska");
+                } else {
+                    let scope = app.fs_scope();
+                    scope.allow_directory(
+                        get_env("workdir".to_string(), app.handle().clone())
+                            .await
+                            .unwrap(),
+                        true,
+                    );
                 }
             });
             Ok(())

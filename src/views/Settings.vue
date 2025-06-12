@@ -31,7 +31,7 @@ onMounted(async () => {
     workdir.value = await getWorkdir();
     showCard.value = checkShowable();
     let profile_pic = workdir.value + "/profile.png";
-    pic.value = await get_file_content(profile_pic, "image/png");
+    pic.value = await get_file_content(profile_pic);
 });
 
 </script>

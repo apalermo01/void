@@ -4,6 +4,7 @@ use crate::MAIN_FOLDER_PREFIX;
 
 #[tauri::command]
 pub fn get_file(ipath: String) -> Vec<u8> {
+    println!("{}", ipath);
     let fpath: &Path = Path::new(&ipath);
     fs::read(fpath).unwrap()
 }

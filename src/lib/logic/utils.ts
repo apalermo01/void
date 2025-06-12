@@ -1,15 +1,18 @@
 import { invoke } from "@tauri-apps/api/core";
 import { Router } from "vue-router";
 import { useExplorerStore } from "./explorerstore";
+import { readFile } from "@tauri-apps/plugin-fs";
 
 export async function get_file_content(
   path: string,
-  intype: string,
 ): Promise<string> {
-  let bytes: Uint8Array = await invoke("get_file", { ipath: path });
-  let url = URL.createObjectURL(
-    new Blob([new Uint8Array(bytes)], { type: intype }),
-  );
+  //let bytes: Uint8Array = await invoke("get_file", { ipath: path });
+  //let url = URL.createObjectURL(
+  //  new Blob([new Uint8Array(bytes)], { type: intype }),
+  //);
+  const binary = await readFile(path);
+  const blob = new Blob([new Uint8Array(binary)]);
+  const url = URL.createObjectURL(blob);
   return url;
 }
 
@@ -67,7 +70,9 @@ export async function decide_file_ext(name: string, router: Router) {
   let extension = name.split('.')[name.split('.').length - 1];
   let workdir = await invoke('get_env', { ename: 'workdir' });
   let explorer = useExplorerStore();
+  name = name.replaceAll(' ', '\ ');
   let file_path = workdir + explorer.current + '/' + name;
-  let coded_path = btoa(file_path);
+  let coded_path = btoa(unescape(encodeURIComponent(file_path)));;
+  console.log(coded_path);
   router.push('/' + ext_map.get(extension) + '/' + coded_path);
 }

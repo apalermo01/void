@@ -1,6 +1,7 @@
 <script setup>
 import { get_file_content } from '@/lib/logic/utils';
 import { onMounted, ref, watch } from 'vue';
+import { readFile } from '@tauri-apps/plugin-fs'
 let props = defineProps({
     url: String
 });
@@ -8,11 +9,12 @@ let props = defineProps({
 let file = ref('');
 
 onMounted(async () => {
-    let file_path = atob(props.url);
+    let file_path = decodeURIComponent(escape(atob(props.url)));;
+    //file.value = await get_file_content(file_path);
     file.value = await get_file_content(file_path);
 });
 watch(() => props.url, async (newUrl) => {
-    let file_path = atob(newUrl);
+    let file_path = decodeURIComponent(escape(atob(props.url)));;
     file.value = await get_file_content(file_path);
 });
 </script>
