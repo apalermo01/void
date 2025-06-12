@@ -18,7 +18,7 @@ export type SideRepo = {
 }
 
 export function showSettings(router: Router) {
-  router.push('settings');
+  router.push('/settings');
 }
 
 export async function changeWorkdir(): Promise<string> {
