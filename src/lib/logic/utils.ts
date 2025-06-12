@@ -72,7 +72,7 @@ export async function decide_file_ext(name: string, router: Router) {
   let explorer = useExplorerStore();
   name = name.replaceAll(' ', '\ ');
   let file_path = workdir + explorer.current + '/' + name;
-  let coded_path = btoa(unescape(encodeURIComponent(file_path)));;
+  let coded_path = btoa(encodeURIComponent(file_path));
   console.log(coded_path);
   router.push('/' + ext_map.get(extension) + '/' + coded_path);
 }

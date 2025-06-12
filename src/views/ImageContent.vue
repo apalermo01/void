@@ -9,12 +9,12 @@ let props = defineProps({
 let file = ref('');
 
 onMounted(async () => {
-    let file_path = decodeURIComponent(escape(atob(props.url)));;
+    let file_path = decodeURIComponent(atob(props.url));
     //file.value = await get_file_content(file_path);
     file.value = await get_file_content(file_path);
 });
 watch(() => props.url, async (newUrl) => {
-    let file_path = decodeURIComponent(escape(atob(props.url)));;
+    let file_path = decodeURIComponent(atob(props.url));
     file.value = await get_file_content(file_path);
 });
 </script>
