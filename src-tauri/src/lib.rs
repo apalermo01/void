@@ -19,14 +19,6 @@ pub fn run() {
                 }
                 if let Err(e) = get_env("workdir".to_string(), app.handle().clone()).await {
                     println!("piska");
-                } else {
-                    let scope = app.fs_scope();
-                    scope.allow_directory(
-                        get_env("workdir".to_string(), app.handle().clone())
-                            .await
-                            .unwrap(),
-                        true,
-                    );
                 }
             });
             Ok(())
@@ -57,6 +49,7 @@ pub fn run() {
             create_entry,
             remove,
             setup_config_directory,
+            allow_scope
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

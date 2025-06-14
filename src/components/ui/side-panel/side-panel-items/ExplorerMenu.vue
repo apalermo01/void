@@ -6,17 +6,17 @@ import ContextMenuContent from '../../context-menu/ContextMenuContent.vue';
 import ContextMenuSeparator from '../../context-menu/ContextMenuSeparator.vue';
 </script>
 <template>
-    <ContextMenu>
-        <ContextMenuTrigger>
-            <slot />
-        </ContextMenuTrigger>
-        <ContextMenuContent>
-            <ContextMenuItem @click="$emit('create-file')">Создать файл</ContextMenuItem>
-            <ContextMenuItem @click="$emit('create-folder')">Создать папку</ContextMenuItem>
-            <ContextMenuItem @click="$emit('delete')">Удалить файл/папку</ContextMenuItem>
-            <ContextMenuSeparator />
-            <ContextMenuItem>Переименовать</ContextMenuItem>
-        </ContextMenuContent>
-    </ContextMenu>
+  <ContextMenu>
+    <ContextMenuTrigger>
+      <slot />
+    </ContextMenuTrigger>
+    <ContextMenuContent>
+      <ContextMenuItem @click="$emit('create-file')">Создать файл</ContextMenuItem>
+      <ContextMenuItem @click="$emit('create-folder')">Создать папку</ContextMenuItem>
+      <ContextMenuItem @click="$emit('delete')">Удалить файл/папку</ContextMenuItem>
+      <ContextMenuSeparator />
+      <ContextMenuItem @click="$emit('rename')">Переименовать</ContextMenuItem>
+    </ContextMenuContent>
+  </ContextMenu>
 </template>
 <style></style>

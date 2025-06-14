@@ -10,6 +10,7 @@ async function setup(name: string, router: Router) {
   })
   await invoke('set_env', { ename: 'workdir', name: folder });
   await invoke('setup_config_directory');
+  await invoke('allow_scope');
   router.push('/');
 }
 

@@ -1,6 +1,10 @@
 use std::{fs, path::Path};
 
+use tauri_plugin_fs::FsExt;
+
 use crate::MAIN_FOLDER_PREFIX;
+
+use super::get_env;
 
 #[tauri::command]
 pub fn get_file(ipath: String) -> Vec<u8> {
@@ -29,5 +33,13 @@ pub async fn setup_config_directory(app: tauri::AppHandle) -> Result<(), String>
     )
     .unwrap();
     println!("{}", value);
+    Ok(())
+}
+
+#[tauri::command]
+pub async fn allow_scope(app: tauri::AppHandle) -> Result<(), String> {
+    let scope = app.fs_scope();
+    let workdir = get_env("workdir".to_string(), app.clone()).await.unwrap();
+    let _ = scope.allow_directory(workdir, true);
     Ok(())
 }

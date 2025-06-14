@@ -24,6 +24,7 @@
     "@xterm/addon-unicode11": "^0.8.0",
     "@xterm/addon-webgl": "^0.18.0",
     "@xterm/xterm": "^5.5.0",
+    "base64-arraybuffer": "^1.0.2",
     "hterm": "^2.0.2",
     "lucide-vue-next": "^0.487.0",
     "motion-v": "^1.0.0-beta.1",
