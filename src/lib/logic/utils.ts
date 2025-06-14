@@ -24,8 +24,16 @@ export function checkShowable(): boolean {
   }
 }
 
-export async function get_folder_content(dirname: string): Promise<String[]> {
-  return await invoke("get_directory_content", { dirname: dirname });
+export async function get_folder_content_paged(
+  dirname: string,
+  offset: number,
+  limit: number
+): Promise<string[]> {
+  return await invoke("list_dir_paged", {
+    dirname,
+    offset,
+    limit,
+  });
 }
 
 export async function create_file(name: string, dirname: string) {
@@ -53,6 +61,7 @@ export async function decide_file_ext(name: string, router: Router) {
   ext_map.set("flac", "audio");
   ext_map.set("alac", "audio");
   ext_map.set("opus", "audio");
+  ext_map.set("m4a", "audio");
   ext_map.set("mp4", "video");
   ext_map.set("mov", "video");
   ext_map.set("avi", "video");

@@ -30,7 +30,7 @@ onMounted(async () => {
   let firstrun = await invoke('get_env', { ename: 'first_run' });
   let uname = await invoke('get_env', { ename: 'name' });
   let theme = localStorage.getItem('mindbreaker:theme');
-  if (theme != 'lotm') {
+  if (theme != 'lotm' && theme != null) {
     await set_theme(theme);
   }
   if (firstrun == "true") {

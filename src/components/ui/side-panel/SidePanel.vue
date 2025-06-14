@@ -1,4 +1,5 @@
 <script setup>
+// Импорт UI компонентов
 import Sidebar from "../sidebar/Sidebar.vue";
 import SidebarHeader from "../sidebar/SidebarHeader.vue";
 import SidebarFooter from "../sidebar/SidebarFooter.vue";
@@ -17,226 +18,222 @@ import { CollapsibleRoot } from "reka-ui";
 import { CollapsibleTrigger } from "reka-ui";
 import SidebarMenuSubItem from "../sidebar/SidebarMenuSubItem.vue";
 import SidebarMenuSub from "../sidebar/SidebarMenuSub.vue";
-import { create_file, create_folder, delete_folder, delete_file, get_folder_content, decide_file_ext } from "@/lib/logic/utils";
+import { create_file, create_folder, delete_folder, delete_file, get_folder_content_paged, decide_file_ext } from "@/lib/logic/utils";
 import { useExplorerStore } from "@/lib/logic/explorerstore";
-import Tooltip from "../tooltip/Tooltip.vue";
 import TooltipProvider from "../tooltip/TooltipProvider.vue";
 import TooltipContent from "../tooltip/TooltipContent.vue";
 import TooltipTrigger from "../tooltip/TooltipTrigger.vue";
 import ExplorerMenu from "./side-panel-items/ExplorerMenu.vue";
+import { RecycleScroller } from 'vue-virtual-scroller';
 import { useSidebar } from "../sidebar";
 import { watch } from "vue";
 import { onKeyDown } from "@vueuse/core";
-import router from "@/router";
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
 const plugins = pluginRegistry;
 const loadedPlugins = plugins.reduce((acc, name) => {
-    acc[name] = defineAsyncComponent(
-        () => import(`@/components/ui/side-panel/side-panel-items/${name}.vue`),
-    );
-    return acc;
+  acc[name] = defineAsyncComponent(() => import(`@/components/ui/side-panel/side-panel-items/${name}.vue`));
+  return acc;
 }, {});
 
 let dirs = ref([]);
 let files = ref([]);
+let page = ref(0);
+let pageSize = 100;
+let hasMore = ref(true);
+let isLoading = ref(false);
 let fcreate = ref(false);
 let dcreate = ref(false);
-const { state } = useSidebar();
 let expanded = ref(false);
 let create_type = ref("");
 let name = ref("");
 
-watch(state, (v) => {
-    if (v === 'collapsed') {
-        expanded.value = false;
-    }
-})
+const { state } = useSidebar();
+const explorer_store = useExplorerStore();
+watch(state, (v) => { if (v === 'collapsed') expanded.value = false; });
 
-async function modify_store(dir) {
-    let explorer_store = useExplorerStore();
-    if (dir != '..') {
-        explorer_store.add_path(dir);
-    }
-    else {
-        explorer_store.remove_path();
-    }
-    await strip_content();
+onMounted(async () => { await resetPagination(); });
+
+
+async function resetPagination() {
+  dirs.value = [];
+  files.value = [];
+  page.value = 0;
+  hasMore.value = true;
+  isLoading.value = false;
+  await loadNextPage();
 }
 
-async function strip_content() {
-    dirs.value = [];
-    files.value = [];
-    let explorer_store = useExplorerStore();
-    let entries = await get_folder_content(explorer_store.current);
-    if (explorer_store.current != "") {
-        dirs.value.push('..');
-    }
-    entries.forEach((entrie) => {
-        if (entrie.includes('.') && !entrie.startsWith('.')) {
-            console.log(entrie);
-            if (entrie.includes('/')) {
-                console.log(entrie);
-                files.value.push(entrie.split('/')[entrie.split('/').length - 1]);
-            }
-            else {
-                files.value.push(entrie);
-            }
-        }
-        else if (!entrie.startsWith('.')) {
-            if (entrie.includes('/')) {
-                dirs.value.push(entrie.split('/')[entrie.split('/').length - 1]);
-            }
-            else {
-                dirs.value.push(entrie);
-            }
-        }
-        files.value.sort();
-        dirs.value.sort();
-    })
+async function loadNextPage() {
+  if (isLoading.value || !hasMore.value) return;
+  isLoading.value = true;
+  let entries = await get_folder_content_paged(explorer_store.current, page.value * pageSize, pageSize);
+  if (explorer_store.current !== "") dirs.value.push("..");
+  entries.forEach(entrie => {
+    if (entrie.includes('.') && !entrie.startsWith('.')) files.value.push(entrie.split('/').pop());
+    else if (!entrie.startsWith('.') && entrie != '') dirs.value.push(entrie.split('/').pop());
+  });
+  console.log(files.value);
+  files.value = [...files.value];
+  if (entries.length < pageSize) hasMore.value = false;
+  else page.value++;
+  isLoading.value = false;
+}
+
+async function modify_store(dir) {
+  dir !== '..' ? explorer_store.add_path(dir) : explorer_store.remove_path();
+  await resetPagination();
 }
 
 function performCreation(flag) {
-    switch (flag) {
-        case 'file':
-            fcreate.value = true;
-            create_type.value = 'file';
-            break;
+  switch (flag) {
+    case 'file':
+      fcreate.value = true;
+      create_type.value = 'file';
+      break;
 
-        case 'folder':
-            dcreate.value = true;
-            create_type.value = 'folder';
-            break;
-    }
+    case 'folder':
+      dcreate.value = true;
+      create_type.value = 'folder';
+      break;
+  }
 }
 
 onKeyDown('Enter', () => { summon(create_type.value) })
 
 async function summon(flag) {
-    console.log("pis: " + flag);
-    let store = useExplorerStore();
-    let folder = store.current;
-    if ((fcreate.value || dcreate.value) && name.value != "") {
-        switch (flag) {
-            case 'file':
-                await create_file('/' + name.value, folder);
-                create_type.value = "";
-                name.value = "";
-                fcreate.value = false;
-                await strip_content();
-                break;
-            case 'folder':
-                await create_folder('/' + name.value, folder);
-                create_type.value = "";
-                name.value = "";
-                dcreate.value = false;
-                await strip_content();
-                break;
-        }
+  console.log("pis: " + flag);
+  let folder = explorer_store.current;
+  if ((fcreate.value || dcreate.value) && name.value != "") {
+    switch (flag) {
+      case 'file':
+        await create_file('/' + name.value, folder);
+        create_type.value = "";
+        name.value = "";
+        fcreate.value = false;
+        await resetPagination();
+        break;
+      case 'folder':
+        await create_folder('/' + name.value, folder);
+        create_type.value = "";
+        name.value = "";
+        dcreate.value = false;
+        await resetPagination();
+        break;
     }
+  }
 }
 
 async function remove_dir(name) {
-    let path = useExplorerStore().current;
-    await delete_folder('/' + name, path);
-    await strip_content();
+  await delete_folder('/' + name, useExplorerStore().current);
+  await resetPagination();
 }
 
 async function remove_file(name) {
-    let path = useExplorerStore().current;
-    await delete_file('/' + name, path);
-    await strip_content();
+  await delete_file('/' + name, useExplorerStore().current);
+  await resetPagination();
 }
-
-onMounted(async () => {
-    await strip_content();
+watch(() => expanded.value, async () => {
+  if (expanded.value) {
+    await loadNextPage();
+  }
+  else {
+    await resetPagination();
+  }
 })
 </script>
+
 <template>
-    <Sidebar collapsible="icon" variant="floating" class="h-[95vh] mt-10 text-sidebar-primary">
-        <SidebarHeader />
-        <SidebarContent class="px-2">
-            <SidebarGroupContent>
-                <SidebarMenu>
-                    <CollapsibleRoot :default-open="false" v-bind:open="expanded" class="group/collapsible">
-                        <SidebarMenuItem>
-                            <CollapsibleTrigger asChild>
-                                <ExplorerMenu @create-file="performCreation('file')"
-                                    @create-folder="performCreation('folder')">
-                                    <SidebarMenuButton>
-                                        <Folder />
-                                        <span class="text-lg cursor-pointer"
-                                            @click="() => { expanded = !expanded }">Проводник</span>
-                                    </SidebarMenuButton>
-                                </ExplorerMenu>
-                            </CollapsibleTrigger>
-                            <CollapsibleContent
-                                class="mr-5 data-[state=open]:min-h-[15rem] max-h-[15rem] overflow-y-scroll overflow-x-clip">
-                                <SidebarMenuSub v-if="fcreate || dcreate">
-                                    <SidebarMenuSubItem>
-                                        <span class="text-sm cursor-pointer flex gap-1 items-center">
-                                            <input type="text" v-model="name" placeholder="unnamed" />
-                                        </span>
-                                    </SidebarMenuSubItem>
-                                </SidebarMenuSub>
-                                <ExplorerMenu @create-file="performCreation('file')"
-                                    @create-folder="performCreation('folder')"
-                                    @delete="async () => await remove_dir(dir)" v-for="dir in dirs">
-                                    <SidebarMenuSub>
-                                        <SidebarMenuSubItem>
-                                            <span class="text-sm cursor-pointer flex gap-1 items-center select-none"
-                                                @click="async () => { await modify_store(dir) }">
-                                                <Folder size="15" />
-                                                {{ dir }}
-                                            </span>
-                                        </SidebarMenuSubItem>
-                                    </SidebarMenuSub>
-                                </ExplorerMenu>
-                                <ExplorerMenu @create-file="performCreation('file')"
-                                    @create-folder="performCreation('folder')"
-                                    @delete="async () => await remove_file(file)" v-for="file in files">
-                                    <SidebarMenuSub>
-                                        <SidebarMenuSubItem>
-                                            <span class="text-sm cursor-pointer flex gap-1">
-                                                <TooltipRoot>
-                                                    <TooltipProvider>
-                                                        <TooltipTrigger>
-                                                            <span class="truncate block max-w-[10rem]"
-                                                                @click="() => { decide_file_ext(file, $router) }">{{
-                                                                file }}</span>
-                                                        </TooltipTrigger>
-                                                        <TooltipContent>{{ file }}</TooltipContent>
-                                                    </TooltipProvider>
-                                                </TooltipRoot>
-                                            </span>
-                                        </SidebarMenuSubItem>
-                                    </SidebarMenuSub>
-                                </ExplorerMenu>
-                            </CollapsibleContent>
-                        </SidebarMenuItem>
-                    </CollapsibleRoot>
-                </SidebarMenu>
-            </SidebarGroupContent>
-            <SidebarGroupLabel class="select-none">Инструменты</SidebarGroupLabel>
-            <SidebarGroupContent>
-                <SidebarMenu v-for="plugin in plugins" :key="plugin">
-                    <SidebarMenuItem>
-                        <SidebarMenuButton asChild>
-                            <component :is="loadedPlugins[plugin]" />
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarMenu>
-            </SidebarGroupContent>
-        </SidebarContent>
-        <SidebarFooter>
-            <SidebarMenu>
-                <SidebarMenuItem>
-                    <SidebarMenuButton class="cursor-pointer select-none" asChild>
-                        <a @click="showSettings($router)">
-                            <Settings />
-                            <span class="text-lg">Настройки</span>
-                        </a>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-            </SidebarMenu>
-        </SidebarFooter>
-    </Sidebar>
+  <Sidebar collapsible="icon" variant="floating" class="h-[95vh] mt-10 text-sidebar-primary">
+    <SidebarHeader />
+    <SidebarContent class="px-2">
+      <SidebarGroupContent>
+        <SidebarMenu>
+          <CollapsibleRoot :default-open="false" v-bind:open="expanded" class="group/collapsible">
+            <SidebarMenuItem>
+              <CollapsibleTrigger asChild>
+                <ExplorerMenu @create-file="performCreation('file')" @create-folder="performCreation('folder')">
+                  <SidebarMenuButton>
+                    <Folder />
+                    <span class="text-lg cursor-pointer" @click="expanded = !expanded">Проводник</span>
+                  </SidebarMenuButton>
+                </ExplorerMenu>
+              </CollapsibleTrigger>
+              <CollapsibleContent v-if="expanded"
+                class="mr-5 data-[state=open]:min-h-[15rem] max-h-[15rem] overflow-y-scroll" @scroll.passive="(e) => {
+                  const el = e.target;
+                  if (el.scrollTop + el.clientHeight >= el.scrollHeight - 5) loadNextPage();
+                }">
+                <SidebarMenuSub v-if="fcreate || dcreate">
+                  <SidebarMenuSubItem>
+                    <span class="text-sm flex gap-1 items-center">
+                      <input type="text" v-model="name" placeholder="unnamed" />
+                    </span>
+                  </SidebarMenuSubItem>
+                </SidebarMenuSub>
+                <RecycleScroller class="scroller" :items="dirs" :item-size="25" :key="explorer_store.current"
+                  v-slot="{ item }">
+                  <ExplorerMenu @create-file="performCreation('file')" @create-folder="performCreation('folder')"
+                    @delete="async () => await remove_dir(item)">
+                    <SidebarMenuSub>
+                      <SidebarMenuSubItem>
+                        <span
+                          class="text-sm cursor-pointer flex gap-1 items-center select-none truncate block max-w-[10rem]"
+                          @click="async () => await modify_store(item)">
+                          <Folder size="15" />
+                          {{ item }}
+                        </span>
+                      </SidebarMenuSubItem>
+                    </SidebarMenuSub>
+                  </ExplorerMenu>
+                </RecycleScroller>
+                <RecycleScroller class="scroller" :items="files" :item-size="25" v-slot="{ item }">
+                  <ExplorerMenu @create-file="performCreation('file')" @create-folder="performCreation('folder')"
+                    @delete="async () => await remove_file(item)">
+                    <SidebarMenuSub>
+                      <SidebarMenuSubItem>
+                        <span class="text-sm cursor-pointer flex gap-1">
+                          <TooltipRoot>
+                            <TooltipProvider>
+                              <TooltipTrigger>
+                                <span class="truncate block max-w-[10rem]"
+                                  @click="() => decide_file_ext(item, $router)">{{ item }}</span>
+                              </TooltipTrigger>
+                              <TooltipContent>{{ item }}</TooltipContent>
+                            </TooltipProvider>
+                          </TooltipRoot>
+                        </span>
+                      </SidebarMenuSubItem>
+                    </SidebarMenuSub>
+                  </ExplorerMenu>
+                </RecycleScroller>
+                <div v-if="isLoading" class="text-center py-2 text-sm text-muted">Загрузка...</div>
+              </CollapsibleContent>
+            </SidebarMenuItem>
+          </CollapsibleRoot>
+        </SidebarMenu>
+      </SidebarGroupContent>
+      <SidebarGroupLabel class="select-none">Инструменты</SidebarGroupLabel>
+      <SidebarGroupContent>
+        <SidebarMenu v-for="plugin in plugins" :key="plugin">
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <component :is="loadedPlugins[plugin]" />
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarContent>
+    <SidebarFooter>
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton class="cursor-pointer select-none" asChild>
+            <a @click="showSettings($router)">
+              <Settings />
+              <span class="text-lg">Настройки</span>
+            </a>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    </SidebarFooter>
+  </Sidebar>
 </template>

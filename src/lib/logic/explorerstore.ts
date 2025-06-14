@@ -11,6 +11,7 @@ export const useExplorerStore = defineStore('explorer', {
       this.current = this.current.replace(path_to_remove, "");
       console.log(this.current);
       localStorage.setItem('mindbreaker:explorer', this.current)
+      console.log('gig')
     }
   }
 })

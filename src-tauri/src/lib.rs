@@ -17,8 +17,19 @@ pub fn run() {
                 if let Err(e) = create_first_database(app.handle().clone()).await {
                     eprintln!("Ошибка при инициализации{}", e);
                 }
-                if let Err(e) = get_env("workdir".to_string(), app.handle().clone()).await {
-                    println!("piska");
+                if get_env("workdir".to_string(), app.handle().clone())
+                    .await
+                    .unwrap()
+                    .as_str()
+                    != ""
+                {
+                    let scope = app.fs_scope();
+                    let _ = scope.allow_directory(
+                        get_env("workdir".to_string(), app.handle().clone())
+                            .await
+                            .unwrap(),
+                        true,
+                    );
                 }
             });
             Ok(())
@@ -45,7 +56,7 @@ pub fn run() {
             delete_repo,
             check_theme_update,
             delete_theme,
-            get_directory_content,
+            list_dir_paged,
             create_entry,
             remove,
             setup_config_directory,

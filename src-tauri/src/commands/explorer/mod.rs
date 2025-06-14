@@ -1,14 +1,35 @@
+use jwalk::WalkDir;
+use std::path::PathBuf;
+
 #[tauri::command]
-pub async fn get_directory_content(dirname: String, app: tauri::AppHandle) -> Vec<String> {
-    let workdir = super::get_env("workdir".to_string(), app.clone())
-        .await
-        .unwrap();
-    let paths = std::fs::read_dir(workdir.clone() + "/" + dirname.as_str()).unwrap();
-    let dirs: Vec<String> = paths
-        .map(|e| e.unwrap().path().to_str().unwrap().to_string())
-        .map(|d| d.replace((workdir.clone() + "/").as_str(), ""))
+pub async fn list_dir_paged(
+    dirname: String,
+    offset: usize,
+    limit: usize,
+    app: tauri::AppHandle,
+) -> Result<Vec<String>, String> {
+    let workdir = super::get_env("workdir".into(), app.clone()).await.unwrap();
+    let root = workdir + dirname.as_str();
+    println!("{:#?}", root);
+    let files = WalkDir::new(&root)
+        .max_depth(1)
+        .skip_hidden(true)
+        .sort(false)
+        .into_iter()
+        .skip(offset)
+        .take(limit)
+        .filter_map(|entry| {
+            let path = entry
+                .ok()?
+                .path()
+                .strip_prefix(&root)
+                .ok()?
+                .to_str()?
+                .to_owned();
+            Some(path)
+        })
         .collect();
-    dirs
+    Ok(files)
 }
 
 #[tauri::command]

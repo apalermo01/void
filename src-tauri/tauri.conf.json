@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "mindbreaker",
+  "productName": "topaz",
   "version": "0.1.0",
   "identifier": "com.transhumanist.app",
   "build": {
@@ -13,7 +13,7 @@
     "macOSPrivateApi": true,
     "windows": [
       {
-        "title": "mindbreaker",
+        "title": "topaz",
         "width": 1400,
         "height": 840,
         "titleBarStyle": "Overlay",
