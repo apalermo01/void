@@ -1,3 +1,4 @@
+mod audio;
 mod database;
 mod environment;
 mod explorer;
@@ -7,6 +8,7 @@ mod settings;
 mod side_repos;
 mod terminal;
 mod themes;
+pub use audio::*;
 pub use database::*;
 pub use environment::*;
 pub use explorer::*;

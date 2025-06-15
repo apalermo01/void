@@ -60,7 +60,8 @@ pub fn run() {
             create_entry,
             remove,
             setup_config_directory,
-            allow_scope
+            allow_scope,
+            read_audio_metadata
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
