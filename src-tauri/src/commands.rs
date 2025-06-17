@@ -1,4 +1,5 @@
 mod audio;
+mod video;
 mod database;
 mod environment;
 mod explorer;
@@ -10,6 +11,7 @@ mod side_repos;
 mod terminal;
 mod themes;
 pub use audio::*;
+pub use video::*;
 pub use database::*;
 pub use environment::*;
 pub use explorer::*;

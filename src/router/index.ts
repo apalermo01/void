@@ -8,7 +8,7 @@ import Terminal from "@/views/Terminal.vue";
 import AudioContent from "@/views/AudioContent.vue";
 import ImageContent from "@/views/ImageContent.vue";
 import JournalContent from "@/views/JournalContent.vue";
-import NoteContent from "@/views/NoteContent.vue";
+import VideoContent from "@/views/VideoContent.vue";
 
 const routes = [
   {
@@ -51,11 +51,11 @@ const routes = [
         meta: { transition: "fade" }
       },
       {
-        path: "note/:url",
-        component: NoteContent,
+        path: "video/:url",
+        component: VideoContent,
         props: true,
         meta: { transition: "fade" }
-      }
+      },
     ],
   },
   { path: "/welcome", component: WelcomeAnimation },
