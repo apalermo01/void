@@ -8,6 +8,7 @@ import Terminal from "@/views/Terminal.vue";
 import AudioContent from "@/views/AudioContent.vue";
 import ImageContent from "@/views/ImageContent.vue";
 import JournalContent from "@/views/JournalContent.vue";
+import NoteContent from "@/views/NoteContent.vue";
 
 const routes = [
   {
@@ -46,6 +47,12 @@ const routes = [
       {
         path: "journal/:url",
         component: JournalContent,
+        props: true,
+        meta: { transition: "fade" }
+      },
+      {
+        path: "note/:url",
+        component: NoteContent,
         props: true,
         meta: { transition: "fade" }
       }

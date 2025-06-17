@@ -3,6 +3,18 @@ import { Router } from "vue-router";
 import { useExplorerStore } from "./explorerstore";
 import { readFile } from "@tauri-apps/plugin-fs";
 
+type AudioMeta = {
+  picture: Uint8Array,
+  title: string,
+  author: string
+}
+
+type AudioResponse = {
+  picture_url: string,
+  author: string,
+  title: string
+}
+
 export async function get_file_content(
   path: string,
 ): Promise<string> {
@@ -16,11 +28,16 @@ export async function get_file_content(
   return url;
 }
 
-export async function get_audio_content(path: string): Promise<string> {
-  let base64_string = await invoke<Uint8Array>('read_audio_metadata', { path: path });
-  const blob = new Blob([new Uint8Array(base64_string)]);
+export async function get_audio_content(path: string): Promise<AudioResponse> {
+  let base64_string = await invoke<AudioMeta>('read_audio_metadata', { path: path });
+  const blob = new Blob([new Uint8Array(base64_string.picture)]);
   const url = URL.createObjectURL(blob);
-  return url;
+  const responce: AudioResponse = {
+    picture_url: url,
+    author: base64_string.author,
+    title: base64_string.title,
+  }
+  return responce;
 }
 
 export function checkShowable(): boolean {

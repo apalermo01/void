@@ -61,7 +61,8 @@ pub fn run() {
             remove,
             setup_config_directory,
             allow_scope,
-            read_audio_metadata
+            read_audio_metadata,
+            get_note_content
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
