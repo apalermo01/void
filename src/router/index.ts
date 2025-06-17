@@ -9,6 +9,8 @@ import AudioContent from "@/views/AudioContent.vue";
 import ImageContent from "@/views/ImageContent.vue";
 import JournalContent from "@/views/JournalContent.vue";
 import VideoContent from "@/views/VideoContent.vue";
+import NoteContent from "@/views/NoteContent.vue";
+import UnsupportedContent from "@/views/UnsupportedContent.vue";
 
 const routes = [
   {
@@ -51,11 +53,22 @@ const routes = [
         meta: { transition: "fade" }
       },
       {
+        path: "note/:url",
+        component: NoteContent,
+        props: true,
+        meta: { transition: "fade" }
+      },
+      {
         path: "video/:url",
         component: VideoContent,
         props: true,
         meta: { transition: "fade" }
       },
+      {
+        path: "unsupported",
+        component: UnsupportedContent,
+        meta: { transition: "fade" }
+      }
     ],
   },
   { path: "/welcome", component: WelcomeAnimation },

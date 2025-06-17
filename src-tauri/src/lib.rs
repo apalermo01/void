@@ -10,7 +10,6 @@ const MAIN_FOLDER_PREFIX: &str = "../../";
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-
     let video_state = init_video_server();
 
     tauri::Builder::default()
@@ -68,7 +67,8 @@ pub fn run() {
             read_audio_metadata,
             get_video_url,
             set_video_path,
-            check_file_exists
+            check_file_exists,
+            get_note_content
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
