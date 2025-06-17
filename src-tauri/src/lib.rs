@@ -3,7 +3,7 @@ use commands::*;
 use tauri_plugin_fs::FsExt;
 
 #[cfg(target_os = "macos")]
-const MAIN_FOLDER_PREFIX: &str = "/Users/transhumanist/Documents/test/";
+const MAIN_FOLDER_PREFIX: &str = "../../";
 
 #[cfg(target_os = "windows")]
 const MAIN_FOLDER_PREFIX: &str = "../../";
