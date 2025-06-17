@@ -6,54 +6,68 @@ import { onMounted, ref, watch } from "vue";
 import type { Component } from "vue";
 import { getUsername, getWorkdir } from "@/lib/logic/settings";
 import { checkShowable, get_file_content } from "@/lib/logic/utils";
-let uname = ref("");
-let pic = ref();
-let showCard = ref(true);
-let workdir = ref("");
-let settings_type = ref('');
-let settingsComponent = ref<Component | null>(null);
-watch(settings_type, async () => {
-    settingsComponent.value = await get_settings(settings_type.value);
-})
 
-window.addEventListener('resize', () => {
-    showCard.value = checkShowable();
-})
-
-async function get_settings(stype: string): Promise<Component> {
-    console.log(stype);
-    let component = await import(`./${stype}.vue`)
-    return component.default;
+const uname = ref("");
+const pic = ref();
+const showCard = ref(true);
+const workdir = ref("");
+const settings_type = ref('');
+const settingsComponent = ref<Component | null>(null);
+const componentModules = import.meta.glob('./*.vue');
+const componentMap: Record<string, () => Promise<any>> = {};
+for (const path in componentModules) {
+  const name = path.split('/').pop()?.replace('.vue', '')!;
+  componentMap[name] = componentModules[path];
 }
 
-onMounted(async () => {
-    uname.value = await getUsername();
-    workdir.value = await getWorkdir();
-    showCard.value = checkShowable();
-    let profile_pic = workdir.value + "/profile.png";
-    pic.value = await get_file_content(profile_pic);
+async function get_settings(name: string): Promise<Component> {
+  if (!name || name === 'Global') return Global;
+  const loader = componentMap[name];
+  if (!loader) {
+    console.warn(`Компонент '${name}' не найден`);
+    return Global;
+  }
+  const mod = await loader();
+  return mod.default;
+}
+
+watch(settings_type, async () => {
+  settingsComponent.value = await get_settings(settings_type.value);
 });
 
+onMounted(async () => {
+  uname.value = await getUsername();
+  workdir.value = await getWorkdir();
+  showCard.value = checkShowable();
+  const profile_pic = workdir.value + "/profile.png";
+  pic.value = await get_file_content(profile_pic);
+
+  window.addEventListener('resize', () => {
+    showCard.value = checkShowable();
+  });
+});
 </script>
+
 <template>
-    <div class="settings-container">
-        <Global v-if="settings_type == '' || settings_type == 'Global'" />
-        <component v-else :is="settingsComponent"></component>
-        <div class=" user-3d fixed right-[5%] top-[20%]" v-if="showCard">
-            <Card :uname="uname" :pic="pic" />
-        </div>
-        <div class="fixed right-[6%] top-[15%]">
-            <SettingsSelector onselect="async () => {settingsComponent = await get_settings(settings_type)}"
-                v-model="settings_type" />
-        </div>
+  <div class="settings-container">
+    <Global v-if="settings_type === '' || settings_type === 'Global'" />
+    <component v-else :is="settingsComponent" />
+    <div class="user-3d fixed right-[5%] top-[20%]" v-if="showCard">
+      <Card :uname="uname" :pic="pic" />
     </div>
+    <div class="fixed right-[6%] top-[15%]">
+      <SettingsSelector v-model="settings_type"
+        @select="async () => { settingsComponent = await get_settings(settings_type) }" />
+    </div>
+  </div>
 </template>
+
 <style scoped>
 h1 {
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
 .settings-container {
-    overflow-y: scroll;
+  overflow-y: scroll;
 }
 </style>

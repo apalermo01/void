@@ -1,6 +1,8 @@
 use jwalk::WalkDir;
 use std::path::PathBuf;
 
+use super::get_env;
+
 #[tauri::command]
 pub async fn list_dir_paged(
     dirname: String,
@@ -67,5 +69,14 @@ pub async fn remove(
         "file" => std::fs::remove_file(path).map_err(|e| e.to_string())?,
         _ => return Err("нет такого флага".to_string()),
     }
+    Ok(())
+}
+
+#[tauri::command]
+pub async fn rename(path: String, new_name: String, app: tauri::AppHandle) -> Result<(), String> {
+    let workdir = get_env("workdir".to_string(), app.clone()).await.unwrap();
+    let path = workdir + path.as_str();
+    let new_path = path.replace(path.split("/").last().unwrap(), &new_name);
+    let _ = std::fs::rename(&path, new_path);
     Ok(())
 }

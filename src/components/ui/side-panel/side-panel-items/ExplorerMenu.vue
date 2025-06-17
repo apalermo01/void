@@ -16,6 +16,9 @@ import ContextMenuSeparator from '../../context-menu/ContextMenuSeparator.vue';
       <ContextMenuItem @click="$emit('delete')">Удалить файл/папку</ContextMenuItem>
       <ContextMenuSeparator />
       <ContextMenuItem @click="$emit('rename')">Переименовать</ContextMenuItem>
+      <ContextMenuSeparator />
+      <ContextMenuItem @click="$emit('copy')">Копировать</ContextMenuItem>
+      <ContextMenuItem @click="$emit('move')">Переместить</ContextMenuItem>
     </ContextMenuContent>
   </ContextMenu>
 </template>

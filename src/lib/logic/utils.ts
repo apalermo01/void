@@ -112,3 +112,5 @@ export async function decide_file_ext(name: string, router: Router) {
     router.push('/unsupported');
   }
 }
+
+export const SettingsRegistry = ['Global', 'Plugins', 'SideRepos'];

@@ -129,7 +129,7 @@ onMounted(async () => {
       invoke('send_to_neovim', { line: data });
     });
 
-    const cleanupTransitions = setupTransitionAwareResize();
+    setupTransitionAwareResize();
   }
 });
 

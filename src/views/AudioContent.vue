@@ -17,7 +17,6 @@ import { get_audio_content, get_file_content } from '@/lib/logic/utils';
 import { PlayCircle, PauseCircle } from 'lucide-vue-next';
 import { Progress } from '@/components/ui/progress';
 import { onMounted, onUnmounted, ref, nextTick, watch } from 'vue';
-import { now } from '@vueuse/core';
 
 const props = defineProps<{ url: string }>();
 

@@ -98,6 +98,7 @@ function performCreation(flag) {
   }
 }
 
+
 onKeyDown('Enter', () => { summon(create_type.value) })
 
 async function summon(flag) {
@@ -151,63 +152,63 @@ watch(() => expanded.value, async () => {
           <CollapsibleRoot :default-open="false" v-bind:open="expanded" class="group/collapsible">
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <ExplorerMenu @create-file="performCreation('file')" @create-folder="performCreation('folder')">
-                  <SidebarMenuButton>
-                    <Folder />
-                    <span class="text-lg cursor-pointer" @click="expanded = !expanded">Проводник</span>
-                  </SidebarMenuButton>
-                </ExplorerMenu>
+                <SidebarMenuButton>
+                  <Folder />
+                  <span class="text-lg cursor-pointer" @click="expanded = !expanded">Проводник</span>
+                </SidebarMenuButton>
               </CollapsibleTrigger>
-              <CollapsibleContent v-if="expanded"
-                class="mr-5 data-[state=open]:min-h-[15rem] max-h-[15rem] overflow-y-scroll" @scroll.passive="(e) => {
-                  const el = e.target;
-                  if (el.scrollTop + el.clientHeight >= el.scrollHeight - 5) loadNextPage();
-                }">
-                <SidebarMenuSub v-if="fcreate || dcreate">
-                  <SidebarMenuSubItem>
-                    <span class="text-sm flex gap-1 items-center">
-                      <input type="text" v-model="name" placeholder="unnamed" />
-                    </span>
-                  </SidebarMenuSubItem>
-                </SidebarMenuSub>
-                <RecycleScroller class="scroller" :items="dirs" :item-size="25" :key="explorer_store.current"
-                  v-slot="{ item }">
-                  <ExplorerMenu @create-file="performCreation('file')" @create-folder="performCreation('folder')"
-                    @delete="async () => await remove_dir(item)">
-                    <SidebarMenuSub>
-                      <SidebarMenuSubItem>
-                        <span
-                          class="text-sm cursor-pointer flex gap-1 items-center select-none truncate block max-w-[10rem]"
-                          @click="async () => await modify_store(item)">
-                          <Folder size="15" />
-                          {{ item }}
-                        </span>
-                      </SidebarMenuSubItem>
-                    </SidebarMenuSub>
-                  </ExplorerMenu>
-                </RecycleScroller>
-                <RecycleScroller class="scroller" :items="files" :item-size="25" v-slot="{ item }">
-                  <ExplorerMenu @create-file="performCreation('file')" @create-folder="performCreation('folder')"
-                    @delete="async () => await remove_file(item)">
-                    <SidebarMenuSub>
-                      <SidebarMenuSubItem>
-                        <span class="text-sm cursor-pointer flex gap-1">
-                          <TooltipRoot>
-                            <TooltipProvider>
-                              <TooltipTrigger>
-                                <span class="truncate block max-w-[10rem]"
-                                  @click="() => decide_file_ext(item, $router)">{{ item }}</span>
-                              </TooltipTrigger>
-                              <TooltipContent>{{ item }}</TooltipContent>
-                            </TooltipProvider>
-                          </TooltipRoot>
-                        </span>
-                      </SidebarMenuSubItem>
-                    </SidebarMenuSub>
-                  </ExplorerMenu>
-                </RecycleScroller>
-                <div v-if="isLoading" class="text-center py-2 text-sm text-muted">Загрузка...</div>
-              </CollapsibleContent>
+              <ExplorerMenu>
+                <CollapsibleContent v-if="expanded"
+                  class="mr-5 data-[state=open]:min-h-[15rem] max-h-[15rem] overflow-y-scroll" @scroll.passive="(e) => {
+                    const el = e.target;
+                    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 5) loadNextPage();
+                  }">
+                  <SidebarMenuSub v-if="fcreate || dcreate">
+                    <SidebarMenuSubItem>
+                      <span class="text-sm flex gap-1 items-center">
+                        <input type="text" v-model="name" placeholder="unnamed" />
+                      </span>
+                    </SidebarMenuSubItem>
+                  </SidebarMenuSub>
+                  <RecycleScroller class="scroller" :items="dirs" :item-size="25" :key="explorer_store.current"
+                    v-slot="{ item }">
+                    <ExplorerMenu @create-file="performCreation('file')" @create-folder="performCreation('folder')"
+                      @delete="async () => await remove_dir(item)">
+                      <SidebarMenuSub>
+                        <SidebarMenuSubItem>
+                          <span
+                            class="text-sm cursor-pointer flex gap-1 items-center select-none truncate block max-w-[10rem]"
+                            @click="async () => await modify_store(item)">
+                            <Folder size="15" />
+                            {{ item }}
+                          </span>
+                        </SidebarMenuSubItem>
+                      </SidebarMenuSub>
+                    </ExplorerMenu>
+                  </RecycleScroller>
+                  <RecycleScroller class="scroller" :items="files" :item-size="25" v-slot="{ item }">
+                    <ExplorerMenu @create-file="performCreation('file')" @create-folder="performCreation('folder')"
+                      @delete="async () => await remove_file(item)">
+                      <SidebarMenuSub>
+                        <SidebarMenuSubItem>
+                          <span class="text-sm cursor-pointer flex gap-1">
+                            <TooltipRoot>
+                              <TooltipProvider>
+                                <TooltipTrigger>
+                                  <span class="truncate block max-w-[10rem]"
+                                    @click="() => decide_file_ext(item, $router)">{{ item }}</span>
+                                </TooltipTrigger>
+                                <TooltipContent>{{ item }}</TooltipContent>
+                              </TooltipProvider>
+                            </TooltipRoot>
+                          </span>
+                        </SidebarMenuSubItem>
+                      </SidebarMenuSub>
+                    </ExplorerMenu>
+                  </RecycleScroller>
+                  <div v-if="isLoading" class="text-center py-2 text-sm text-muted">Загрузка...</div>
+                </CollapsibleContent>
+              </ExplorerMenu>
             </SidebarMenuItem>
           </CollapsibleRoot>
         </SidebarMenu>
