@@ -48,16 +48,8 @@ export function checkShowable(): boolean {
   }
 }
 
-export async function get_folder_content_paged(
-  dirname: string,
-  offset: number,
-  limit: number
-): Promise<string[]> {
-  return await invoke("list_dir_paged", {
-    dirname,
-    offset,
-    limit,
-  });
+export async function get_folder_content(dirname: string): Promise<String[]> {
+  return await invoke("get_directory_content", { dirname: dirname });
 }
 
 export async function create_file(name: string, dirname: string) {
@@ -75,6 +67,10 @@ export async function delete_folder(name: string, dirname: string) {
 
 export async function delete_file(name: string, dirname: string) {
   await invoke("remove", { name: name, path: dirname, flag: "file" });
+}
+
+export async function rename(before_path: string, name: string) {
+  await invoke('rename', { path: before_path, newName: name });
 }
 
 export async function decide_file_ext(name: string, router: Router) {

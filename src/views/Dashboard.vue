@@ -21,6 +21,7 @@ watch(() => sidebar_store.current, () => {
 })
 onMounted(() => {
   showTrigger.value = checkShowable();
+  showPanel.value = sidebar_store.current;
   window.addEventListener("resize", () => {
     showTrigger.value = checkShowable();
   });
@@ -28,8 +29,7 @@ onMounted(() => {
 </script>
 <template>
   <div class="app-container">
-    <SidebarProvider :defaultOpen="showPanel == 'expanded' ? true : false"
-      :class="showTrigger ? 'max-w-[3em]' : 'max-w-[0px]'">
+    <SidebarProvider :defaultOpen="showPanel" :class="showTrigger ? 'max-w-[3em]' : 'max-w-[0px]'">
       <SidePanel />
       <SidebarTrigger class="sidepanel-trigger top-1" v-if="showTrigger"
         @click="() => { sidebar_store.toggle(); showPanel = sidebar_store.current; }" />

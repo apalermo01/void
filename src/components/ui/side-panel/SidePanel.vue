@@ -1,5 +1,4 @@
 <script setup>
-// Импорт UI компонентов
 import Sidebar from "../sidebar/Sidebar.vue";
 import SidebarHeader from "../sidebar/SidebarHeader.vue";
 import SidebarFooter from "../sidebar/SidebarFooter.vue";
@@ -18,7 +17,7 @@ import { CollapsibleRoot } from "reka-ui";
 import { CollapsibleTrigger } from "reka-ui";
 import SidebarMenuSubItem from "../sidebar/SidebarMenuSubItem.vue";
 import SidebarMenuSub from "../sidebar/SidebarMenuSub.vue";
-import { create_file, create_folder, delete_folder, delete_file, get_folder_content_paged, decide_file_ext } from "@/lib/logic/utils";
+import { create_file, create_folder, delete_folder, delete_file, get_folder_content, decide_file_ext, rename } from "@/lib/logic/utils";
 import { useExplorerStore } from "@/lib/logic/explorerstore";
 import TooltipProvider from "../tooltip/TooltipProvider.vue";
 import TooltipContent from "../tooltip/TooltipContent.vue";
@@ -29,59 +28,47 @@ import { useSidebar } from "../sidebar";
 import { watch } from "vue";
 import { onKeyDown } from "@vueuse/core";
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
+import { useSidebarStore } from "@/lib/logic/sidebarstore";
+import { nanoid } from 'nanoid';
+import { Input } from '@/components/ui/input';
 const plugins = pluginRegistry;
 const loadedPlugins = plugins.reduce((acc, name) => {
   acc[name] = defineAsyncComponent(() => import(`@/components/ui/side-panel/side-panel-items/${name}.vue`));
   return acc;
 }, {});
 
-let dirs = ref([]);
-let files = ref([]);
+let entries = ref([]);
 let page = ref(0);
-let pageSize = 100;
-let hasMore = ref(true);
-let isLoading = ref(false);
 let fcreate = ref(false);
 let dcreate = ref(false);
 let expanded = ref(false);
 let create_type = ref("");
 let name = ref("");
+let rename_mode = ref({ name: '', enabled: false });
 
 const { state } = useSidebar();
 const explorer_store = useExplorerStore();
+const sidebar_store = useSidebarStore();
+const sidebar_state = useSidebar();
+
 watch(state, (v) => { if (v === 'collapsed') expanded.value = false; });
 
-onMounted(async () => { await resetPagination(); });
+onMounted(async () => {
 
+  window.addEventListener('keydown', (event) => {
+    if (event.metaKey && event.key == 's') {
+      event.preventDefault();
+      sidebar_store.toggle();
+      sidebar_state.toggleSidebar();
+    }
+  })
+  await strip_content();
+});
 
-async function resetPagination() {
-  dirs.value = [];
-  files.value = [];
-  page.value = 0;
-  hasMore.value = true;
-  isLoading.value = false;
-  await loadNextPage();
-}
-
-async function loadNextPage() {
-  if (isLoading.value || !hasMore.value) return;
-  isLoading.value = true;
-  let entries = await get_folder_content_paged(explorer_store.current, page.value * pageSize, pageSize);
-  if (explorer_store.current !== "") dirs.value.push("..");
-  entries.forEach(entrie => {
-    if (entrie.includes('.') && !entrie.startsWith('.')) files.value.push(entrie.split('/').pop());
-    else if (!entrie.startsWith('.') && entrie != '') dirs.value.push(entrie.split('/').pop());
-  });
-  console.log(files.value);
-  files.value = [...files.value];
-  if (entries.length < pageSize) hasMore.value = false;
-  else page.value++;
-  isLoading.value = false;
-}
 
 async function modify_store(dir) {
   dir !== '..' ? explorer_store.add_path(dir) : explorer_store.remove_path();
-  await resetPagination();
+  await strip_content();
 }
 
 function performCreation(flag) {
@@ -99,8 +86,6 @@ function performCreation(flag) {
 }
 
 
-onKeyDown('Enter', () => { summon(create_type.value) })
-
 async function summon(flag) {
   console.log("pis: " + flag);
   let folder = explorer_store.current;
@@ -111,14 +96,14 @@ async function summon(flag) {
         create_type.value = "";
         name.value = "";
         fcreate.value = false;
-        await resetPagination();
+        await strip_content();
         break;
       case 'folder':
         await create_folder('/' + name.value, folder);
         create_type.value = "";
         name.value = "";
         dcreate.value = false;
-        await resetPagination();
+        await strip_content();
         break;
     }
   }
@@ -126,25 +111,60 @@ async function summon(flag) {
 
 async function remove_dir(name) {
   await delete_folder('/' + name, useExplorerStore().current);
-  await resetPagination();
+  await strip_content();
 }
 
 async function remove_file(name) {
   await delete_file('/' + name, useExplorerStore().current);
-  await resetPagination();
+  await strip_content();
 }
-watch(() => expanded.value, async () => {
-  if (expanded.value) {
-    await loadNextPage();
+async function strip_content() {
+  entries.value = [];
+  let explorer_store = useExplorerStore();
+  let rentries = await get_folder_content(explorer_store.current);
+  if (explorer_store.current != "") {
+    entries.value.push({ id: nanoid(), name: '..', type: 'dir' });
   }
-  else {
-    await resetPagination();
-  }
-})
+  rentries.forEach((entrie) => {
+    if (entrie.includes('.') && !entrie.startsWith('.')) {
+      if (entrie.includes('/')) {
+        entries.value.push({ id: nanoid(), name: entrie.split('/')[entrie.split('/').length - 1], type: 'file' });
+      }
+      else {
+        entries.value.push({ id: nanoid(), name: entrie, type: 'file' });
+      }
+    }
+    else if (!entrie.startsWith('.')) {
+      if (entrie.includes('/')) {
+        entries.value.push({ id: nanoid(), name: entrie.split('/')[entrie.split('/').length - 1], type: 'dir' });
+      }
+      else {
+        entries.value.push({ id: nanoid(), name: entrie, type: 'dir' });
+      }
+    }
+    entries.value = [...entries.value].sort((a, b) => {
+      if (a.type === b.type) return a.name.localeCompare(b.name);
+      return a.type === 'dir' ? -1 : 1;
+    });
+  })
+}
+
+function enter_rename(name) {
+  rename_mode.value = {
+    name: name,
+    enabled: true
+  };
+  window.addEventListener('keydown', (event) => {
+    if (event.target == 'enter') {
+      event.preventDefault();
+      console.log(name.value);
+    }
+  })
+}
 </script>
 
 <template>
-  <Sidebar collapsible="icon" variant="floating" class="h-[95vh] mt-10 text-sidebar-primary">
+  <Sidebar collapsible="icon" variant="floating" class="h-[95vh] mt-10 text-sidebar-primary select-none">
     <SidebarHeader />
     <SidebarContent class="px-2">
       <SidebarGroupContent>
@@ -159,54 +179,101 @@ watch(() => expanded.value, async () => {
               </CollapsibleTrigger>
               <ExplorerMenu>
                 <CollapsibleContent v-if="expanded"
-                  class="mr-5 data-[state=open]:min-h-[15rem] max-h-[15rem] overflow-y-scroll" @scroll.passive="(e) => {
-                    const el = e.target;
-                    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 5) loadNextPage();
-                  }">
+                  class="mr-5 data-[state=open]:min-h-[15rem] max-h-[15rem] overflow-y-scroll">
                   <SidebarMenuSub v-if="fcreate || dcreate">
                     <SidebarMenuSubItem>
                       <span class="text-sm flex gap-1 items-center">
-                        <input type="text" v-model="name" placeholder="unnamed" />
+                        <Input type="text" v-model="name" placeholder="unnamed" @keydown="(event) => {
+                          if (event.key == 'Enter') {
+                            summon(create_type);
+                          }
+                          else if (event.key == 'Escape') {
+                            fcreate = false;
+                            dcreate = false;
+                            name = '';
+                          }
+                        }" />
                       </span>
                     </SidebarMenuSubItem>
                   </SidebarMenuSub>
-                  <RecycleScroller class="scroller" :items="dirs" :item-size="25" :key="explorer_store.current"
-                    v-slot="{ item }">
-                    <ExplorerMenu @create-file="performCreation('file')" @create-folder="performCreation('folder')"
-                      @delete="async () => await remove_dir(item)">
+                  <RecycleScroller class="scroller h-[15rem]" :items="entries" :item-size="24" key-field="id"
+                    :key="explorer_store.current" v-slot="{ item }">
+                    <ExplorerMenu v-if="item.type == 'dir'" @create-file="performCreation('file')"
+                      @create-folder="performCreation('folder')" @delete="async () => await remove_dir(item.name)"
+                      @rename="enter_rename(item.name)" class="h-6">
                       <SidebarMenuSub>
                         <SidebarMenuSubItem>
-                          <span
-                            class="text-sm cursor-pointer flex gap-1 items-center select-none truncate block max-w-[10rem]"
-                            @click="async () => await modify_store(item)">
-                            <Folder size="15" />
-                            {{ item }}
-                          </span>
-                        </SidebarMenuSubItem>
-                      </SidebarMenuSub>
-                    </ExplorerMenu>
-                  </RecycleScroller>
-                  <RecycleScroller class="scroller" :items="files" :item-size="25" v-slot="{ item }">
-                    <ExplorerMenu @create-file="performCreation('file')" @create-folder="performCreation('folder')"
-                      @delete="async () => await remove_file(item)">
-                      <SidebarMenuSub>
-                        <SidebarMenuSubItem>
-                          <span class="text-sm cursor-pointer flex gap-1">
+                          <span class="text-sm cursor-pointer flex gap-1 items-center select-none"
+                            @click="async () => { if (!rename_mode.enabled) { await modify_store(item.name) } }">
                             <TooltipRoot>
                               <TooltipProvider>
+                                <Folder size="15" />
                                 <TooltipTrigger>
-                                  <span class="truncate block max-w-[10rem]"
-                                    @click="() => decide_file_ext(item, $router)">{{ item }}</span>
+                                  <span v-if="!rename_mode.enabled || !(rename_mode.name == item.name)"
+                                    class="truncate block max-w-[10rem]">{{ item.name
+                                    }}</span>
+                                  <span v-else>
+                                    <Input class="h-5" v-model="name" type="text" @keydown="async (event) => {
+                                      if (event.key == 'Escape') {
+                                        event.preventDefault();
+                                        rename_mode = { name: '', enabled: false };
+                                        name = '';
+                                      }
+                                      else if (event.key == 'Enter') {
+                                        let current_dir = explorer_store.current;
+                                        await rename(current_dir + '/' + item.name, name);
+                                        rename_mode = { name: '', enabled: false };
+                                        name = '';
+                                        await strip_content();
+                                      }
+                                    }" />
+                                  </span>
                                 </TooltipTrigger>
-                                <TooltipContent>{{ item }}</TooltipContent>
+                                <TooltipContent>{{ item.name }}</TooltipContent>
                               </TooltipProvider>
                             </TooltipRoot>
                           </span>
                         </SidebarMenuSubItem>
                       </SidebarMenuSub>
                     </ExplorerMenu>
+                    <ExplorerMenu v-else @create-file="performCreation('file')"
+                      @create-folder="performCreation('folder')" @delete="async () => await remove_file(item.name)"
+                      @rename="enter_rename(item.name)" class="h-6">
+                      <SidebarMenuSub>
+                        <SidebarMenuSubItem>
+                          <span v-if="!rename_mode.enabled || !rename_mode.name.includes(item.name)"
+                            class="text-sm cursor-pointer flex gap-1">
+                            <TooltipRoot>
+                              <TooltipProvider>
+                                <TooltipTrigger>
+                                  <span draggable="true" class="truncate block max-w-[10rem]"
+                                    @click="() => decide_file_ext(item.name, $router)">{{ item.name }}</span>
+                                </TooltipTrigger>
+                                <TooltipContent>{{ item.name }}</TooltipContent>
+                              </TooltipProvider>
+                            </TooltipRoot>
+                          </span>
+                          <span v-else>
+                            <Input class="h-5" v-model="name" type="text" @keydown="async (event) => {
+                              if (event.key == 'Escape') {
+                                event.preventDefault();
+                                rename_mode = { name: '', enabled: false };
+                                name = '';
+                              }
+                              else if (event.key == 'Enter') {
+                                let current_dir = explorer_store.current;
+                                let new_name = name + '.' + item.name.split('.')[item.name.split('.').length - 1];
+                                await rename(current_dir + '/' + item.name, new_name);
+                                rename_mode = { name: '', enabled: false };
+                                name = '';
+                                await strip_content();
+                              }
+                            }" />
+                          </span>
+                        </SidebarMenuSubItem>
+                      </SidebarMenuSub>
+                    </ExplorerMenu>
                   </RecycleScroller>
-                  <div v-if="isLoading" class="text-center py-2 text-sm text-muted">Загрузка...</div>
                 </CollapsibleContent>
               </ExplorerMenu>
             </SidebarMenuItem>

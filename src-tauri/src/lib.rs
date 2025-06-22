@@ -59,7 +59,7 @@ pub fn run() {
             delete_repo,
             check_theme_update,
             delete_theme,
-            list_dir_paged,
+            get_directory_content,
             create_entry,
             remove,
             setup_config_directory,
@@ -68,7 +68,8 @@ pub fn run() {
             get_video_url,
             set_video_path,
             check_file_exists,
-            get_note_content
+            get_note_content,
+            rename
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
