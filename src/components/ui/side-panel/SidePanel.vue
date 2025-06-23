@@ -13,11 +13,11 @@ import { showSettings } from "@/lib/logic/settings";
 import { pluginRegistry } from "@/components/ui/side-panel/side-panel-items/index";
 import { defineAsyncComponent, onMounted, ref } from "vue";
 import { CollapsibleContent, TooltipRoot } from "reka-ui";
-import { CollapsibleRoot } from "reka-ui";
 import { CollapsibleTrigger } from "reka-ui";
 import SidebarMenuSubItem from "../sidebar/SidebarMenuSubItem.vue";
 import SidebarMenuSub from "../sidebar/SidebarMenuSub.vue";
-import { create_file, create_folder, delete_folder, delete_file, get_folder_content, decide_file_ext, rename, get_env } from "@/lib/logic/utils";
+import { create_file, create_folder, delete_folder, delete_file, get_folder_content, decide_file_ext, rename, get_env, copy_entry } from "@/lib/logic/utils";
+import { CollapsibleRoot } from "reka-ui";
 import { useExplorerStore } from "@/lib/logic/explorerstore";
 import TooltipProvider from "../tooltip/TooltipProvider.vue";
 import TooltipContent from "../tooltip/TooltipContent.vue";
@@ -46,6 +46,8 @@ let expanded = ref(false);
 let create_type = ref("");
 let name = ref("");
 let rename_mode = ref({ name: '', enabled: false });
+let copied = ref('');
+let paste_flag = ref('');
 
 const { state } = useSidebar();
 const explorer_store = useExplorerStore();
@@ -55,11 +57,11 @@ const sidebar_state = useSidebar();
 watch(state, (v) => { if (v === 'collapsed') expanded.value = false; });
 
 onMounted(async () => {
-
-
   let watchdir = await get_env('workdir');
   let a = await watchDir(watchdir, async () => {
     await strip_content();
+  }, {
+    recursive: true
   });
   window.addEventListener('keydown', (event) => {
     if (event.metaKey && event.key == 's') {
@@ -166,6 +168,10 @@ function enter_rename(name) {
     }
   })
 }
+
+function initiate_copy(name) {
+  copied.value = explorer_store.current + '/' + name;
+}
 </script>
 
 <template>
@@ -182,7 +188,8 @@ function enter_rename(name) {
                   <span class="text-lg cursor-pointer" @click="expanded = !expanded">Проводник</span>
                 </SidebarMenuButton>
               </CollapsibleTrigger>
-              <ExplorerMenu>
+              <ExplorerMenu :copied="copied != ''"
+                @epaste="async () => { await copy_entry(copied, explorer_store.current, paste_flag); copied = ''; paste_flag = ''; }">
                 <CollapsibleContent v-if="expanded"
                   class="mr-5 data-[state=open]:min-h-[15rem] max-h-[15rem] overflow-y-scroll">
                   <SidebarMenuSub v-if="fcreate || dcreate">
@@ -203,9 +210,13 @@ function enter_rename(name) {
                   </SidebarMenuSub>
                   <RecycleScroller class="scroller h-[15rem]" :items="entries" :item-size="24" key-field="id"
                     :key="explorer_store.current" v-slot="{ item }">
-                    <ExplorerMenu v-if="item.type == 'dir'" @create-file="performCreation('file')"
-                      @create-folder="performCreation('folder')" @delete="async () => await remove_dir(item.name)"
-                      @rename="enter_rename(item.name)" class="h-6">
+                    <ExplorerMenu v-if="item.type == 'dir'" :copied="copied != ''"
+                      @create-file="performCreation('file')" @create-folder="performCreation('folder')"
+                      @delete="async () => await remove_dir(item.name)" @rename="enter_rename(item.name)"
+                      @cut="() => { initiate_copy(item.name); paste_flag = 'move'; }"
+                      @copy="() => { initiate_copy(item.name); paste_flag = 'file'; }"
+                      @epaste="async () => { await copy_entry(copied, explorer_store.current, paste_flag); copied = ''; paste_flag = '' }"
+                      class="h-6">
                       <SidebarMenuSub>
                         <SidebarMenuSubItem>
                           <span class="text-sm cursor-pointer flex gap-1 items-center select-none"
@@ -241,9 +252,11 @@ function enter_rename(name) {
                         </SidebarMenuSubItem>
                       </SidebarMenuSub>
                     </ExplorerMenu>
-                    <ExplorerMenu v-else @create-file="performCreation('file')"
+                    <ExplorerMenu v-else @create-file="performCreation('file')" :copied="copied != ''"
                       @create-folder="performCreation('folder')" @delete="async () => await remove_file(item.name)"
-                      @rename="enter_rename(item.name)" class="h-6">
+                      @rename="enter_rename(item.name)" class="h-6" @copy="initiate_copy(item.name)"
+                      @cut="() => { initiate_copy(item.name); paste_flag = 'move'; }"
+                      @epaste="async () => { await copy_entry(copied, explorer_store.current, paste_flag); copied = ''; paste_flag = ''; }">
                       <SidebarMenuSub>
                         <SidebarMenuSubItem>
                           <span v-if="!rename_mode.enabled || !rename_mode.name.includes(item.name)"

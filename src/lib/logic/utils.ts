@@ -125,3 +125,7 @@ export async function read_canvas(path: string): Promise<string> {
 export async function get_env(key: string): Promise<string> {
   return await invoke('get_env', { ename: key });
 }
+
+export async function copy_entry(before_path: string, after_path: string, flag: string) {
+  await invoke('modify_entry', { beforePath: before_path, afterPath: after_path, flag: flag });
+}

@@ -3,7 +3,7 @@ use commands::*;
 use tauri_plugin_fs::FsExt;
 
 #[cfg(target_os = "macos")]
-const MAIN_FOLDER_PREFIX: &str = "/Users/transhumanist/Documents/php/olimp/";
+const MAIN_FOLDER_PREFIX: &str = "../../";
 
 #[cfg(target_os = "windows")]
 const MAIN_FOLDER_PREFIX: &str = "../../";
@@ -70,7 +70,8 @@ pub fn run() {
             check_file_exists,
             get_note_content,
             rename,
-            write_canvas_data
+            write_canvas_data,
+            modify_entry
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

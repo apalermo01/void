@@ -1,3 +1,5 @@
+use tauri::Emitter;
+
 use super::get_env;
 
 #[tauri::command]
@@ -56,5 +58,33 @@ pub async fn rename(path: String, new_name: String, app: tauri::AppHandle) -> Re
     let path = workdir + path.as_str();
     let new_path = path.replace(path.split("/").last().unwrap(), &new_name);
     let _ = std::fs::rename(&path, new_path);
+    Ok(())
+}
+
+#[tauri::command]
+pub async fn modify_entry(
+    before_path: String,
+    after_path: String,
+    flag: String,
+    app: tauri::AppHandle,
+) -> Result<(), String> {
+    let workdir = get_env("workdir".to_string(), app.clone()).await.unwrap();
+    let before_path = workdir.clone() + before_path.as_str();
+    let after_path = workdir + after_path.as_str() + "/" + before_path.split("/").last().unwrap();
+    match flag.as_str() {
+        "copy" => {
+            std::fs::copy(before_path, after_path).map_err(|e| {
+                app.emit("error", e.to_string()).unwrap();
+                e.to_string()
+            })?;
+        }
+        "move" => {
+            std::fs::rename(before_path, after_path).map_err(|e| {
+                app.emit("error", e.to_string()).unwrap();
+                e.to_string()
+            })?;
+        }
+        _ => (),
+    }
     Ok(())
 }

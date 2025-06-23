@@ -238,3 +238,12 @@
   font-family: "Spectral";
   src: url("../Spectral-Regular.ttf") format('truetype');
 }
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
