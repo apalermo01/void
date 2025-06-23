@@ -5,6 +5,7 @@ import App from "./App.vue";
 import VueVirtualScroller from 'vue-virtual-scroller';
 import VuePlyr from 'vue-plyr';
 import 'vue-plyr/dist/vue-plyr.css';
+import '@excalidraw/excalidraw/index.css'
 
 const pinia = createPinia();
 createApp(App).use(router).use(pinia).use(VueVirtualScroller).use(VuePlyr, {

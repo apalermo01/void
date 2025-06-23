@@ -1,7 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import { Router } from "vue-router";
 import { useExplorerStore } from "./explorerstore";
-import { readFile } from "@tauri-apps/plugin-fs";
+import { readFile, readTextFile } from "@tauri-apps/plugin-fs";
 
 type AudioMeta = {
   picture: Uint8Array,
@@ -93,7 +93,7 @@ export async function decide_file_ext(name: string, router: Router) {
   ext_map.set("png", "image");
   ext_map.set("webp", "image");
   ext_map.set("gif", "image");
-  ext_map.set("card", "canvas");
+  ext_map.set("canvas", "canvas");
   let extension = name.split('.')[name.split('.').length - 1];
   if (ext_map.get(extension) != undefined) {
     let workdir = await invoke('get_env', { ename: 'workdir' });
@@ -110,3 +110,18 @@ export async function decide_file_ext(name: string, router: Router) {
 }
 
 export const SettingsRegistry = ['Global', 'Plugins', 'SideRepos'];
+
+export async function write_canvas(data: string, path?: string): Promise<string> {
+  let explorer_store = useExplorerStore();
+  let npath = path == undefined ? '' : explorer_store.current + '/' + path;
+  return await invoke("write_canvas_data", { path: npath, data: data });
+}
+
+export async function read_canvas(path: string): Promise<string> {
+  let data = await readTextFile(path);
+  return data;
+}
+
+export async function get_env(key: string): Promise<string> {
+  return await invoke('get_env', { ename: key });
+}

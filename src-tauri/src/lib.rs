@@ -69,7 +69,8 @@ pub fn run() {
             set_video_path,
             check_file_exists,
             get_note_content,
-            rename
+            rename,
+            write_canvas_data
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

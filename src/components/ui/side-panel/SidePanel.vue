@@ -17,7 +17,7 @@ import { CollapsibleRoot } from "reka-ui";
 import { CollapsibleTrigger } from "reka-ui";
 import SidebarMenuSubItem from "../sidebar/SidebarMenuSubItem.vue";
 import SidebarMenuSub from "../sidebar/SidebarMenuSub.vue";
-import { create_file, create_folder, delete_folder, delete_file, get_folder_content, decide_file_ext, rename } from "@/lib/logic/utils";
+import { create_file, create_folder, delete_folder, delete_file, get_folder_content, decide_file_ext, rename, get_env } from "@/lib/logic/utils";
 import { useExplorerStore } from "@/lib/logic/explorerstore";
 import TooltipProvider from "../tooltip/TooltipProvider.vue";
 import TooltipContent from "../tooltip/TooltipContent.vue";
@@ -31,6 +31,7 @@ import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
 import { useSidebarStore } from "@/lib/logic/sidebarstore";
 import { nanoid } from 'nanoid';
 import { Input } from '@/components/ui/input';
+import { watchImmediate as watchDir } from "@tauri-apps/plugin-fs";
 const plugins = pluginRegistry;
 const loadedPlugins = plugins.reduce((acc, name) => {
   acc[name] = defineAsyncComponent(() => import(`@/components/ui/side-panel/side-panel-items/${name}.vue`));
@@ -55,6 +56,11 @@ watch(state, (v) => { if (v === 'collapsed') expanded.value = false; });
 
 onMounted(async () => {
 
+
+  let watchdir = await get_env('workdir');
+  let a = await watchDir(watchdir, async () => {
+    await strip_content();
+  });
   window.addEventListener('keydown', (event) => {
     if (event.metaKey && event.key == 's') {
       event.preventDefault();
@@ -119,34 +125,33 @@ async function remove_file(name) {
   await strip_content();
 }
 async function strip_content() {
-  entries.value = [];
   let explorer_store = useExplorerStore();
   let rentries = await get_folder_content(explorer_store.current);
-  if (explorer_store.current != "") {
-    entries.value.push({ id: nanoid(), name: '..', type: 'dir' });
+  let temp = [];
+
+  if (explorer_store.current !== "") {
+    temp.push({ id: nanoid(), name: '..', type: 'dir' });
   }
+
   rentries.forEach((entrie) => {
-    if (entrie.includes('.') && !entrie.startsWith('.')) {
-      if (entrie.includes('/')) {
-        entries.value.push({ id: nanoid(), name: entrie.split('/')[entrie.split('/').length - 1], type: 'file' });
-      }
-      else {
-        entries.value.push({ id: nanoid(), name: entrie, type: 'file' });
-      }
-    }
-    else if (!entrie.startsWith('.')) {
-      if (entrie.includes('/')) {
-        entries.value.push({ id: nanoid(), name: entrie.split('/')[entrie.split('/').length - 1], type: 'dir' });
-      }
-      else {
-        entries.value.push({ id: nanoid(), name: entrie, type: 'dir' });
+    if (!entrie.startsWith('.')) {
+      let name = entrie.includes('/')
+        ? entrie.split('/').pop()
+        : entrie;
+
+      if (entrie.includes('.') && !entrie.endsWith('/')) {
+        temp.push({ id: nanoid(), name, type: 'file' });
+      } else {
+        temp.push({ id: nanoid(), name, type: 'dir' });
       }
     }
-    entries.value = [...entries.value].sort((a, b) => {
-      if (a.type === b.type) return a.name.localeCompare(b.name);
-      return a.type === 'dir' ? -1 : 1;
-    });
-  })
+  });
+
+  // Сортировка один раз, после цикла
+  entries.value = temp.sort((a, b) => {
+    if (a.type === b.type) return a.name.localeCompare(b.name);
+    return a.type === 'dir' ? -1 : 1;
+  });
 }
 
 function enter_rename(name) {

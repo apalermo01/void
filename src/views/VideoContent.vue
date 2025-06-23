@@ -58,8 +58,7 @@ const filePath = computed(() => props.url ? decodeURIComponent(atob(props.url)) 
 const mimeType = computed(() => {
   const ext = filePath.value.split('.').pop()?.toLowerCase();
   return {
-    'mov': 'video/quicktime',
-    'avi': 'video/x-msvideo'
+    'mov': 'video/mp4',
   }[ext || ''] || 'video/mp4';
 });
 

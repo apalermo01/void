@@ -1,4 +1,5 @@
 mod audio;
+mod canvas;
 mod database;
 mod environment;
 mod explorer;
@@ -11,6 +12,7 @@ mod terminal;
 mod themes;
 mod video;
 pub use audio::*;
+pub use canvas::*;
 pub use database::*;
 pub use environment::*;
 pub use explorer::*;

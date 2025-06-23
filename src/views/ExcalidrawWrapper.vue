@@ -1,0 +1,166 @@
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { applyReactInVue } from 'veaury';
+import { writeTextFile, readTextFile, exists } from '@tauri-apps/plugin-fs';
+import { appDataDir, join } from '@tauri-apps/api/path';
+import { restore, serializeAsJSON } from '@excalidraw/excalidraw';
+import { BinaryFiles } from '@excalidraw/excalidraw/types';
+import { ClearCanvas } from '@excalidraw/excalidraw/components/main-menu/DefaultItems';
+import { read_canvas, write_canvas } from '@/lib/logic/utils';
+import { useExplorerStore } from '@/lib/logic/explorerstore';
+
+let props = defineProps({
+  url: String
+});
+
+interface ExcalidrawElement {
+  id: string;
+  type: string;
+  [key: string]: any;
+}
+
+interface AppState {
+  viewBackgroundColor: string;
+  [key: string]: any;
+}
+
+interface ExcalidrawData {
+  elements: ExcalidrawElement[];
+  appState: AppState;
+  files?: BinaryFiles;
+}
+
+const ExcalidrawReact = ref<any>(null);
+const drawingData = ref<ExcalidrawData>({
+  elements: [],
+  appState: { viewBackgroundColor: 'transparent' }
+});
+const initializationError = ref<string | null>(null);
+const filePath = ref<string>('');
+const file_path = ref<string>('');
+const waiting = ref<boolean>(false);
+
+const initializeApp = async () => {
+  try {
+    filePath.value = await join(await appDataDir(), 'drawing.json');
+    const module = await import('@excalidraw/excalidraw');
+    ExcalidrawReact.value = applyReactInVue(module.Excalidraw);
+  } catch (error) {
+    initializationError.value = `Ошибка загрузки: ${error instanceof Error ? error.message : String(error)}`;
+  }
+};
+
+onMounted(async () => {
+  if (props.url != undefined) {
+    let path = decodeURIComponent(atob(props.url));
+    let content = await read_canvas(decodeURIComponent(atob(props.url)));
+    let obj = JSON.parse(content);
+    let restored = restore(obj, null, null);
+    drawingData.value = {
+      elements: restored.elements,
+      appState: restored.appState,
+      files: restored.files
+    };
+    file_path.value = useExplorerStore().current + '/' + path.split('/')[path.split('/').length - 1];
+  }
+  await initializeApp();
+});
+
+
+const handleChange = (elements: ExcalidrawElement[], appState: AppState, files?: BinaryFiles) => {
+  drawingData.value = { elements, appState, files };
+  saveDrawing();
+};
+
+const saveDrawing = async () => {
+  if (!filePath.value) return;
+  let data = serializeAsJSON(drawingData.value.elements, drawingData.value.appState, drawingData.value.files, "local");
+  if (file_path.value == '' && !waiting.value) {
+    waiting.value = true;
+    file_path.value = await write_canvas(data);
+  }
+  else if (!waiting.value) {
+    waiting.value = true;
+    await write_canvas(data, file_path.value);
+  }
+  waiting.value = false;
+
+};
+</script>
+
+<template>
+  <div class="excalidraw-app w-full h-full overflow-hidden rounded-[15px]">
+    <div class="canvas-container rounded-[15px] overflow-hidden">
+      <component :is="ExcalidrawReact" :initialData="drawingData" @change="handleChange" :UIOptions="{
+        canvasActions: {
+          loadScene: false,
+          saveScene: false,
+          export: false,
+          changeViewBackgroundColor: false,
+          toggleTheme: false,
+          saveAsImage: false,
+        },
+        libraryMenu: false,
+      }" />
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.excalidraw-app {
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+}
+
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  color: #ff4444;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.canvas-container {
+  flex: 1;
+  position: relative;
+}
+
+:deep(.excalidraw) {
+  --zIndex-popup: 1000;
+}
+
+:deep(.App-menu_top .HorizontalMenu) {
+  padding-top: env(safe-area-inset-top);
+}
+
+:deep(.sidebar-trigger) {
+  display: none !important;
+}
+
+:deep(.dropdown-menu-button) {
+  display: none !important;
+}
+</style>

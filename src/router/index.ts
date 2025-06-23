@@ -11,6 +11,7 @@ import JournalContent from "@/views/JournalContent.vue";
 import VideoContent from "@/views/VideoContent.vue";
 import NoteContent from "@/views/NoteContent.vue";
 import UnsupportedContent from "@/views/UnsupportedContent.vue";
+import ExcalidrawWrapper from "@/views/ExcalidrawWrapper.vue";
 
 const routes = [
   {
@@ -67,6 +68,17 @@ const routes = [
       {
         path: "unsupported",
         component: UnsupportedContent,
+        meta: { transition: "fade" }
+      },
+      {
+        path: "canvas/:url",
+        component: ExcalidrawWrapper,
+        props: true,
+        meta: { transition: "fade" }
+      },
+      {
+        path: "canvas",
+        component: ExcalidrawWrapper,
         meta: { transition: "fade" }
       }
     ],
