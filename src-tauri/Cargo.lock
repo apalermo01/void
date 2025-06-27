@@ -13,6 +13,35 @@ dependencies = [
 ]
 
 [[package]]
+name = "VOID"
+version = "0.1.0"
+dependencies = [
+ "base64 0.22.1",
+ "futures",
+ "hyper 0.14.32",
+ "jwalk",
+ "lazy_static",
+ "libc",
+ "lofty",
+ "once_cell",
+ "portable-pty",
+ "rust-fetch",
+ "serde",
+ "serde_json",
+ "surrealdb",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-dialog",
+ "tauri-plugin-fs",
+ "tauri-plugin-opener",
+ "thiserror 2.0.12",
+ "tokio",
+ "tokio-util",
+ "urlencoding",
+ "warp",
+]
+
+[[package]]
 name = "addr"
 version = "0.15.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6949,35 +6978,6 @@ dependencies = [
  "serde_spanned",
  "toml_datetime",
  "winnow 0.7.6",
-]
-
-[[package]]
-name = "topaz"
-version = "0.1.0"
-dependencies = [
- "base64 0.22.1",
- "futures",
- "hyper 0.14.32",
- "jwalk",
- "lazy_static",
- "libc",
- "lofty",
- "once_cell",
- "portable-pty",
- "rust-fetch",
- "serde",
- "serde_json",
- "surrealdb",
- "tauri",
- "tauri-build",
- "tauri-plugin-dialog",
- "tauri-plugin-fs",
- "tauri-plugin-opener",
- "thiserror 2.0.12",
- "tokio",
- "tokio-util",
- "urlencoding",
- "warp",
 ]
 
 [[package]]

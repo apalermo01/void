@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "topaz",
+  "productName": "VOID",
   "version": "0.1.0",
   "identifier": "com.transhumanist.app",
   "build": {
@@ -13,7 +13,7 @@
     "macOSPrivateApi": true,
     "windows": [
       {
-        "title": "topaz",
+        "title": "VOID",
         "width": 1400,
         "height": 840,
         "titleBarStyle": "Overlay",

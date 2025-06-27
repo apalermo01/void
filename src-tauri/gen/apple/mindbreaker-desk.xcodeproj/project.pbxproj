@@ -16,30 +16,56 @@
 		534B024B52B3C879F5F61AB8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B91FF7DD82EB1A4B65EF6E10 /* UIKit.framework */; };
 		6A159EC562AC9FCAC9B08B94 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29679784AF19A3BB6DA4CBD8 /* MetalKit.framework */; };
 		74869A8C08F91BBB4AAD4280 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DEBEC03E9D67C22AC01BEFA8 /* Assets.xcassets */; };
+		8D270B0D2112772E4896B16F /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8F52A11F537312EC105D7DAE /* main.mm */; };
 		E48E12BF1BD7C3DEC44985AA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F5B06F5146B604B6EAFB4CAB /* LaunchScreen.storyboard */; };
 		F6B38FA2412BE570BC33C34A /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 9D0B750525C2AC9F24C1FAC7 /* assets */; };
 		F793ECDFE406E7DFC6A9FE53 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37876372906365B88982FE11 /* main.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		00ACDF258EE9CF6EBB71398F /* entity_errors.rs */ = {isa = PBXFileReference; path = entity_errors.rs; sourceTree = "<group>"; };
+		014FED0E58B1580C825C936D /* mod.rs */ = {isa = PBXFileReference; path = mod.rs; sourceTree = "<group>"; };
+		0B6BB1638341F3D44162499E /* mod.rs */ = {isa = PBXFileReference; path = mod.rs; sourceTree = "<group>"; };
 		0D3E8762802DBA4118C18F27 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		0ED4AC8F2874E011B7B65F17 /* entity_interface.rs */ = {isa = PBXFileReference; path = entity_interface.rs; sourceTree = "<group>"; };
 		0F1AC489E5516F6E487BF4A1 /* libapp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libapp.a; sourceTree = "<group>"; };
+		15287127E4BAB47CB05CEF68 /* themes_list.rs */ = {isa = PBXFileReference; path = themes_list.rs; sourceTree = "<group>"; };
 		213D41119D4587EDB259B5F3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		27F119095390FA9AE98BD54B /* main_config.rs */ = {isa = PBXFileReference; path = main_config.rs; sourceTree = "<group>"; };
 		29679784AF19A3BB6DA4CBD8 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
 		37876372906365B88982FE11 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		48AB71BDA83BB2D3FB92CB3B /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		4943464FBDB6EB68A64A2B62 /* entity_repositorty.rs */ = {isa = PBXFileReference; path = entity_repositorty.rs; sourceTree = "<group>"; };
 		5C1BCF1F1B8BC72FC86E310B /* lib.rs */ = {isa = PBXFileReference; path = lib.rs; sourceTree = "<group>"; };
 		62ECE3CDF0864F234C0C2D43 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
+		7BFA8EFDB9FE0674F11139EE /* bindings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bindings.h; sourceTree = "<group>"; };
+		8D5020D4023A037F46BCFB2D /* mod.rs */ = {isa = PBXFileReference; path = mod.rs; sourceTree = "<group>"; };
+		8F52A11F537312EC105D7DAE /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
+		8FFD7DB846EE88672D21B6FA /* plugin_settings.rs */ = {isa = PBXFileReference; path = plugin_settings.rs; sourceTree = "<group>"; };
+		9316F17896CDA634B005A7B0 /* mod.rs */ = {isa = PBXFileReference; path = mod.rs; sourceTree = "<group>"; };
+		963EB0019FAD64618DC685C3 /* plugin_list.rs */ = {isa = PBXFileReference; path = plugin_list.rs; sourceTree = "<group>"; };
 		9D0B750525C2AC9F24C1FAC7 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = SOURCE_ROOT; };
+		B2CE77B82A9F4C80CB84A66B /* mod.rs */ = {isa = PBXFileReference; path = mod.rs; sourceTree = "<group>"; };
+		B2FF6ED81987380DCE7BD66A /* mod.rs */ = {isa = PBXFileReference; path = mod.rs; sourceTree = "<group>"; };
+		B7043A7DA6E7099F4E4BEFFC /* mod.rs */ = {isa = PBXFileReference; path = mod.rs; sourceTree = "<group>"; };
 		B91FF7DD82EB1A4B65EF6E10 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		BA01290F40290992E3925C5A /* mod.rs */ = {isa = PBXFileReference; path = mod.rs; sourceTree = "<group>"; };
+		C712C89401FC4D6BF39128DD /* commands.rs */ = {isa = PBXFileReference; path = commands.rs; sourceTree = "<group>"; };
+		C8EFD26B6256202332D591A9 /* mod.rs */ = {isa = PBXFileReference; path = mod.rs; sourceTree = "<group>"; };
 		D075D41B7C44D6DDF6F3AD50 /* main.rs */ = {isa = PBXFileReference; path = main.rs; sourceTree = "<group>"; };
 		D0AA61D485821038FB0EE454 /* mindbreaker-desk_iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "mindbreaker-desk_iOS.entitlements"; sourceTree = "<group>"; };
+		D537739F1A1FC20C3344E05E /* mod.rs */ = {isa = PBXFileReference; path = mod.rs; sourceTree = "<group>"; };
+		D891592E4A7CB485A153C13B /* mod.rs */ = {isa = PBXFileReference; path = mod.rs; sourceTree = "<group>"; };
 		DEBEC03E9D67C22AC01BEFA8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		E0E80195D008889BB1D71F32 /* mod.rs */ = {isa = PBXFileReference; path = mod.rs; sourceTree = "<group>"; };
 		E2A439814DC1484E8AFF54F6 /* bindings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bindings.h; sourceTree = "<group>"; };
 		E6A7F44CA35C16439407E71A /* mindbreaker-desk_iOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = "mindbreaker-desk_iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6FB07182BC046DC84E96550 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		EB96D06FBA46D9AF0EF42973 /* mod.rs */ = {isa = PBXFileReference; path = mod.rs; sourceTree = "<group>"; };
 		F5B06F5146B604B6EAFB4CAB /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		F79460DC0DEF58C11B482528 /* side_repos.rs */ = {isa = PBXFileReference; path = side_repos.rs; sourceTree = "<group>"; };
 		F8AAD771115348698E809333 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		FAB3592D546A9059BF96D554 /* mod.rs */ = {isa = PBXFileReference; path = mod.rs; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +87,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1D782A32A6248598B88A9AB1 /* side_repos */ = {
+			isa = PBXGroup;
+			children = (
+				B2FF6ED81987380DCE7BD66A /* mod.rs */,
+			);
+			path = side_repos;
+			sourceTree = "<group>";
+		};
+		26D95800D7E8AD3995BD28A1 /* VOID */ = {
+			isa = PBXGroup;
+			children = (
+				8F52A11F537312EC105D7DAE /* main.mm */,
+				7DE65C632BCC5E4E044CD055 /* bindings */,
+			);
+			path = VOID;
+			sourceTree = "<group>";
+		};
+		2824FF4D9015D5DAEBD53E70 /* themes */ = {
+			isa = PBXGroup;
+			children = (
+				D891592E4A7CB485A153C13B /* mod.rs */,
+			);
+			path = themes;
+			sourceTree = "<group>";
+		};
 		2C6C6B7E2785CCDFB912516A = {
 			isa = PBXGroup;
 			children = (
@@ -76,6 +127,14 @@
 			);
 			sourceTree = "<group>";
 		};
+		2D0D0D0E01E7906D82A3A03D /* notes */ = {
+			isa = PBXGroup;
+			children = (
+				BA01290F40290992E3925C5A /* mod.rs */,
+			);
+			path = notes;
+			sourceTree = "<group>";
+		};
 		3684E12D3F3ACD6A7AA00A54 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -84,11 +143,46 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		389D01789715B00C926EF842 /* audio */ = {
+			isa = PBXGroup;
+			children = (
+				B2CE77B82A9F4C80CB84A66B /* mod.rs */,
+			);
+			path = audio;
+			sourceTree = "<group>";
+		};
+		600DC121C7EB2706ED8C587D /* database */ = {
+			isa = PBXGroup;
+			children = (
+				EB96D06FBA46D9AF0EF42973 /* mod.rs */,
+				F285E64D9D01394C5316F316 /* entities */,
+			);
+			path = database;
+			sourceTree = "<group>";
+		};
+		68D5135C8738D69BA6F55B84 /* explorer */ = {
+			isa = PBXGroup;
+			children = (
+				0B6BB1638341F3D44162499E /* mod.rs */,
+			);
+			path = explorer;
+			sourceTree = "<group>";
+		};
+		7DE65C632BCC5E4E044CD055 /* bindings */ = {
+			isa = PBXGroup;
+			children = (
+				7BFA8EFDB9FE0674F11139EE /* bindings.h */,
+			);
+			path = bindings;
+			sourceTree = "<group>";
+		};
 		A5D1062099ACF54453744647 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				C712C89401FC4D6BF39128DD /* commands.rs */,
 				5C1BCF1F1B8BC72FC86E310B /* lib.rs */,
 				D075D41B7C44D6DDF6F3AD50 /* main.rs */,
+				C6C2C40DF76E2CE7BC9457B4 /* commands */,
 			);
 			name = src;
 			path = ../../src;
@@ -98,8 +192,45 @@
 			isa = PBXGroup;
 			children = (
 				E65EE4C4F5685E748DB11D91 /* mindbreaker-desk */,
+				26D95800D7E8AD3995BD28A1 /* VOID */,
 			);
 			path = Sources;
+			sourceTree = "<group>";
+		};
+		A8EFD0C4489EA1FE02D31A9B /* video */ = {
+			isa = PBXGroup;
+			children = (
+				8D5020D4023A037F46BCFB2D /* mod.rs */,
+			);
+			path = video;
+			sourceTree = "<group>";
+		};
+		C5A9D8E918758D073A7A0CBD /* filesystem */ = {
+			isa = PBXGroup;
+			children = (
+				D537739F1A1FC20C3344E05E /* mod.rs */,
+			);
+			path = filesystem;
+			sourceTree = "<group>";
+		};
+		C6C2C40DF76E2CE7BC9457B4 /* commands */ = {
+			isa = PBXGroup;
+			children = (
+				389D01789715B00C926EF842 /* audio */,
+				E109439C4C2BC6066752BC60 /* canvas */,
+				600DC121C7EB2706ED8C587D /* database */,
+				DF74ED98C2AED1E75DB0BEA0 /* environment */,
+				68D5135C8738D69BA6F55B84 /* explorer */,
+				C5A9D8E918758D073A7A0CBD /* filesystem */,
+				2D0D0D0E01E7906D82A3A03D /* notes */,
+				E17F3F698A1F399141CE63C7 /* plugin_builder */,
+				E67BDBEDA2EF2AB1BEBE8E11 /* settings */,
+				1D782A32A6248598B88A9AB1 /* side_repos */,
+				D24CCF6846EEE47746BBD60D /* terminal */,
+				2824FF4D9015D5DAEBD53E70 /* themes */,
+				A8EFD0C4489EA1FE02D31A9B /* video */,
+			);
+			path = commands;
 			sourceTree = "<group>";
 		};
 		D1C4701A8153B5E178EC3F8E /* Externals */ = {
@@ -107,6 +238,14 @@
 			children = (
 			);
 			path = Externals;
+			sourceTree = "<group>";
+		};
+		D24CCF6846EEE47746BBD60D /* terminal */ = {
+			isa = PBXGroup;
+			children = (
+				014FED0E58B1580C825C936D /* mod.rs */,
+			);
+			path = terminal;
 			sourceTree = "<group>";
 		};
 		D558BDC078CF87DA7E9AC72C /* Frameworks */ = {
@@ -133,12 +272,36 @@
 			path = "mindbreaker-desk_iOS";
 			sourceTree = "<group>";
 		};
+		DF74ED98C2AED1E75DB0BEA0 /* environment */ = {
+			isa = PBXGroup;
+			children = (
+				FAB3592D546A9059BF96D554 /* mod.rs */,
+			);
+			path = environment;
+			sourceTree = "<group>";
+		};
 		DFBAF5FF0B226CEB30E44B52 /* bindings */ = {
 			isa = PBXGroup;
 			children = (
 				E2A439814DC1484E8AFF54F6 /* bindings.h */,
 			);
 			path = bindings;
+			sourceTree = "<group>";
+		};
+		E109439C4C2BC6066752BC60 /* canvas */ = {
+			isa = PBXGroup;
+			children = (
+				9316F17896CDA634B005A7B0 /* mod.rs */,
+			);
+			path = canvas;
+			sourceTree = "<group>";
+		};
+		E17F3F698A1F399141CE63C7 /* plugin_builder */ = {
+			isa = PBXGroup;
+			children = (
+				B7043A7DA6E7099F4E4BEFFC /* mod.rs */,
+			);
+			path = plugin_builder;
 			sourceTree = "<group>";
 		};
 		E65EE4C4F5685E748DB11D91 /* mindbreaker-desk */ = {
@@ -148,6 +311,30 @@
 				DFBAF5FF0B226CEB30E44B52 /* bindings */,
 			);
 			path = "mindbreaker-desk";
+			sourceTree = "<group>";
+		};
+		E67BDBEDA2EF2AB1BEBE8E11 /* settings */ = {
+			isa = PBXGroup;
+			children = (
+				C8EFD26B6256202332D591A9 /* mod.rs */,
+			);
+			path = settings;
+			sourceTree = "<group>";
+		};
+		F285E64D9D01394C5316F316 /* entities */ = {
+			isa = PBXGroup;
+			children = (
+				00ACDF258EE9CF6EBB71398F /* entity_errors.rs */,
+				0ED4AC8F2874E011B7B65F17 /* entity_interface.rs */,
+				4943464FBDB6EB68A64A2B62 /* entity_repositorty.rs */,
+				27F119095390FA9AE98BD54B /* main_config.rs */,
+				E0E80195D008889BB1D71F32 /* mod.rs */,
+				963EB0019FAD64618DC685C3 /* plugin_list.rs */,
+				8FFD7DB846EE88672D21B6FA /* plugin_settings.rs */,
+				F79460DC0DEF58C11B482528 /* side_repos.rs */,
+				15287127E4BAB47CB05CEF68 /* themes_list.rs */,
+			);
+			path = entities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -167,6 +354,8 @@
 			dependencies = (
 			);
 			name = "mindbreaker-desk_iOS";
+			packageProductDependencies = (
+			);
 			productName = "mindbreaker-desk_iOS";
 			productReference = E6A7F44CA35C16439407E71A /* mindbreaker-desk_iOS.app */;
 			productType = "com.apple.product-type.application";
@@ -191,6 +380,8 @@
 				en,
 			);
 			mainGroup = 2C6C6B7E2785CCDFB912516A;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 54;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -242,6 +433,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8D270B0D2112772E4896B16F /* main.mm in Sources */,
 				F793ECDFE406E7DFC6A9FE53 /* main.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
