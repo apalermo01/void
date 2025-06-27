@@ -15,7 +15,6 @@ let props = defineProps({
   url: String
 });
 let content = ref('');
-console.log('penis');
 const extensionFactory = new Function(`
 const { Node, mergeAttributes } = window.__tiptap_core;
 

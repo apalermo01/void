@@ -21,13 +21,13 @@
 - склонировать данный репозиторий
 
 ```
-git clone https://github.com/WTWB-none/mindbreaker.git
+git clone https://github.com/WTWB-none/void.git
 ```
 
 - установить зависимости
 
 ```
-cd mindbreaker && npm install
+cd void && npm install
 ```
 
 - запустить проект в dev режиме
