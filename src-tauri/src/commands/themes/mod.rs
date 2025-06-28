@@ -133,7 +133,7 @@ pub async fn clone_theme(key: String, app: tauri::AppHandle) -> Result<(), Strin
             .await
             .map_err(|e| e.to_string())?;
             let theme_css = theme_css.text().await.map_err(|e| e.to_string())?;
-            let theme_dir = format!("{}/.conf/themes/{}", workdir, key);
+            let theme_dir = format!("{}/.conf/themes/{}", workdir, key.clone());
             let theme_dir_path = std::path::Path::new(&theme_dir);
             let theme_file = format!("{}/theme.css", theme_dir);
             let theme_file_path = std::path::Path::new(&theme_file);
@@ -142,7 +142,7 @@ pub async fn clone_theme(key: String, app: tauri::AppHandle) -> Result<(), Strin
         }
         None => return Err(EntityError::NotFound.to_string()),
     }
-    app.emit("theme_changed", "").unwrap();
+    app.emit("theme_downloaded", key).unwrap();
     Ok(())
 }
 

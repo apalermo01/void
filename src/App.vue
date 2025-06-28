@@ -23,8 +23,11 @@ listen('error', (event) => {
 
 listen('notify', (event) => {
   notification.value = event.payload;
-})
+});
 
+listen('themes_downloaded', (event) => {
+  notification.value = 'Тема ' + event.payload + ' успешно установлена';
+});
 
 onMounted(async () => {
   let firstrun = await invoke('get_env', { ename: 'first_run' });

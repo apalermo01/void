@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { applyReactInVue } from 'veaury';
-import { writeTextFile, readTextFile, exists } from '@tauri-apps/plugin-fs';
 import { appDataDir, join } from '@tauri-apps/api/path';
 import { restore, serializeAsJSON } from '@excalidraw/excalidraw';
 import { BinaryFiles } from '@excalidraw/excalidraw/types';
-import { ClearCanvas } from '@excalidraw/excalidraw/components/main-menu/DefaultItems';
 import { read_canvas, write_canvas } from '@/lib/logic/utils';
 import { useExplorerStore } from '@/lib/logic/explorerstore';
 

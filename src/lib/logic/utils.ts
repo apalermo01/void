@@ -112,8 +112,7 @@ export async function decide_file_ext(name: string, router: Router) {
 export const SettingsRegistry = ['Global', 'Plugins', 'SideRepos'];
 
 export async function write_canvas(data: string, path?: string): Promise<string> {
-  let explorer_store = useExplorerStore();
-  let npath = path == undefined ? '' : explorer_store.current + '/' + path;
+  let npath = path == undefined ? '' : path;
   return await invoke("write_canvas_data", { path: npath, data: data });
 }
 
