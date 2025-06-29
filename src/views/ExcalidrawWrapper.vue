@@ -3,35 +3,31 @@ import { ref, onMounted } from 'vue';
 import { applyReactInVue } from 'veaury';
 import { appDataDir, join } from '@tauri-apps/api/path';
 import { restore, serializeAsJSON } from '@excalidraw/excalidraw';
-import { BinaryFiles } from '@excalidraw/excalidraw/types';
+import { AppState, BinaryFiles } from '@excalidraw/excalidraw/types';
 import { read_canvas, write_canvas } from '@/lib/logic/utils';
 import { useExplorerStore } from '@/lib/logic/explorerstore';
+import { ExcalidrawElement } from '@excalidraw/excalidraw/element/types';
+
 
 let props = defineProps({
   url: String
 });
-
-interface ExcalidrawElement {
-  id: string;
-  type: string;
-  [key: string]: any;
-}
-
-interface AppState {
-  viewBackgroundColor: string;
-  [key: string]: any;
-}
-
 interface ExcalidrawData {
   elements: ExcalidrawElement[];
-  appState: AppState;
+  appState: Partial<AppState>;
   files?: BinaryFiles;
 }
 
 const ExcalidrawReact = ref<any>(null);
 const drawingData = ref<ExcalidrawData>({
   elements: [],
-  appState: { viewBackgroundColor: 'transparent' }
+  appState: {
+    viewBackgroundColor: 'transparent',
+    width: 0,
+    height: 0,
+    offsetTop: 0,
+    offsetLeft: 0,
+  }
 });
 const initializationError = ref<string | null>(null);
 const filePath = ref<string>('');
@@ -61,7 +57,13 @@ onMounted(async () => {
     let restored = restore(obj, null, null);
     drawingData.value = {
       elements: restored.elements,
-      appState: restored.appState,
+      appState: {
+        ...structuredClone(restored.appState),
+        width: 0,
+        height: 0,
+        offsetTop: 0,
+        offsetLeft: 0,
+      },
       files: restored.files
     };
     file_path.value = useExplorerStore().current + '/' + path.split('/')[path.split('/').length - 1];
@@ -77,7 +79,7 @@ const handleChange = (elements: ExcalidrawElement[], appState: AppState, files?:
 
 const saveDrawing = async () => {
   if (!filePath.value) return;
-  let data = serializeAsJSON(drawingData.value.elements, drawingData.value.appState, drawingData.value.files, "local");
+  let data = serializeAsJSON(drawingData.value.elements, drawingData.value.appState, drawingData.value.files ?? {}, "local");
   if (file_path.value == '' && !waiting.value) {
     waiting.value = true;
     file_path.value = await write_canvas(data);
