@@ -25,7 +25,7 @@ listen('notify', (event) => {
   notification.value = event.payload;
 });
 
-listen('themes_downloaded', (event) => {
+listen('theme_downloaded', (event) => {
   notification.value = 'Тема ' + event.payload + ' успешно установлена';
 });
 

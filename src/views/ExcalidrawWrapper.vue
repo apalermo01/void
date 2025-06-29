@@ -52,6 +52,11 @@ onMounted(async () => {
   if (props.url != undefined) {
     let path = decodeURIComponent(atob(props.url));
     let content = await read_canvas(decodeURIComponent(atob(props.url)));
+    if (content == '') {
+      await initializeApp();
+      file_path.value = useExplorerStore().current + '/' + path.split('/')[path.split('/').length - 1];
+      return;
+    }
     let obj = JSON.parse(content);
     let restored = restore(obj, null, null);
     drawingData.value = {

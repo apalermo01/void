@@ -3,25 +3,20 @@ import SidePanel from "@/components/ui/side-panel/SidePanel.vue";
 import SidebarProvider from "@/components/ui/sidebar/SidebarProvider.vue";
 import SidebarTrigger from "@/components/ui/sidebar/SidebarTrigger.vue";
 import {
-  ArrowLeft,
   ChevronLeft,
   ChevronRight,
-  ChevronsLeft,
 } from "lucide-vue-next";
-import { useCookies } from "@vueuse/integrations/useCookies";
 import { onMounted, ref, watch } from "vue";
 import { checkShowable } from "@/lib/logic/utils";
 import { useSidebarStore } from "@/lib/logic/sidebarstore";
 const sidebar_store = useSidebarStore();
 let showTrigger = ref(false);
-let showPanel = ref('');
+let showPanel = ref(sidebar_store.current);
 watch(() => sidebar_store.current, () => {
-  console.log('piska');
   showPanel.value = sidebar_store.current;
 })
 onMounted(() => {
   showTrigger.value = checkShowable();
-  showPanel.value = sidebar_store.current;
   window.addEventListener("resize", () => {
     showTrigger.value = checkShowable();
   });
@@ -29,7 +24,7 @@ onMounted(() => {
 </script>
 <template>
   <div class="app-container">
-    <SidebarProvider :defaultOpen="showPanel" :class="showTrigger ? 'max-w-[3em]' : 'max-w-[0px]'">
+    <SidebarProvider :defaultOpen="showPanel != 'collapsed'" :class="showTrigger ? 'max-w-[3em]' : 'max-w-[0px]'">
       <SidePanel />
       <SidebarTrigger class="sidepanel-trigger top-1" v-if="showTrigger"
         @click="() => { sidebar_store.toggle(); showPanel = sidebar_store.current; }" />

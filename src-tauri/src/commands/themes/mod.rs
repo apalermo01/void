@@ -1,6 +1,5 @@
 use super::{
-    DB, EntityControl, EntityError, MainConfig, SideRepo, SideRepoField, ThemeRepo, ThemeRepoField,
-    add_repo, get_env,
+    DB, EntityControl, EntityError, MainConfig, ThemeRepo, ThemeRepoField, add_repo, get_env,
 };
 use rust_fetch::reqwest;
 use serde::Deserialize;
@@ -43,15 +42,23 @@ pub async fn get_list_of_themes(
     let fentities = match key.as_str() {
         "installed" => entities
             .iter()
-            .filter(|t| *t.get_value_by_key("installed".to_string()).unwrap() == "true".to_string())
-            .map(|x| x.clone())
+            .filter(|t| {
+                t.get_value_by_key("installed".to_string())
+                    .unwrap()
+                    .as_str()
+                    == "true"
+            })
+            .cloned()
             .collect::<Vec<ThemeRepo>>(),
         "not_installed" => entities
             .iter()
             .filter(|t| {
-                *t.get_value_by_key("installed".to_string()).unwrap() == "false".to_string()
+                t.get_value_by_key("installed".to_string())
+                    .unwrap()
+                    .as_str()
+                    == "false"
             })
-            .map(|x| x.clone())
+            .cloned()
             .collect::<Vec<ThemeRepo>>(),
         _ => Vec::<ThemeRepo>::new(),
     };
