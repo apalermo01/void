@@ -7,6 +7,12 @@ use std::{collections::HashMap, fs, vec};
 use tauri::Emitter;
 
 #[derive(Deserialize, Debug)]
+struct ThemeManifest {
+    repo_type: String,
+    members: Vec<ThemeManifestMember>,
+}
+
+#[derive(Deserialize, Debug)]
 struct ThemeManifestMember {
     name: String,
     author: String,
@@ -83,13 +89,13 @@ pub async fn create_themes_table(link: String, app: tauri::AppHandle) {
         Ok(r) => r.text().await.unwrap(),
         _ => "none".to_string(),
     };
-    let themes = serde_json::from_str::<HashMap<String, ThemeManifestMember>>(&manifest).unwrap();
-    for (key, theme) in themes.into_iter() {
+    let themes = serde_json::from_str::<ThemeManifest>(&manifest).unwrap();
+    for theme in themes.members.into_iter() {
         let link = format!(
             "https://raw.githubusercontent.com/{}/{}/main/{}/theme.css",
             linkparts.get(1).unwrap(),
             linkparts.get(2).unwrap(),
-            key
+            theme.name
         );
         println!("{}", link);
         let input: Vec<ThemeRepoField> = vec![
@@ -99,7 +105,7 @@ pub async fn create_themes_table(link: String, app: tauri::AppHandle) {
             ThemeRepoField::Link(link),
             ThemeRepoField::Installed("false".to_string()),
         ];
-        db.create::<ThemeRepoField, ThemeRepo>(input, app.clone(), "themes_repo", &key)
+        db.create::<ThemeRepoField, ThemeRepo>(input, app.clone(), "themes_repo", &theme.name)
             .await
             .unwrap();
     }
