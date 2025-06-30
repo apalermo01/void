@@ -3,11 +3,12 @@ use super::{
 };
 use rust_fetch::reqwest;
 use serde::Deserialize;
-use std::{collections::HashMap, fs, vec};
+use std::{fs, vec};
 use tauri::Emitter;
 
 #[derive(Deserialize, Debug)]
 struct ThemeManifest {
+    #[allow(dead_code)]
     repo_type: String,
     members: Vec<ThemeManifestMember>,
 }
@@ -97,7 +98,6 @@ pub async fn create_themes_table(link: String, app: tauri::AppHandle) {
             linkparts.get(2).unwrap(),
             theme.name
         );
-        println!("{}", link);
         let input: Vec<ThemeRepoField> = vec![
             ThemeRepoField::Name(theme.name.clone()),
             ThemeRepoField::Author(theme.author.clone()),

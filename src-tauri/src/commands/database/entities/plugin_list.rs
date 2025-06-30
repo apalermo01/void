@@ -1,49 +1,80 @@
 use serde::{Deserialize, Serialize};
-use tauri::Emitter;
 
 use super::{EntityControl, EntityError};
 
 pub enum PluginListFields {
     Name(String),
-    Enabled(bool),
+    Author(String),
+    Version(String),
+    PluginType(String),
+    Installed(String),
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct PluginList {
-    name: String,
-    enabled: bool,
+    plugin_name: String,
+    plugin_author: String,
+    plugin_version: String,
+    plugin_type: String,
+    is_installed: String,
 }
 
 impl EntityControl<PluginListFields, PluginList> for PluginList {
     fn new(input: Vec<PluginListFields>, app: tauri::AppHandle) -> Result<PluginList, EntityError> {
-        if input.len() != 2 {
+        if input.len() < 5 {
             return Err(EntityError::WrongInputLength);
         }
-        let name = match input.get(0) {
+        let plugin_name = match input.first() {
             Some(PluginListFields::Name(s)) => s.clone(),
             _ => {
-                return Err(PluginList::throw_error(
-                    app.clone(),
-                    "Ошибка при инициализации поля Name",
-                ));
+                PluginList::throw_error(app.clone(), "Name");
+                "?".to_string()
             }
         };
-        let enabled = match input.get(1) {
-            Some(PluginListFields::Enabled(enabled)) => enabled.clone(),
+        let plugin_author = match input.get(1) {
+            Some(PluginListFields::Author(s)) => s.clone(),
             _ => {
-                return Err(PluginList::throw_error(
-                    app.clone(),
-                    "Ошибка при инициализации поля Enabled",
-                ));
+                PluginList::throw_error(app.clone(), "Author");
+                "?".to_string()
             }
         };
-        Ok(PluginList { name, enabled })
+        let plugin_version = match input.get(2) {
+            Some(PluginListFields::Version(s)) => s.clone(),
+            _ => {
+                PluginList::throw_error(app.clone(), "Version");
+                "?".to_string()
+            }
+        };
+        let plugin_type = match input.get(3) {
+            Some(PluginListFields::PluginType(s)) => s.clone(),
+            _ => {
+                PluginList::throw_error(app.clone(), "Type");
+                "?".to_string()
+            }
+        };
+        let is_installed = match input.last() {
+            Some(PluginListFields::Installed(s)) => s.clone(),
+            _ => {
+                PluginList::throw_error(app.clone(), "Installed");
+                "?".to_string()
+            }
+        };
+        Ok(PluginList {
+            plugin_name,
+            plugin_author,
+            plugin_version,
+            plugin_type,
+            is_installed,
+        })
     }
 
     fn get_value_by_key(&self, key: String) -> Result<String, EntityError> {
         match key.as_str() {
-            "name" => Ok(self.name.clone()),
-            "enabled" => Ok(self.enabled.clone().to_string()),
+            "name" => Ok(self.plugin_name.clone()),
+            "author" => Ok(self.plugin_author.clone()),
+            "version" => Ok(self.plugin_version.clone()),
+            "type" => Ok(self.plugin_type.clone()),
+            "installed" => Ok(self.is_installed.clone()),
             _ => Err(EntityError::NotFound),
         }
     }

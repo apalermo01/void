@@ -71,7 +71,9 @@ pub fn run() {
             get_note_content,
             rename,
             write_canvas_data,
-            modify_entry
+            modify_entry,
+            create_plugins_table,
+            get_list_of_plugins
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
