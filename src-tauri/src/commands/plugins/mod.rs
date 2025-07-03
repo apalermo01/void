@@ -46,6 +46,7 @@ pub async fn create_plugins_table(url: String, app: tauri::AppHandle) -> Result<
             PluginListFields::Author(plugin.author),
             PluginListFields::Version(plugin.version),
             PluginListFields::PluginType(plugin.plugin_type),
+            PluginListFields::PluginLink(url.clone()),
             PluginListFields::Installed("false".to_string()),
         ];
         db.create::<PluginListFields, PluginList>(
@@ -69,21 +70,16 @@ pub async fn get_list_of_plugins(key: String) -> Result<Vec<PluginList>, String>
             .await
             .map_err(|e| e.to_string())?
             .iter()
-            .filter(|e| {
-                e.get_value_by_key("is_intalled".to_string())
-                    .unwrap()
-                    .as_str()
-                    != "false"
-            })
+            .filter(|e| e.get_value_by_key("intalled".to_string()).unwrap().as_str() != "false")
             .cloned()
             .collect::<Vec<_>>(),
         "not_installed" => db
-            .get_all_members::<PluginList>("plugins_table")
+            .get_all_members::<PluginList>("plugins_repo")
             .await
             .map_err(|e| e.to_string())?
             .iter()
             .filter(|p| {
-                p.get_value_by_key("is_installed".to_string())
+                p.get_value_by_key("installed".to_string())
                     .unwrap()
                     .as_str()
                     == "false"
@@ -92,5 +88,46 @@ pub async fn get_list_of_plugins(key: String) -> Result<Vec<PluginList>, String>
             .collect::<Vec<_>>(),
         _ => Vec::<PluginList>::new(),
     };
+    println!("{:#?}", result);
     Ok(result)
+}
+#[tauri::command]
+pub async fn clone_plugin(key: String, app: tauri::AppHandle) -> Result<(), String> {
+    let db = DB.get().unwrap();
+    let workdir = super::get_env("workdir".to_string(), app.clone())
+        .await
+        .map_err(|e| e.to_string())?;
+    let plugin = db
+        .get::<PluginList>(key.as_str(), "plugins_repo")
+        .await
+        .unwrap();
+
+    let _ = git2::Repository::clone(
+        format!(
+            "https://{}.git",
+            plugin.get_value_by_key("link".to_string()).unwrap()
+        )
+        .as_str(),
+        format!("{}/.conf/plugins/", workdir).as_str(),
+    )
+    .map_err(|e| e.to_string())?;
+    let extensions = db
+        .get_all_members::<PluginList>("plugins_repo")
+        .await
+        .map_err(|e| e.to_string())?;
+    for ext in extensions {
+        if ext.get_value_by_key("link".to_string()).unwrap()
+            == plugin.get_value_by_key("link".to_string()).unwrap()
+        {
+            db.update(
+                ext.get_value_by_key("plugin_name".to_string()).unwrap(),
+                "plugins_repo",
+                "is_installed".to_string(),
+                "true".to_string(),
+            )
+            .await
+            .map_err(|e| e.to_string())?;
+        }
+    }
+    Ok(())
 }

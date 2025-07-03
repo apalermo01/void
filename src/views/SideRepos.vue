@@ -22,7 +22,7 @@ let link = ref('');
 let repos = ref<SideRepo[]>([]);
 
 async function import_repo(link: string) {
-  await add_extension_tables('Themes', link);
+  await add_extension_tables(link);
   repos.value = await get_repos();
 }
 

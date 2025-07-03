@@ -5,6 +5,9 @@ use tauri_plugin_fs::FsExt;
 #[cfg(target_os = "macos")]
 const MAIN_FOLDER_PREFIX: &str = "../../";
 
+#[cfg(target_os = "linux")]
+const MAIN_FOLDER_PREFIX: &str = "../../";
+
 #[cfg(target_os = "windows")]
 const MAIN_FOLDER_PREFIX: &str = "../../";
 
@@ -73,7 +76,8 @@ pub fn run() {
             write_canvas_data,
             modify_entry,
             create_plugins_table,
-            get_list_of_plugins
+            get_list_of_plugins,
+            clone_plugin
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

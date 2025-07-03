@@ -7,6 +7,7 @@ pub enum PluginListFields {
     Author(String),
     Version(String),
     PluginType(String),
+    PluginLink(String),
     Installed(String),
 }
 
@@ -16,12 +17,13 @@ pub struct PluginList {
     plugin_author: String,
     plugin_version: String,
     plugin_type: String,
+    plugin_link: String,
     is_installed: String,
 }
 
 impl EntityControl<PluginListFields, PluginList> for PluginList {
     fn new(input: Vec<PluginListFields>, app: tauri::AppHandle) -> Result<PluginList, EntityError> {
-        if input.len() < 5 {
+        if input.len() < 6 {
             return Err(EntityError::WrongInputLength);
         }
         let plugin_name = match input.first() {
@@ -52,6 +54,13 @@ impl EntityControl<PluginListFields, PluginList> for PluginList {
                 "?".to_string()
             }
         };
+        let plugin_link = match input.get(4) {
+            Some(PluginListFields::PluginLink(s)) => s.clone(),
+            _ => {
+                PluginList::throw_error(app.clone(), "Link");
+                "?".to_string()
+            }
+        };
         let is_installed = match input.last() {
             Some(PluginListFields::Installed(s)) => s.clone(),
             _ => {
@@ -64,6 +73,7 @@ impl EntityControl<PluginListFields, PluginList> for PluginList {
             plugin_author,
             plugin_version,
             plugin_type,
+            plugin_link,
             is_installed,
         })
     }
@@ -74,6 +84,7 @@ impl EntityControl<PluginListFields, PluginList> for PluginList {
             "author" => Ok(self.plugin_author.clone()),
             "version" => Ok(self.plugin_version.clone()),
             "type" => Ok(self.plugin_type.clone()),
+            "link" => Ok(self.plugin_link.clone()),
             "installed" => Ok(self.is_installed.clone()),
             _ => Err(EntityError::NotFound),
         }
