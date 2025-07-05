@@ -1,5 +1,7 @@
 <template>
-  <div ref="terminalContainer" class="w-full h-full rounded-2xl ml-2 mt-0.5"></div>
+  <div class="w-full h-full rounded-2xl overflow-hidden ">
+    <div ref="terminalContainer" class="w-full h-full rounded-2xl ml-2 mt-0.5"></div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -20,7 +22,7 @@ const term = new Terminal({
   allowProposedApi: true,
   allowTransparency: true,
   theme: {
-    background: 'rgba(0,0,0,0)'
+    background: 'var(--destructive)'
   }
 });
 

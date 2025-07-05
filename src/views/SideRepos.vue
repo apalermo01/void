@@ -1,5 +1,5 @@
 <template>
-  <h1 class="text-4xl text-center text-accent mt-2">Внешний вид</h1>
+  <h1 class="text-4xl text-center text-accent mt-2">Кастомные репозитории</h1>
   <div class="flex gap-[1em] ml-[2em] mt-[2em]">
     <Input class="placeholder:text-[var(--card-nested-foreground)] bg-[var(--card-nested)] w-[50%]" type="text"
       v-model="link" />

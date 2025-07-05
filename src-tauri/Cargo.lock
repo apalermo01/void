@@ -19,7 +19,7 @@ dependencies = [
  "base64 0.22.1",
  "futures",
  "git2",
- "hyper 0.14.32",
+ "hyper 1.6.0",
  "jwalk",
  "lazy_static",
  "libc",

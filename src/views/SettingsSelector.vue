@@ -8,23 +8,23 @@ import SelectTrigger from '@/components/ui/select/SelectTrigger.vue';
 import SelectValue from '@/components/ui/select/SelectValue.vue';
 </script>
 <template>
-    <Select>
-        <SelectTrigger>
-            <SelectValue placeholder="Настройки" />
-        </SelectTrigger>
-        <SelectContent>
-            <SelectGroup>
-                <SelectLabel>Настройки</SelectLabel>
-                <SelectItem value="Global">
-                    Общие
-                </SelectItem>
-                <SelectItem value="Plugins">
-                    Плагины
-                </SelectItem>
-                <SelectItem value="SideRepos">
-                    Кастомные репозитории
-                </SelectItem>
-            </SelectGroup>
-        </SelectContent>
-    </Select>
+  <Select>
+    <SelectTrigger>
+      <SelectValue placeholder="Настройки" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectGroup>
+        <SelectLabel>Настройки</SelectLabel>
+        <SelectItem value="Global">
+          Общие
+        </SelectItem>
+        <SelectItem value="Plugins">
+          Расширения и кастомизация
+        </SelectItem>
+        <SelectItem value="SideRepos">
+          Кастомные репозитории
+        </SelectItem>
+      </SelectGroup>
+    </SelectContent>
+  </Select>
 </template>

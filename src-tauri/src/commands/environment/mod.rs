@@ -1,5 +1,3 @@
-use tauri::Emitter;
-
 use crate::commands::database::{DB, EntityError, MainConfig};
 
 use super::EntityControl;
@@ -13,11 +11,11 @@ pub async fn get_env(ename: String, _app: tauri::AppHandle) -> Result<String, St
         .await
     {
         Ok(Some(data)) => match data.get_value_by_key(ename) {
-            Ok(str) => return Ok(str),
-            Err(e) => return Err(e.to_string()),
+            Ok(str) => Ok(str),
+            Err(e) => Err(e.to_string()),
         },
-        Ok(None) => return Err(EntityError::NotFound.to_string()),
-        Err(e) => return Err(e.to_string()),
+        Ok(None) => Err(EntityError::NotFound.to_string()),
+        Err(e) => Err(e.to_string()),
     }
 }
 

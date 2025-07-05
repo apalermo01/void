@@ -8,7 +8,7 @@ use super::{DB, EntityControl, PluginList, PluginListFields, add_repo};
 struct PluginManifest {
     #[allow(dead_code)]
     repo_type: String,
-    members: Vec<PluginManifestMember>,
+    member: PluginManifestMember,
 }
 #[derive(Deserialize)]
 struct PluginManifestMember {
@@ -40,24 +40,22 @@ pub async fn create_plugins_table(url: String, app: tauri::AppHandle) -> Result<
         }
     };
     let object = serde_json::from_str::<PluginManifest>(&manifest).unwrap();
-    for plugin in object.members.into_iter() {
-        let item = vec![
-            PluginListFields::Name(plugin.name.clone()),
-            PluginListFields::Author(plugin.author),
-            PluginListFields::Version(plugin.version),
-            PluginListFields::PluginType(plugin.plugin_type),
-            PluginListFields::PluginLink(url.clone()),
-            PluginListFields::Installed("false".to_string()),
-        ];
-        db.create::<PluginListFields, PluginList>(
-            item,
-            app.clone(),
-            "plugins_repo",
-            plugin.name.as_str(),
-        )
-        .await
-        .map_err(|e| e.to_string())?;
-    }
+    let item = vec![
+        PluginListFields::Name(object.member.name.clone()),
+        PluginListFields::Author(object.member.author),
+        PluginListFields::Version(object.member.version),
+        PluginListFields::PluginType(object.member.plugin_type),
+        PluginListFields::PluginLink(url.clone()),
+        PluginListFields::Installed("false".to_string()),
+    ];
+    db.create::<PluginListFields, PluginList>(
+        item,
+        app.clone(),
+        "plugins_repo",
+        object.member.name.as_str(),
+    )
+    .await
+    .map_err(|e| e.to_string())?;
     Ok(())
 }
 
@@ -88,7 +86,6 @@ pub async fn get_list_of_plugins(key: String) -> Result<Vec<PluginList>, String>
             .collect::<Vec<_>>(),
         _ => Vec::<PluginList>::new(),
     };
-    println!("{:#?}", result);
     Ok(result)
 }
 #[tauri::command]
