@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { get_plugins_list } from '@/lib/logic/extensions';
-import { Theme, update, get_installed_themes_list, get_themes_to_download, delete_theme } from "@/lib/logic/settings";
+import { update, get_installed_themes_list, delete_theme } from "@/lib/logic/settings";
 import SettingsSelector from "../components/ui/settings/SettingsSelector.vue";
 import SettingsHeader from '@/components/ui/settings/SettingsHeader.vue';
 import SettingsButton from '@/components/ui/settings/SettingsButton.vue';
@@ -11,16 +10,12 @@ import SettingsPopup from "@/components/ui/settings/SettingsPopup.vue";
 import { listen } from '@tauri-apps/api/event';
 import { useThemeStore } from '@/lib/logic/themestore';
 import SettingsSeparator from '@/components/ui/settings/SettingsSeparator.vue';
-let installed = ref<any[]>([]);
 let showPopup = ref(false);
-let objects = ref<Theme[]>([]);
 let listOfThemes = ref();
 let theme = ref("");
-let notInstalled = ref<any[]>([]);
 
 function getThemesMarketplace() {
   showPopup.value = !showPopup.value;
-  get_themes_to_download().then((res: Theme[]) => { objects.value = res; console.log(res); }, () => { console.warn("faild to fetch themes") });
 };
 
 listen("theme_downloaded", async () => {
@@ -39,8 +34,6 @@ async function updateThemesList() {
 }
 
 onMounted(async () => {
-  installed.value = await get_plugins_list('not_installed');
-  console.log(installed.value);
   let themeStore = useThemeStore();
   theme.value = themeStore.current;
   if (theme.value === '' && theme.value != null) {
@@ -76,7 +69,7 @@ onMounted(async () => {
     </SettingsComposition>
   </div>
   <SettingsSeparator />
-  <SettingsPopup v-if="showPopup" :object_list="objects" v-model="showPopup" />
+  <SettingsPopup v-if="showPopup" v-model="showPopup" />
 </template>
 <style scoped>
 .installed-themes-table {

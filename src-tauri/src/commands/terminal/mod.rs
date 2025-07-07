@@ -35,8 +35,9 @@ impl PtyController {
                 })
                 .unwrap();
 
-            let mut command = CommandBuilder::new("nvim");
-            command.env("TERM", "xterm-256colour");
+            let mut command = CommandBuilder::new("zsh");
+            command.arg("-i");
+            command.env("TERM", "xterm-256color");
 
             let mut child = pair.slave.spawn_command(command).unwrap();
             let mut reader = pair.master.try_clone_reader().unwrap();
@@ -45,13 +46,40 @@ impl PtyController {
             let app_clone = app.clone();
             thread::spawn(move || {
                 let mut buffer = [0u8; 1024];
+                let mut utf8_accumulator = Vec::new();
 
-                while let Ok(n) = reader.read(&mut buffer) {
-                    if n == 0 {
-                        break;
+                loop {
+                    let read_len = match reader.read(&mut buffer) {
+                        Ok(0) => break,
+                        Ok(n) => n,
+                        Err(_) => break,
+                    };
+
+                    utf8_accumulator.extend_from_slice(&buffer[..read_len]);
+
+                    // пробуем декодировать как UTF-8
+                    let valid_up_to = match std::str::from_utf8(&utf8_accumulator) {
+                        Ok(valid_str) => {
+                            // вся строка валидна
+                            let encoded = general_purpose::STANDARD.encode(valid_str);
+                            let _ = app_clone.emit("nvim-data", encoded);
+                            utf8_accumulator.clear();
+                            continue;
+                        }
+                        Err(e) => e.valid_up_to(),
+                    };
+
+                    if valid_up_to > 0 {
+                        // часть строки валидна — отправляем её
+                        let (valid, rest) = utf8_accumulator.split_at(valid_up_to);
+                        let encoded = general_purpose::STANDARD.encode(valid);
+                        let _ = app_clone.emit("nvim-data", encoded);
+
+                        // остаток оставляем в буфере
+                        utf8_accumulator = rest.to_vec();
                     }
-                    let encoded = general_purpose::STANDARD.encode(&buffer[..n]);
-                    let _ = app_clone.emit("nvim-data", encoded);
+
+                    // если valid_up_to == 0 — символ обрезан, ждём следующего чанка
                 }
             });
 
