@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { install_plugin, get_plugins_list } from '@/lib/logic/extensions';
-import { Theme, update, get_installed_themes_list, get_themes_to_download, delete_theme, get_themes_marketplace } from "@/lib/logic/settings";
+import { get_plugins_list } from '@/lib/logic/extensions';
+import { Theme, update, get_installed_themes_list, get_themes_to_download, delete_theme } from "@/lib/logic/settings";
 import SettingsSelector from "../components/ui/settings/SettingsSelector.vue";
 import SettingsHeader from '@/components/ui/settings/SettingsHeader.vue';
 import SettingsButton from '@/components/ui/settings/SettingsButton.vue';

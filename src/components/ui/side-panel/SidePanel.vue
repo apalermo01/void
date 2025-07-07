@@ -189,7 +189,8 @@ function initiate_copy(name) {
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <ExplorerMenu :copied="copied != ''"
-                @epaste="async () => { await copy_entry(copied, explorer_store.current, paste_flag); copied = ''; paste_flag = ''; }">
+                @epaste="async () => { await copy_entry(copied, explorer_store.current, paste_flag); copied = ''; paste_flag = ''; }"
+                @create-file="performCreation('file')" @create-folder="performCreation('folder')">
                 <CollapsibleContent v-if="expanded"
                   class="mr-5 data-[state=open]:min-h-[15rem] max-h-[15rem] overflow-y-scroll">
                   <SidebarMenuSub v-if="fcreate || dcreate">
