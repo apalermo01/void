@@ -32,10 +32,8 @@ let animationTimeout: NodeJS.Timeout | null = null;
 let realtimeRafId: number | null = null;
 
 listen<string>('nvim-data', (event) => {
-  const cleanedPayload = decode(event.payload);
-  //const bytes = new Uint8Array(cleanedPayload.split('').map(c => c.charCodeAt(0)));
-  //const text = new TextDecoder('utf-8').decode(bytes);
-  const text = new TextDecoder("utf-8").decode(cleanedPayload);
+  const data = new Uint8Array(decode(event.payload));
+  const text = new TextDecoder('utf-8').decode(data);
   term.write(text);
 });
 
