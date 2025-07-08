@@ -28,11 +28,12 @@ git clone https://github.com/WTWB-none/void.git
   для всех систем обязательно нужен Rust
   
   -  windows
-    - Microsoft C++ Build Tools
-    - WebView2
-    - node
+      Microsoft C++ Build Tools
+      WebView2
+      node
   - linux
-    ``` debian
+    
+    ``` 
     sudo apt update
     sudo apt install libwebkit2gtk-4.1-dev \
       build-essential \
