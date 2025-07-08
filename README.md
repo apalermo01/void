@@ -47,7 +47,7 @@ git clone https://github.com/WTWB-none/void.git
       librsvg2-dev
     ```
   - arch
-    ``` arch
+    ``` 
     sudo pacman -Syu
     sudo pacman -S --needed \
       webkit2gtk-4.1 \
@@ -61,7 +61,8 @@ git clone https://github.com/WTWB-none/void.git
       librsvg \
       xdotool
     ```
-    ``` fedora
+  - fedora
+    ```
     sudo dnf check-update
     sudo dnf install webkit2gtk4.1-devel \
       openssl-devel \
@@ -73,7 +74,8 @@ git clone https://github.com/WTWB-none/void.git
       libxdo-devel
     sudo dnf group install "c-development"
     ```
-    ``` gentoo
+  - gentoo
+    ```
     sudo emerge --ask \
       net-libs/webkit-gtk:4.1 \
       dev-libs/libappindicator \
@@ -81,7 +83,8 @@ git clone https://github.com/WTWB-none/void.git
       net-misc/wget \
       sys-apps/file
     ```
-    ``` openSUSE
+  - openSUSE
+    ```
     sudo zypper up
     sudo zypper in webkit2gtk3-devel \
       libopenssl-devel \
@@ -92,7 +95,8 @@ git clone https://github.com/WTWB-none/void.git
       librsvg-devel
     sudo zypper in -t pattern devel_basis
     ```
-    ``` Alpine
+  - alpine
+    ``` 
     sudo apk add \
       build-base \
       webkit2gtk \
@@ -103,7 +107,8 @@ git clone https://github.com/WTWB-none/void.git
       libayatana-appindicator-dev \
       librsvg
     ```
-    ``` NixOS
+  - nixOS
+    ``` 
     let
       pkgs = import <nixpkgs> { };
     in
@@ -133,7 +138,9 @@ git clone https://github.com/WTWB-none/void.git
     }
     ```
   - mac os
-    - xcode
+    ```
+     xcode
+    ```
 ```
 cd void && npm install
 ```
