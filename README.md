@@ -28,11 +28,12 @@ git clone https://github.com/WTWB-none/void.git
   для всех систем обязательно нужен Rust
   
   -  windows
-      Microsoft C++ Build Tools
-      WebView2
-      node
-  - linux
-    
+    ```
+    Microsoft C++ Build Tools
+    WebView2
+    node
+    ```
+  - debian
     ``` 
     sudo apt update
     sudo apt install libwebkit2gtk-4.1-dev \
@@ -45,6 +46,7 @@ git clone https://github.com/WTWB-none/void.git
       libayatana-appindicator3-dev \
       librsvg2-dev
     ```
+  - arch
     ``` arch
     sudo pacman -Syu
     sudo pacman -S --needed \
