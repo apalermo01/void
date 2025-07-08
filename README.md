@@ -25,7 +25,7 @@ git clone https://github.com/WTWB-none/void.git
 ```
 
 - установить зависимости
-  для всех систем обязательно нужен Rust
+- для всех систем обязательно нужен Rust
   
   -  windows
     ```
