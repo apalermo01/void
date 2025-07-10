@@ -1,20 +1,12 @@
 <template>
-  <div
-    ref="containerRef"
-    :class="cn('w-full h-full', props.class)"
-  >
-    <canvas
-      ref="canvasRef"
-      class="pointer-events-none"
-      :width="canvasSize.width"
-      :height="canvasSize.height"
-    />
+  <div ref="containerRef" :class="cn('w-full h-full', props.class)">
+    <canvas ref="canvasRef" class="pointer-events-none" :width="canvasSize.width" :height="canvasSize.height" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { cn } from '@/lib/utils';
-import { ref, onMounted, onBeforeUnmount, toRefs, computed } from 'vue';
+import { cn } from "@/lib/utils";
+import { ref, onMounted, onBeforeUnmount, toRefs, computed } from "vue";
 
 interface FlickeringGridProps {
   squareSize?: number;
@@ -31,7 +23,7 @@ const props = withDefaults(defineProps<FlickeringGridProps>(), {
   squareSize: 4,
   gridGap: 6,
   flickerChance: 0.3,
-  color: 'rgb(0, 0, 0)',
+  color: "rgb(0, 0, 0)",
   maxOpacity: 0.3,
 });
 
@@ -45,9 +37,9 @@ const isInView = ref(false);
 const canvasSize = ref({ width: 0, height: 0 });
 
 const computedColor = computed(() => {
-  if (!context.value) return 'rgba(255, 0, 0,';
+  if (!context.value) return "rgba(255, 0, 0,";
 
-  const hex = color.value.replace(/^#/, '');
+  const hex = color.value.replace(/^#/, "");
   const bigint = Number.parseInt(hex, 16);
   const r = (bigint >> 16) & 255;
   const g = (bigint >> 8) & 255;
@@ -99,7 +91,7 @@ function drawGrid(
   dpr: number,
 ) {
   ctx.clearRect(0, 0, width, height);
-  ctx.fillStyle = 'transparent';
+  ctx.fillStyle = "transparent";
   ctx.fillRect(0, 0, width, height);
   for (let i = 0; i < cols; i++) {
     for (let j = 0; j < rows; j++) {
@@ -151,7 +143,7 @@ function animate(time: number) {
 
 onMounted(() => {
   if (!canvasRef.value || !containerRef.value) return;
-  context.value = canvasRef.value.getContext('2d')!;
+  context.value = canvasRef.value.getContext("2d")!;
   if (!context.value) return;
 
   updateCanvasSize();

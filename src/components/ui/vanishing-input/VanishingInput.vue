@@ -1,25 +1,25 @@
 <template>
   <form :class="[
-    'relative mx-auto h-12 w-full max-w-xl overflow-hidden rounded-full bg-rosepine-surface shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),_0px_1px_0px_0px_rgba(25,28,33,0.02),_0px_0px_0px_1px_rgba(25,28,33,0.08)] transition duration-200 dark:bg-rosepine-love',
-    vanishingText && 'bg-rosepine-love',
+    'relative mx-auto h-12 w-full max-w-xl overflow-hidden rounded-full bg-white shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),_0px_1px_0px_0px_rgba(25,28,33,0.02),_0px_0px_0px_1px_rgba(25,28,33,0.08)] transition duration-200 dark:bg-zinc-800',
+    vanishingText && 'bg-gray-50',
   ]" @submit.prevent="handleSubmit">
     <!-- Canvas Element -->
     <canvas ref="canvasRef" :class="[
-      'pointer-events-none absolute left-2 top-[20%] origin-top-left scale-50 pr-20 text-rosepine-text sm:left-8 ',
+      'pointer-events-none absolute left-2 top-[20%] origin-top-left scale-50 pr-20 text-base invert sm:left-8 dark:invert-0',
       animating ? 'opacity-100' : 'opacity-0',
     ]" />
 
     <!-- Text Input -->
     <input ref="inputRef" v-model="vanishingText" :disabled="animating" type="text"
-      class="relative z-50 size-full rounded-full border-none bg-transparent pl-4 pr-20 text-sm text-rosepine-text focus:outline-none focus:ring-0 sm:pl-10 sm:text-base dark:text-white"
+      class="relative z-50 size-full rounded-full border-none bg-transparent pl-4 pr-20 text-sm text-black focus:outline-none focus:ring-0 sm:pl-10 sm:text-base dark:text-white"
       :class="{ 'text-transparent dark:text-transparent': animating }" @keydown.enter="handleKeyDown" />
 
     <!-- Submit Button -->
     <button :disabled="!vanishingText" type="submit"
-      class="absolute right-2 top-1/2 z-50 flex size-8 -translate-y-1/2 items-center justify-center rounded-full bg-rosepine-love transition duration-200 disabled:bg-rosepine-muted dark:bg-zinc-900 dark:disabled:bg-zinc-700">
+      class="absolute right-2 top-1/2 z-50 flex size-8 -translate-y-1/2 items-center justify-center rounded-full bg-black transition duration-200 disabled:bg-gray-100 dark:bg-zinc-900 dark:disabled:bg-zinc-700">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-        class="size-4 text-rosepine-surface">
+        class="size-4 text-gray-300">
         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
         <path d="M5 12l14 0" :style="{
           strokeDasharray: '50%',
@@ -38,7 +38,7 @@
         enter-to-class="opacity-100 translate-y-0" leave-from-class="opacity-100 translate-y-0"
         leave-to-class="opacity-0 -translate-y-4">
         <p :key="currentPlaceholder"
-          class="w-[calc(100%-2rem)] truncate pl-4 text-left text-sm font-normal text-neutral-500 sm:pl-10 sm:text-rosepine-iris dark:text-zinc-500">
+          class="w-[calc(100%-2rem)] truncate pl-4 text-left text-sm font-normal text-neutral-500 sm:pl-10 sm:text-base dark:text-zinc-500">
           {{ placeholders[currentPlaceholder] }}
         </p>
       </Transition>
@@ -47,8 +47,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, onBeforeUnmount } from 'vue';
-import { templateRef } from '@vueuse/core';
+import { ref, onMounted, watch, onBeforeUnmount } from "vue";
+import { templateRef } from "@vueuse/core";
 
 // Define interfaces for props and data structures
 interface Props {
@@ -66,12 +66,12 @@ interface AnimatedPixel extends PixelData {
 }
 
 const vanishingText = defineModel<string>({
-  default: '',
+  default: "",
 });
-const emit = defineEmits(['submit', 'change']);
+const emit = defineEmits(["submit", "change"]);
 
-const canvasRef = templateRef<HTMLCanvasElement>('canvasRef');
-const inputRef = templateRef<HTMLInputElement>('inputRef');
+const canvasRef = templateRef<HTMLCanvasElement>("canvasRef");
+const inputRef = templateRef<HTMLInputElement>("inputRef");
 
 // normal refs
 const currentPlaceholder = ref<number>(0);
@@ -82,7 +82,7 @@ const animationFrame = ref<number | null>(null);
 
 // props
 const props = withDefaults(defineProps<Props>(), {
-  placeholders: () => ['Placeholder 1', 'Placeholder 2', 'Placeholder 3'],
+  placeholders: () => ["Placeholder 1", "Placeholder 2", "Placeholder 3"],
 });
 
 // Focus on input when mounted
@@ -98,10 +98,10 @@ function changePlaceholder(): void {
 }
 
 function handleVisibilityChange(): void {
-  if (document.visibilityState !== 'visible' && intervalRef.value) {
+  if (document.visibilityState !== "visible" && intervalRef.value) {
     clearInterval(intervalRef.value);
     intervalRef.value = null;
-  } else if (document.visibilityState === 'visible') {
+  } else if (document.visibilityState === "visible") {
     changePlaceholder();
   }
 }
@@ -110,7 +110,7 @@ function draw(): void {
   if (!inputRef.value || !canvasRef.value) return;
 
   const canvas = canvasRef.value;
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext("2d");
   if (!ctx) return;
 
   const computedStyles = getComputedStyle(inputRef.value);
@@ -119,9 +119,9 @@ function draw(): void {
   canvas.height = 800;
   ctx.clearRect(0, 0, 800, 800);
 
-  const fontSize = parseFloat(computedStyles.getPropertyValue('font-size'));
+  const fontSize = parseFloat(computedStyles.getPropertyValue("font-size"));
   ctx.font = `${fontSize * 2}px ${computedStyles.fontFamily}`;
-  ctx.fillStyle = '#eb6f92';
+  ctx.fillStyle = "#FFF";
   ctx.fillText(vanishingText.value, 16, 40);
 
   const imageData = ctx.getImageData(0, 0, 800, 800);
@@ -136,7 +136,7 @@ function draw(): void {
         newData.push({
           x: n,
           y: t,
-          color: `#eb6f92`,
+          color: `rgba(${pixelData[e]}, ${pixelData[e + 1]}, ${pixelData[e + 2]}, ${pixelData[e + 3]})`,
         });
       }
     }
@@ -162,7 +162,7 @@ function animate(start: number = 0): void {
       }
     }
     newDataRef.value = newArr;
-    const ctx = canvasRef.value?.getContext('2d');
+    const ctx = canvasRef.value?.getContext("2d");
     if (ctx) {
       ctx.clearRect(start, 0, 800, 800);
       newDataRef.value.forEach(({ x, y, r, color }) => {
@@ -178,7 +178,7 @@ function animate(start: number = 0): void {
     if (newDataRef.value.length > 0) {
       animate(start - 8);
     } else {
-      vanishingText.value = '';
+      vanishingText.value = "";
       animating.value = false;
       setTimeout(() => {
         // regain focus after animation
@@ -189,7 +189,8 @@ function animate(start: number = 0): void {
 }
 
 function handleKeyDown(e: KeyboardEvent): void {
-  if (e.key === 'Enter' && !animating.value) {
+  if (vanishingText.value === "") return;
+  if (e.key === "Enter" && !animating.value) {
     vanishAndSubmit();
   }
 }
@@ -200,7 +201,7 @@ function vanishAndSubmit(): void {
   if (vanishingText.value) {
     const maxX = Math.max(...newDataRef.value.map(({ x }) => x));
     animate(maxX);
-    emit('submit', vanishingText.value);
+    emit("submit", vanishingText.value);
   }
 }
 
@@ -211,13 +212,13 @@ function handleSubmit(): void {
 // Watch for value changes
 watch(vanishingText, (newVal: string) => {
   if (!animating.value) {
-    emit('change', { target: { value: newVal } });
+    emit("change", { target: { value: newVal } });
   }
 });
 
 onMounted(() => {
   changePlaceholder();
-  document.addEventListener('visibilitychange', handleVisibilityChange);
+  document.addEventListener("visibilitychange", handleVisibilityChange);
 });
 
 onBeforeUnmount(() => {
@@ -227,6 +228,6 @@ onBeforeUnmount(() => {
   if (animationFrame.value) {
     cancelAnimationFrame(animationFrame.value);
   }
-  document.removeEventListener('visibilitychange', handleVisibilityChange);
+  document.removeEventListener("visibilitychange", handleVisibilityChange);
 });
 </script>

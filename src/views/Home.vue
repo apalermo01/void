@@ -38,6 +38,8 @@ const items = [
 ];
 onMounted(async () => {
   username.value = await invoke("get_env", { ename: "name" });
+  console.log(username.value);
+  const code = await invoke('read_plugin', { name: 'test_plugin' })
 
   const blob = new Blob([code], { type: 'application/javascript' })
   const url = URL.createObjectURL(blob)

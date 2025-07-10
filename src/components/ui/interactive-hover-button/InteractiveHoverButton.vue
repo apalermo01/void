@@ -5,8 +5,7 @@
   )
     ">
     <div class="flex items-center gap-2">
-      <div class="size-2 scale-100 rounded-lg bg-rosepine-love transition-all duration-300 group-hover:scale-[100.8]">
-      </div>
+      <div class="size-2 scale-100 rounded-lg bg-primary transition-all duration-300 group-hover:scale-[100.8]"></div>
       <span
         class="inline-block whitespace-nowrap transition-all duration-300 group-hover:translate-x-12 group-hover:opacity-0">
         {{ text }}
@@ -27,15 +26,15 @@
 </template>
 
 <script lang="ts" setup>
-import { cn } from '@/lib/utils';
-import { ref } from 'vue';
+import { cn } from "@/lib/utils";
+import { ref } from "vue";
 
 interface Props {
   text?: string;
   class?: string;
 }
 const props = withDefaults(defineProps<Props>(), {
-  text: 'Button',
+  text: "Button",
 });
 
 const buttonRef = ref<HTMLButtonElement>();
