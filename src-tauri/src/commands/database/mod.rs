@@ -10,7 +10,7 @@ use crate::MAIN_FOLDER_PREFIX;
 pub static DB: OnceCell<DbRepo> = OnceCell::new();
 
 pub async fn init() {
-    let db_path = format!("{}db", MAIN_FOLDER_PREFIX);
+    let db_path = format!("{}/db", MAIN_FOLDER_PREFIX.get().unwrap().to_str().unwrap());
     let db = Surreal::new::<RocksDb>(db_path).await.unwrap();
     db.use_ns("mindbreaker").use_db("config").await.unwrap();
     let db = DbRepo::new(db);

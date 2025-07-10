@@ -1,8 +1,7 @@
 use std::{fs, path::Path};
 
+use tauri::Manager;
 use tauri_plugin_fs::FsExt;
-
-use crate::MAIN_FOLDER_PREFIX;
 
 use super::get_env;
 
@@ -25,13 +24,19 @@ pub async fn setup_config_directory(app: tauri::AppHandle) -> Result<(), String>
     let plugins_path = Path::new(&plugins_conf);
     fs::create_dir_all(themes_path).unwrap();
     fs::create_dir_all(plugins_path).unwrap();
-    let dest = super::get_env("workdir".to_string(), app).await.unwrap() + "/profile.png";
+    let dest = super::get_env("workdir".to_string(), app.clone())
+        .await
+        .unwrap()
+        + "/profile.png";
     let dest_path = Path::new(&dest);
-    let value = fs::copy(
-        format!("{}Resources/profile.png", MAIN_FOLDER_PREFIX),
-        dest_path,
-    )
-    .unwrap();
+    let pic = app
+        .path()
+        .resolve(
+            "resources/profile.png",
+            tauri::path::BaseDirectory::Resource,
+        )
+        .unwrap();
+    let value = fs::copy(pic, dest_path).unwrap();
     println!("{}", value);
     Ok(())
 }

@@ -16,7 +16,7 @@ import Input from '@/components/ui/input/Input.vue';
 import SettingsButton from '@/components/ui/settings/SettingsButton.vue';
 import SettingsHeader from '@/components/ui/settings/SettingsHeader.vue';
 import { add_extension_tables } from '@/lib/logic/extensions';
-import { add_themes_repo, delete_repo, get_repos, SideRepo } from '@/lib/logic/settings';
+import { delete_repo, get_repos, SideRepo } from '@/lib/logic/settings';
 import { onMounted, ref } from 'vue';
 let link = ref('');
 let repos = ref<SideRepo[]>([]);

@@ -1,9 +1,12 @@
 mod commands;
+use std::path::PathBuf;
+
 use commands::*;
+use tauri::Manager;
 use tauri_plugin_fs::FsExt;
 
-#[cfg(target_os = "macos")]
-const MAIN_FOLDER_PREFIX: &str = "../../";
+pub static MAIN_FOLDER_PREFIX: once_cell::sync::OnceCell<PathBuf> =
+    once_cell::sync::OnceCell::new();
 
 #[cfg(target_os = "linux")]
 const MAIN_FOLDER_PREFIX: &str = "../../";
@@ -19,6 +22,25 @@ pub fn run() {
         .plugin(tauri_plugin_fs::init())
         .setup(|app| {
             tauri::async_runtime::block_on(async {
+                std::fs::create_dir_all(
+                    app.handle()
+                        .path()
+                        .home_dir()
+                        .unwrap()
+                        .join(".config")
+                        .join("void"),
+                )
+                .unwrap();
+                crate::MAIN_FOLDER_PREFIX
+                    .set(
+                        app.handle()
+                            .path()
+                            .home_dir()
+                            .unwrap()
+                            .join(".config")
+                            .join("void"),
+                    )
+                    .unwrap();
                 if let Err(e) = create_first_database(app.handle().clone()).await {
                     eprintln!("Ошибка при инициализации{}", e);
                 }

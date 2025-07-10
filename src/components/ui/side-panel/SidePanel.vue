@@ -136,7 +136,7 @@ async function strip_content() {
   }
 
   rentries.forEach((entrie) => {
-    if (!entrie.startsWith('.')) {
+    if (!entrie.startsWith('.') && !entrie.includes('\\')) {
       let name = entrie.includes('/')
         ? entrie.split('/').pop()
         : entrie;
@@ -147,9 +147,17 @@ async function strip_content() {
         temp.push({ id: nanoid(), name, type: 'dir' });
       }
     }
+    else if (!entrie.startsWith('.')) {
+      let name = entrie.includes('\\') ? entrie.split('\\').pop() : entrie;
+
+      if (entrie.includes('.') && !entrie.endsWith('\\')) {
+        temp.push({ id: nanoid(), name, type: 'file' });
+      } else {
+        temp.push({ id: nanoid(), name, type: 'dir' });
+      }
+    }
   });
 
-  // Сортировка один раз, после цикла
   entries.value = temp.sort((a, b) => {
     if (a.type === b.type) return a.name.localeCompare(b.name);
     return a.type === 'dir' ? -1 : 1;
