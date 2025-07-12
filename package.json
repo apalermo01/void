@@ -20,7 +20,6 @@
     "@tiptap/pm": "^2.14.0",
     "@tiptap/starter-kit": "^2.14.0",
     "@tiptap/vue-3": "^2.14.0",
-    "@vue-pdf-viewer/viewer": "^2.5.4",
     "@vue/language-server": "^2.2.10",
     "@vueuse/core": "^13.4.0",
     "@vueuse/integrations": "^13.1.0",
