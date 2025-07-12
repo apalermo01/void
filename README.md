@@ -33,7 +33,7 @@ npm install
 ### 3. Install system requirements
 
 <details>
-<summary>🪟 Windows</summary>
+<summary>Windows</summary>
 
 * Microsoft C++ Build Tools
 * WebView2
@@ -42,7 +42,7 @@ npm install
 </details>
 
 <details>
-<summary>🐧 Debian / Ubuntu</summary>
+<summary>Debian / Ubuntu</summary>
 
 ```bash
 sudo apt update
@@ -60,7 +60,7 @@ sudo apt install libwebkit2gtk-4.1-dev \
 </details>
 
 <details>
-<summary>🎯 Arch Linux</summary>
+<summary>Arch Linux</summary>
 
 ```bash
 sudo pacman -Syu
@@ -80,7 +80,7 @@ sudo pacman -S --needed \
 </details>
 
 <details>
-<summary>🐮 Fedora</summary>
+<summary>Fedora</summary>
 
 ```bash
 sudo dnf check-update
@@ -98,7 +98,7 @@ sudo dnf group install "c-development"
 </details>
 
 <details>
-<summary>🧬 Gentoo</summary>
+<summary>Gentoo</summary>
 
 ```bash
 sudo emerge --ask \
@@ -112,7 +112,7 @@ sudo emerge --ask \
 </details>
 
 <details>
-<summary>🧊 openSUSE</summary>
+<summary>openSUSE</summary>
 
 ```bash
 sudo zypper up
@@ -129,7 +129,7 @@ sudo zypper in -t pattern devel_basis
 </details>
 
 <details>
-<summary>🏔 Alpine Linux</summary>
+<summary>Alpine Linux</summary>
 
 ```bash
 sudo apk add \
@@ -146,7 +146,7 @@ sudo apk add \
 </details>
 
 <details>
-<summary>❄ NixOS</summary>
+<summary>NixOS</summary>
 
 ```nix
 let
@@ -181,7 +181,7 @@ pkgs.mkShell {
 </details>
 
 <details>
-<summary>🍏 macOS</summary>
+<summary>macOS</summary>
 
 * Xcode (via App Store or Xcode Command Line Tools)
 
