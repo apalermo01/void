@@ -15,26 +15,26 @@ Copyright 2025 The VOID Authors. All Rights Reserved.
 -->
 <template>
   <div class="w-full h-full overflow-auto">
-    <code-mirror v-model="content" ref="Editor" class="editor"></code-mirror>
+    <CodeMirror :extensions="extensions" v-model="content" ref="Editor" class="editor" />
   </div>
 </template>
 <script setup lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
+import { onMounted, ref, shallowRef } from 'vue';
 import CodeMirror from 'vue-codemirror6';
 import { invoke } from '@tauri-apps/api/core';
+import { liveMarkdownHeaders } from '@/components/editor/headers/headers';
+import { strikeThrough } from '@/components/editor/strike-through/strike-through';
 let props = defineProps({
   url: String
 });
 let content = ref('');
-defineComponent({
-  components: { CodeMirror }, setup() {
-    return { content };
-  }
-});
+const extensions = shallowRef([liveMarkdownHeaders]);
 
 onMounted(async () => {
   if (!props.url) { return }
   content.value = await invoke('get_note_content', { path: decodeURIComponent(atob(props.url)) });
+  extensions.value = [...extensions.value, strikeThrough];
+
 })
 </script>
 <style>

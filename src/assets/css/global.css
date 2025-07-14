@@ -302,3 +302,38 @@
   border: none !important;
   box-shadow: none !important;
 }
+
+.cm-strike {
+  text-decoration: line-through;
+}
+
+.cm-hide-tilde {
+  opacity: 0;
+  pointer-events: none;
+  user-select: none;
+  transition: opacity 0.2s ease;
+}
+
+.cm-md-h1 {
+  font-size: 1.8em;
+}
+
+.cm-md-h2 {
+  font-size: 1.6em;
+}
+
+.cm-md-h3 {
+  font-size: 1.4em;
+}
+
+.cm-md-h4 {
+  font-size: 1.2em;
+}
+
+.cm-md-h5 {
+  font-size: 1em;
+}
+
+.cm-md-h6 {
+  font-size: 0.9em;
+}
