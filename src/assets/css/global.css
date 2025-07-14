@@ -296,3 +296,9 @@
   --background-light: #f3f4f6;
   --muted: #6b7280;
 }
+
+.cm-editor.cm-focused {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
