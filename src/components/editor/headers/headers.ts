@@ -1,3 +1,18 @@
+/**
+Copyright 2025 The VOID Authors. All Rights Reserved.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
 import {
   Decoration,
   DecorationSet,
@@ -9,7 +24,6 @@ import {
   RangeSetBuilder, StateField
 } from '@codemirror/state'
 
-/** Виджет заголовка */
 class MarkdownHeaderWidget extends WidgetType {
   constructor(
     private readonly level: number,
@@ -30,7 +44,6 @@ class MarkdownHeaderWidget extends WidgetType {
   }
 }
 
-/** Поиск заголовков и возврат декораций */
 function buildDecorations(state: EditorState): DecorationSet {
   const builder = new RangeSetBuilder<Decoration>()
   const cursor = state.selection.main.head
@@ -51,17 +64,15 @@ function buildDecorations(state: EditorState): DecorationSet {
     const cursorInside = cursor >= start && cursor <= end
 
     if (!cursorInside) {
-      // Удаляем оригинальный markdown
       builder.add(start, end, Decoration.replace({ inclusive: false }))
 
-      // Вставляем <h1>-<h6> как виджет
       builder.add(
         end,
         end,
         Decoration.widget({
           widget: new MarkdownHeaderWidget(level, content),
           side: 1,
-          block: true // ✅ теперь можно!
+          block: true
         })
       )
     }
@@ -70,7 +81,6 @@ function buildDecorations(state: EditorState): DecorationSet {
   return builder.finish()
 }
 
-/** StateField для декораций */
 export const liveMarkdownHeaders = StateField.define<DecorationSet>({
   create(state) {
     return buildDecorations(state)
