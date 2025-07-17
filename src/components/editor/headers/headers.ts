@@ -17,81 +17,87 @@ import {
   Decoration,
   DecorationSet,
   EditorView,
-  WidgetType
+  ViewPlugin,
+  ViewUpdate,
 } from '@codemirror/view'
-import {
-  EditorState,
-  RangeSetBuilder, StateField
-} from '@codemirror/state'
+import { RangeSetBuilder } from '@codemirror/state'
 
-class MarkdownHeaderWidget extends WidgetType {
-  constructor(
-    private readonly level: number,
-    private readonly content: string
-  ) {
-    super()
+function findHeadings(line: string, offset: number, cursor: number) {
+  const decorations: { from: number; to: number; deco: Decoration }[] = []
+  const regex = /^(#{1,6})\s+(.*)/ // markdown-style headers
+  const match = regex.exec(line)
+
+  if (!match) return decorations
+
+  const level = match[1].length
+  const start = offset
+  const end = start + match[0].length
+  const markerStart = start
+  const markerEnd = start + level + 1
+  const contentStart = start
+  const contentEnd = end
+
+  const cursorInside = cursor >= markerStart && cursor <= end
+
+  if (!cursorInside) {
+    decorations.push({
+      from: markerStart,
+      to: markerEnd,
+      deco: Decoration.replace({ inclusive: false }),
+    })
   }
 
-  toDOM(): HTMLElement {
-    const el = document.createElement(`h${this.level}`)
-    el.className = `cm-md-preview-header cm-md-h${this.level}`
-    el.textContent = this.content
-    return el
-  }
+  decorations.push({
+    from: contentStart,
+    to: contentEnd,
+    deco: Decoration.mark({
+      class: `cm-md-h${level}`,
+      attributes: {
+        'data-heading-level': String(level),
+      },
+    }),
+  })
 
-  ignoreEvent(): boolean {
-    return true
-  }
+  return decorations
 }
 
-function buildDecorations(state: EditorState): DecorationSet {
-  const builder = new RangeSetBuilder<Decoration>()
-  const cursor = state.selection.main.head
-  const doc = state.doc
+export const headingPlugin = ViewPlugin.fromClass(
+  class {
+    decorations: DecorationSet
 
-  for (let i = 1; i <= doc.lines; i++) {
-    const line = doc.line(i)
-    const text = line.text
-    const offset = line.from
+    constructor(view: EditorView) {
+      this.decorations = this.build(view)
+    }
 
-    const match = text.match(/^(#{1,6})\s+(.*)/)
-    if (!match) continue
+    update(update: ViewUpdate) {
+      if (update.docChanged || update.viewportChanged || update.selectionSet) {
+        this.decorations = this.build(update.view)
+      }
+    }
 
-    const [full, hashes, content] = match
-    const level = hashes.length
-    const start = offset
-    const end = start + full.length
-    const cursorInside = cursor >= start && cursor <= end
+    build(view: EditorView): DecorationSet {
+      const builder = new RangeSetBuilder<Decoration>()
+      const doc = view.state.doc
+      const cursor = view.state.selection.main.head
 
-    if (!cursorInside) {
-      builder.add(start, end, Decoration.replace({ inclusive: false }))
+      for (let i = 1; i <= doc.lines; i++) {
+        const line = doc.line(i)
+        const deco = findHeadings(line.text, line.from, cursor)
 
-      builder.add(
-        end,
-        end,
-        Decoration.widget({
-          widget: new MarkdownHeaderWidget(level, content),
-          side: 1,
-          block: true
+        deco.sort((a, b) => {
+          if (a.from !== b.from) return a.from - b.from
+          return (a.deco.spec.side || 0) - (b.deco.spec.side || 0)
         })
-      )
+
+        for (const { from, to, deco: d } of deco) {
+          builder.add(from, to, d)
+        }
+      }
+
+      return builder.finish()
     }
+  },
+  {
+    decorations: (plugin) => plugin.decorations,
   }
-
-  return builder.finish()
-}
-
-export const liveMarkdownHeaders = StateField.define<DecorationSet>({
-  create(state) {
-    return buildDecorations(state)
-  },
-
-  update(deco, tr) {
-    if (tr.docChanged || tr.selection) {
-      return buildDecorations(tr.state)
-    }
-    return deco.map(tr.changes)
-  },
-
-  provide: f => EditorView.decorations.from(f)
-})
+)

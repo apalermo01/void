@@ -22,13 +22,13 @@ Copyright 2025 The VOID Authors. All Rights Reserved.
 import { onMounted, ref, shallowRef } from 'vue';
 import CodeMirror from 'vue-codemirror6';
 import { invoke } from '@tauri-apps/api/core';
-import { liveMarkdownHeaders } from '@/components/editor/headers/headers';
+import { headingPlugin } from '@/components/editor/headers/headers';
 import { strikeThrough } from '@/components/editor/strike-through/strike-through';
 let props = defineProps({
   url: String
 });
 let content = ref('');
-const extensions = shallowRef([liveMarkdownHeaders]);
+const extensions = shallowRef<any[]>([headingPlugin]);
 
 onMounted(async () => {
   if (!props.url) { return }
