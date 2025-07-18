@@ -22,7 +22,7 @@ import {
 } from '@codemirror/view'
 import { RangeSetBuilder } from '@codemirror/state'
 
-function findHeadings(line: string, offset: number, cursor: number) {
+function findHeadings(line: string, offset: number, cursor: number, view: EditorView) {
   const decorations: { from: number; to: number; deco: Decoration }[] = []
   const regex = /^(#{1,6})\s+(.*)/ // markdown-style headers
   const match = regex.exec(line)
@@ -37,7 +37,7 @@ function findHeadings(line: string, offset: number, cursor: number) {
   const contentStart = start
   const contentEnd = end
 
-  const cursorInside = cursor >= markerStart && cursor <= end
+  const cursorInside = view.hasFocus && cursor >= markerStart && cursor <= end
 
   if (!cursorInside) {
     decorations.push({
@@ -82,7 +82,7 @@ export const headingPlugin = ViewPlugin.fromClass(
 
       for (let i = 1; i <= doc.lines; i++) {
         const line = doc.line(i)
-        const deco = findHeadings(line.text, line.from, cursor)
+        const deco = findHeadings(line.text, line.from, cursor, view)
 
         deco.sort((a, b) => {
           if (a.from !== b.from) return a.from - b.from

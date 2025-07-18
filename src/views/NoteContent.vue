@@ -24,17 +24,16 @@ import CodeMirror from 'vue-codemirror6';
 import { invoke } from '@tauri-apps/api/core';
 import { headingPlugin } from '@/components/editor/headers/headers';
 import { strikeThrough } from '@/components/editor/strike-through/strike-through';
+import { pageBreaker } from '@/components/editor/page-breaker/page-breaker';
 let props = defineProps({
   url: String
 });
 let content = ref('');
-const extensions = shallowRef<any[]>([headingPlugin]);
+const extensions = shallowRef([headingPlugin, strikeThrough, pageBreaker]);
 
 onMounted(async () => {
   if (!props.url) { return }
   content.value = await invoke('get_note_content', { path: decodeURIComponent(atob(props.url)) });
-  extensions.value = [...extensions.value, strikeThrough];
-
 })
 </script>
 <style>
