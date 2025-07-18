@@ -1,4 +1,5 @@
 import { createApp } from "vue";
+import { createI18n } from "vue-i18n";
 import router from "./router/index";
 import { createPinia } from "pinia";
 import App from "./App.vue";
@@ -8,7 +9,8 @@ import 'vue-plyr/dist/vue-plyr.css';
 import '@excalidraw/excalidraw/index.css'
 
 const pinia = createPinia();
-createApp(App).use(router).use(pinia).use(VueVirtualScroller).use(VuePlyr, {
+const i18n = createI18n({});
+createApp(App).use(router).use(pinia).use(VueVirtualScroller).use(i18n).use(VuePlyr, {
     plyr: {
       controls: [
         'play-large',
