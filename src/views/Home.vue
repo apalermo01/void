@@ -68,7 +68,7 @@ onMounted(async () => {
 </script>
 <template>
   <h1 class="text-4xl text-accent text-center pt-[1%]">
-    Добро пожаловать, {{ username }}
+    {{ $t('home.welcome') }}, {{ username }}
   </h1>
   <div class="plugin-grid">
     <BentoGrid class="mx-auto max-w-4xl">

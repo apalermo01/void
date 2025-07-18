@@ -1,4 +1,10 @@
 {
+    "excalidrawWrapper": {
+        "loadingError": "Loading error"
+    },
+    "home": {
+        "welcome": "Welcome"
+    },
     "loader": {
         "loader": "Came. Saw. Wrote."
     }

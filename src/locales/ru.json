@@ -1,4 +1,10 @@
 {
+    "excalidrawWrapper": {
+        "loadingError": "Ошибка загрузки"
+    },
+    "home": {
+        "welcome": "Добро пожаловать"
+    },
     "loader": {
         "loader": "Пришел. Увидел. Записал."
     }
