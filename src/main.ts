@@ -9,7 +9,22 @@ import 'vue-plyr/dist/vue-plyr.css';
 import '@excalidraw/excalidraw/index.css'
 
 const pinia = createPinia();
-const i18n = createI18n({});
+const i18n = createI18n({
+    locale: 'en',
+    messages: {
+        en: {
+            loader: {
+                loader: 'Came. Saw. Wrote.'
+            }
+        },
+
+        ru: {
+            loader: {
+                loader: 'Пришел. Увидел. Записал.'
+            }
+        }
+    }
+});
 createApp(App).use(router).use(pinia).use(VueVirtualScroller).use(i18n).use(VuePlyr, {
     plyr: {
       controls: [
