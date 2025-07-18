@@ -7,24 +7,18 @@ import VueVirtualScroller from 'vue-virtual-scroller';
 import VuePlyr from 'vue-plyr';
 import 'vue-plyr/dist/vue-plyr.css';
 import '@excalidraw/excalidraw/index.css'
+import en from './locales/en.json'
+import ru from './locales/ru.json'
 
 const pinia = createPinia();
 const i18n = createI18n({
     locale: 'en',
     messages: {
-        en: {
-            loader: {
-                loader: 'Came. Saw. Wrote.'
-            }
-        },
-
-        ru: {
-            loader: {
-                loader: 'Пришел. Увидел. Записал.'
-            }
-        }
+        en: en,
+        ru: ru
     }
 });
+
 createApp(App).use(router).use(pinia).use(VueVirtualScroller).use(i18n).use(VuePlyr, {
     plyr: {
       controls: [

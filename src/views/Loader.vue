@@ -121,7 +121,6 @@ Copyright 2025 The VOID Authors. All Rights Reserved.
 import { ref } from 'vue';
 import BlurReveal from '@/components/ui/blur-reveal/BlurReveal.vue';
 
-const text = "Пришел. Увидел. Записал."
 
 </script>
 <style scoped>
