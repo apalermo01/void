@@ -26,12 +26,12 @@ import { headingPlugin } from '@/components/editor/headers/headers';
 import { strikeThrough } from '@/components/editor/strike-through/strike-through';
 import { pageBreaker } from '@/components/editor/page-breaker/page-breaker';
 import { calloutPlugin } from '@/components/editor/callout/callout';
-import { lineNumbers } from '@codemirror/view';
+import { boldPlugin } from '@/components/editor/bold/bold';
 let props = defineProps({
   url: String
 });
 let content = ref('');
-const extensions = shallowRef([headingPlugin, strikeThrough, pageBreaker, calloutPlugin]);
+const extensions = shallowRef([headingPlugin, strikeThrough, pageBreaker, calloutPlugin, boldPlugin]);
 
 onMounted(async () => {
   if (!props.url) { return }

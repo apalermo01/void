@@ -331,6 +331,10 @@
   text-decoration: line-through;
 }
 
+.cm-bold {
+  font-weight: bold;
+}
+
 .cm-hide-tilde {
   opacity: 0;
   pointer-events: none;
