@@ -20,5 +20,8 @@
         "settingsLabel": "Settings",
         "general": "General",
         "sideRepos": "Custom Repositories"
+    },
+    "unsupportedContent": {
+        "filetypeNotSupportedMsg": "This file type is not supported!"
     }
 }

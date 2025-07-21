@@ -21,5 +21,8 @@
         "settingssLabel": "Настройки",
         "general": "Общие",
         "customRepos": "астомные репозитории"
+    },
+    "unsupportedContent": {
+        "filetypeNotSupportedMsg": "Этот тип файлов не поддерживается!"
     }
 }
