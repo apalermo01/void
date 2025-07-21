@@ -21,8 +21,10 @@ import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button
 import { ref } from 'vue';
 import 'primeicons/primeicons.css';
 import { prev_slide, next_slide, set_bounds, move_to_account } from '@/lib/logic/welcome';
+const main = require("../main.ts")
 
-
+// TODO: translate based on locale 
+// see https://stackoverflow.com/questions/74940459/vuejs-and-i18n-for-custom-variable-items
 const welcome_info = [
   'Добро пожаловать в VOID путник!',
   'Это мое новое творение которое я создал как сайд-проект.',
@@ -31,6 +33,11 @@ const welcome_info = [
   'Но главное - оставить все такую же гибкость настройки и использования!',
   'Надеюсь тебе понравится!'
 ];
+
+
+// const welcome_info = (text) => {
+//     return (items[text][i18n.global.local])
+// }
 let index = ref(0);
 let bounds = ref({ width: 0, height: 0 });
 bounds.value = set_bounds();

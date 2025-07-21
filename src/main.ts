@@ -10,13 +10,14 @@ import '@excalidraw/excalidraw/index.css'
 import en from './locales/en.json'
 import ru from './locales/ru.json'
 
+const messages = {
+    "en": en,
+    "ru": ru
+}
 const pinia = createPinia();
 const i18n = createI18n({
     locale: 'en',
-    messages: {
-        en: en,
-        ru: ru
-    }
+    messages: messages
 });
 
 createApp(App).use(router).use(pinia).use(VueVirtualScroller).use(i18n).use(VuePlyr, {
@@ -35,3 +36,5 @@ createApp(App).use(router).use(pinia).use(VueVirtualScroller).use(i18n).use(VueP
       ]
     }
   }).mount("#app");
+
+module.exports = messages;

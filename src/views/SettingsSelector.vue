@@ -30,7 +30,7 @@ import SelectValue from '@/components/ui/select/SelectValue.vue';
     </SelectTrigger>
     <SelectContent>
       <SelectGroup>
-        <SelectLabel>{{ $t{settingsSelector.settingsLabel }}</SelectLabel>
+        <SelectLabel>{{ $t(settingsSelector.settingsLabel) }}</SelectLabel>
         <SelectItem value="Global">
             {{ $t(settingsSelector.general) }}
         </SelectItem>

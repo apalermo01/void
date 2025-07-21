@@ -23,5 +23,15 @@
     },
     "unsupportedContent": {
         "filetypeNotSupportedMsg": "This file type is not supported!"
+    },
+    "videoContent": {
+        "vidErrMsg": "Error Loading Video"
+    },
+    "welcomeAnimation": {
+        "msg1": "Welcome to VOID, traveler!",
+        "msg2": "This is my new creation which I created as a side project.",
+        "msg3": "The main idea is to create a second brain that will not be as difficult to set up as obsidian or notion.",
+        "msg4": "But the main thing is to leave the same flexibility of setup and use!",
+        "msg5": "Hope you like it!"
     }
 }
