@@ -3,8 +3,8 @@ import { Terminal } from "lucide-vue-next";
 import { RouterLink } from "vue-router";
 </script>
 <template>
-    <RouterLink to="/code">
-        <Terminal />
-        <span class="text-lg">Neovim</span>
-    </RouterLink>
+  <RouterLink to="/code">
+    <Terminal />
+    <span class="text-lg">Terminal</span>
+  </RouterLink>
 </template>

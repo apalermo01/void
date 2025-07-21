@@ -335,6 +335,10 @@
   font-weight: bold;
 }
 
+.cm-italic {
+  font-style: italic;
+}
+
 .cm-hide-tilde {
   opacity: 0;
   pointer-events: none;

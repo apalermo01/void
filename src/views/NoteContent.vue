@@ -27,11 +27,12 @@ import { strikeThrough } from '@/components/editor/strike-through/strike-through
 import { pageBreaker } from '@/components/editor/page-breaker/page-breaker';
 import { calloutPlugin } from '@/components/editor/callout/callout';
 import { boldPlugin } from '@/components/editor/bold/bold';
+import { italicPlugin } from '@/components/editor/italic/italic';
 let props = defineProps({
   url: String
 });
 let content = ref('');
-const extensions = shallowRef([headingPlugin, strikeThrough, pageBreaker, calloutPlugin, boldPlugin]);
+const extensions = shallowRef([headingPlugin, strikeThrough, pageBreaker, calloutPlugin, boldPlugin, italicPlugin]);
 
 onMounted(async () => {
   if (!props.url) { return }
