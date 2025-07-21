@@ -1,4 +1,7 @@
 {
+    "common": {
+        "extAndCustomization": "Extensions and Customizations"
+    },
     "excalidrawWrapper": {
         "loadingError": "Loading error"
     },
@@ -12,5 +15,10 @@
         "pluginHeader": "Extensions and Customizations",
         "collect": "Collect yours",
         "moreFreedom": "Do you want more freedom?"
+    },
+    "settingsSelector": {
+        "settingsLabel": "Settings",
+        "general": "General",
+        "sideRepos": "Custom Repositories"
     }
 }

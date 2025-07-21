@@ -30,15 +30,15 @@ import SelectValue from '@/components/ui/select/SelectValue.vue';
     </SelectTrigger>
     <SelectContent>
       <SelectGroup>
-        <SelectLabel>Настройки</SelectLabel>
+        <SelectLabel>{{ $t{settingsSelector.settingsLabel }}</SelectLabel>
         <SelectItem value="Global">
-          Общие
+            {{ $t(settingsSelector.general) }}
         </SelectItem>
         <SelectItem value="Plugins">
-          Расширения и кастомизация
+            {{ $t(common.extAndCustomization) }}
         </SelectItem>
         <SelectItem value="SideRepos">
-          Кастомные репозитории
+           {{ $t(settingsSelector.customRepos) }}
         </SelectItem>
       </SelectGroup>
     </SelectContent>
