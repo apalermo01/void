@@ -7,5 +7,10 @@
     },
     "loader": {
         "loader": "Came. Saw. Wrote."
+    },
+    "plugins": {
+        "pluginHeader": "Extensions and Customizations",
+        "collect": "Collect yours",
+        "moreFreedom": "Do you want more freedom?"
     }
 }
