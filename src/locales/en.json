@@ -8,6 +8,9 @@
     "home": {
         "welcome": "Welcome"
     },
+    "journalContent": {
+        "loadingMsg": "Loading"
+    },
     "loader": {
         "loader": "Came. Saw. Wrote."
     },
@@ -35,6 +38,6 @@
         "msg5": "Hope you like it!"
     },
     "welcomeSetup": {
-        "namePrompt": "What should I call you?",
+        "namePrompt": "What should I call you?"
     }
 }
