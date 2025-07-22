@@ -23,16 +23,15 @@ import { onMounted, ref, shallowRef } from 'vue';
 import CodeMirror from 'vue-codemirror6';
 import { invoke } from '@tauri-apps/api/core';
 import { headingPlugin } from '@/components/editor/headers/headers';
-import { strikeThrough } from '@/components/editor/strike-through/strike-through';
 import { pageBreaker } from '@/components/editor/page-breaker/page-breaker';
 import { calloutPlugin } from '@/components/editor/callout/callout';
-import { boldPlugin } from '@/components/editor/bold/bold';
-import { italicPlugin } from '@/components/editor/italic/italic';
+import { inlinePlugin } from '@/components/editor/inline/inline';
+import { quotePlugin } from '@/components/editor/quote/quote';
 let props = defineProps({
   url: String
 });
 let content = ref('');
-const extensions = shallowRef([headingPlugin, strikeThrough, pageBreaker, calloutPlugin, boldPlugin, italicPlugin]);
+const extensions = shallowRef([headingPlugin, inlinePlugin, pageBreaker, calloutPlugin, quotePlugin]);
 
 onMounted(async () => {
   if (!props.url) { return }

@@ -339,6 +339,20 @@
   font-style: italic;
 }
 
+.cm-highlight {
+  background-color: rgba(112, 56, 57, 0.7);
+  color: var(--accent-foreground);
+  padding: 0.3em;
+}
+
+.quote-block {
+  border-left: 3px solid #666;
+  padding-left: 1em;
+  margin: 6px 0;
+  font-style: italic;
+  color: #aaa;
+}
+
 .cm-hide-tilde {
   opacity: 0;
   pointer-events: none;
