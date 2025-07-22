@@ -1,6 +1,27 @@
 {
     "common": {
-        "extAndCustomization": "Extensions and Customizations"
+        "extAndCustomization": "Extensions and Customizations",
+        "home": "Home",
+        "graph": "Graph",
+        "neovim": "Neovim",
+        "canvas": "Canvas",
+        "explorer": "Explorer",
+        "settings": "Settings",
+        "tools": "Tools",
+        "sideRepos": "Custom Repositories"
+    },
+    "contextMenu": {
+        "createFile": "Create File",
+        "createFolder": "Create Folder",
+        "delete": "Delete File/Folder",
+        "rename": "Rename",
+        "cut": "Cut",
+        "copy": "Copy",
+        "epaste": "Paste"
+    },
+    "notifications": {
+        "error": "Error",
+        "warning": "Warning"
     },
     "excalidrawWrapper": {
         "loadingError": "Loading error"

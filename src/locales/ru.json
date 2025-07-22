@@ -1,6 +1,27 @@
 {
     "common": {
-        "extAndCustomization": "Расширения и кастомизация"
+        "extAndCustomization": "Расширения и кастомизация",
+        "home": "Домой",
+        "graph": "Граф",
+        "neovim": "неовим",
+        "canvas": "Холст",
+        "explorer": "Проводник",
+        "settings": "астройки",
+        "tools": "Инструменты",
+        "sideRepos": "астомные репозитории"
+    },
+    "contextMenu": {
+        "createFile": "Создать файл",
+        "createFolder": "Создать папку",
+        "delete": "Удалить файл/папку",
+        "rename": "Переименовать",
+        "cut": "Вырезать",
+        "copy": "Копировать",
+        "epaste": "Вставить"
+    },
+    "notifications": {
+        "error": "Ошибка",
+        "warning": "Уведомление"
     },
     "excalidrawWrapper": {
         "loadingError": "Ошибка загрузки"
@@ -23,7 +44,7 @@
     "settingsSelector": {
         "settingssLabel": "Настройки",
         "general": "Общие",
-        "customRepos": "астомные репозитории"
+        "sideRepos": "астомные репозитории"
     },
     "unsupportedContent": {
         "filetypeNotSupportedMsg": "Этот тип файлов не поддерживается!"

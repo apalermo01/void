@@ -21,7 +21,6 @@ import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button
 import { ref } from 'vue';
 import 'primeicons/primeicons.css';
 import { prev_slide, next_slide, set_bounds, move_to_account } from '@/lib/logic/welcome';
-const main = require("../main.ts")
 
 // TODO: translate based on locale 
 // see https://stackoverflow.com/questions/74940459/vuejs-and-i18n-for-custom-variable-items

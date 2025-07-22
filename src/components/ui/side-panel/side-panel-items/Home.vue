@@ -4,6 +4,6 @@ import { Home } from "lucide-vue-next";
 <template>
     <RouterLink to="/home">
         <Home />
-        <span class="text-lg">Домой</span>
+        <span class="text-lg">{{ $t('common.home') }}</span>
     </RouterLink>
 </template>
