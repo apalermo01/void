@@ -20,7 +20,7 @@ Copyright 2025 The VOID Authors. All Rights Reserved.
       <div v-if="error"
         class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-75 text-white z-50">
         <div class="text-center">
-          <p class="text-lg mb-2"> {{ $t(videoContent.vidErrMsg) }}</p>
+          <p class="text-lg mb-2"> {{ $t('videoContent.vidErrMsg') }}</p>
           <p class="text-sm">{{ error }}</p>
         </div>
       </div>

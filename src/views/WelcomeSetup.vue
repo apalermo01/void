@@ -48,7 +48,7 @@ const placeholders: Array<string> = [
   <div class="form-container">
     <LampEffect>
       <div class="input-wrapper">
-        <h1 class="text-rosepine-text text-4xl">{{ $t(welcomeSetup.namePrompt) }}</h1>
+        <h1 class="text-rosepine-text text-4xl">{{ $t('welcomeSetup.namePrompt') }}</h1>
         <VanishingInput class="user-input" v-model="username" :placeholders="placeholders"
           @submit="delayedSetup(username, $router)" />
       </div>

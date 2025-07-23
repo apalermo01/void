@@ -20,7 +20,7 @@ Copyright 2025 The VOID Authors. All Rights Reserved.
       style="z-index: 10;">
       <VuePdfEmbed v-if="doc" :source="file" :page="currentPage" :style="pdfStyle" />
       <div v-else class="flex items-center justify-center w-full h-full text-white">
-        {{ $t(journalContent.loadingMsg) }} PDF...
+        {{ $t('journalContent.loadingMsg') }} PDF...
       </div>
     </div>
 
