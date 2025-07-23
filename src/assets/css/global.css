@@ -397,3 +397,11 @@
   height: 0.2em;
   border-top: 1px solid var(--destructive);
 }
+
+.cm-todo-checkbox {
+  vertical-align: middle;
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.4rem;
+  cursor: pointer;
+}

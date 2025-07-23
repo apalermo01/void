@@ -25,6 +25,12 @@ import {
   EditorState
 } from '@codemirror/state';
 
+import { headingPlugin } from '@/components/editor/headers/headers';
+import { pageBreaker } from '@/components/editor/page-breaker/page-breaker';
+import { inlinePlugin } from '@/components/editor/inline/inline';
+import { quotePlugin } from '@/components/editor/quote/quote';
+import { todoPlugin } from '@/components/editor/todo/todo';
+
 class CalloutWidget extends WidgetType {
   constructor(
     private readonly tag: string,
@@ -36,54 +42,32 @@ class CalloutWidget extends WidgetType {
 
   toDOM(): HTMLElement {
     const outer = document.createElement('div');
-    outer.style.width = '100%';
-
-    const container = document.createElement('div');
-    container.className = `callout callout-${this.tag.toLowerCase()} callout-level-${this.level}`;
+    outer.className = `callout callout-${this.tag.toLowerCase()} callout-level-${this.level}`;
 
     const header = document.createElement('div');
     header.className = 'callout-header';
     header.textContent = this.tag;
+    outer.appendChild(header);
 
-    const bodyContainer = document.createElement('div');
-    bodyContainer.className = 'callout-body';
+    const nestedState = EditorState.create({
+      doc: this.body,
+      extensions: [
+        EditorView.editable.of(false),
+        EditorView.lineWrapping,
+        calloutPlugin,
+        quotePlugin,
+        headingPlugin,
+        pageBreaker,
+        inlinePlugin,
+        todoPlugin
+      ]
+    });
 
-    const lines = this.body.split('\n');
-    let i = 0;
+    new EditorView({
+      state: nestedState,
+      parent: outer
+    });
 
-    while (i < lines.length) {
-      const line = lines[i];
-      const match = line.match(/^(\s*)> \[!(\w+)]/);
-
-      if (match) {
-        const indent = match[1] ?? '';
-        const tag = match[2];
-        const nestedLines: string[] = [];
-
-        for (let j = i + 1; j < lines.length; j++) {
-          const nextLine = lines[j];
-          if (!nextLine.startsWith(indent + '> ')) break;
-          nestedLines.push(nextLine.slice(indent.length + 2));
-          i = j;
-        }
-
-        const nestedBody = nestedLines.join('\n');
-        const nestedWidget = new CalloutWidget(tag, nestedBody, this.level + 1);
-        const nestedDOM = nestedWidget.toDOM();
-
-        bodyContainer.appendChild(nestedDOM); // ⬅️ вот сюда
-      } else {
-        const p = document.createElement('div');
-        p.textContent = line;
-        bodyContainer.appendChild(p);
-      }
-
-      i++;
-    }
-
-    container.appendChild(header);
-    container.appendChild(bodyContainer);
-    outer.appendChild(container);
     return outer;
   }
 
@@ -120,18 +104,10 @@ function parseCallout(state: EditorState): {
 
     for (let j = i + 1; j < lines.length; j++) {
       const nextLine = lines[j];
-      if (!nextLine.startsWith(indent + '> ')) {
-        const nested = nextLine.match(/^(\s*)> /);
-        if (nested && nested[1].length > indent.length) {
-          bodyLines.push(nextLine.slice(indent.length + 2));
-          toLine = j;
-        } else {
-          break;
-        }
-      } else {
-        bodyLines.push(nextLine.slice(indent.length + 2));
-        toLine = j;
-      }
+      if (!nextLine.startsWith(indent + '> ')) break;
+
+      bodyLines.push(nextLine.slice(indent.length + 2));
+      toLine = j;
     }
 
     const from = state.doc.line(fromLine + 1).from;
@@ -221,7 +197,6 @@ const continueCalloutOnEnter = keymap.of([{
     return false;
   }
 }]);
-
 
 export const calloutPlugin = [
   calloutDecorationField,
