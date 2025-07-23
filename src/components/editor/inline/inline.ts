@@ -13,7 +13,7 @@ Copyright 2025 The VOID Authors. All Rights Reserved.
   See the License for the specific language governing permissions and
   limitations under the License.
 */
-import { createUnifiedInlinePlugin } from '../inline-fabric/fabric.ts';
+import { createUnifiedInlinePlugin } from '../inline-factory/factory';
 
 export const inlinePlugin = createUnifiedInlinePlugin([
   {
@@ -43,5 +43,12 @@ export const inlinePlugin = createUnifiedInlinePlugin([
     marker: 'highlight',
     openingLength: 2,
     closingLength: 2
+  },
+  {
+    regex: /`([^`\n]+?)`/g,
+    className: 'cm-inline-codeblock',
+    marker: 'linecode',
+    openingLength: 1,
+    closingLength: 1,
   }
 ]);

@@ -345,6 +345,14 @@
   padding: 0.3em;
 }
 
+.cm-inline-codeblock {
+  background-color: rgba(200, 200, 200, 0.15);
+  font-family: monospace;
+  border-radius: 4px;
+  padding: 1px 4px;
+  font-size: 0.95em;
+}
+
 .quote-block {
   border-left: 3px solid #666;
   padding-left: 1em;
