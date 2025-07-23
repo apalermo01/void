@@ -14,17 +14,17 @@ let props = defineProps({
       <slot />
     </ContextMenuTrigger>
     <ContextMenuContent>
-      <ContextMenuItem @click="$emit('create-file')">Создать файл</ContextMenuItem>
-      <ContextMenuItem @click="$emit('create-folder')">Создать папку</ContextMenuItem>
-      <ContextMenuItem @click="$emit('delete')">Удалить файл/папку</ContextMenuItem>
+            <ContextMenuItem @click="$emit('create-file')">{{ $t('common.createFile') }}</ContextMenuItem>
+            <ContextMenuItem @click="$emit('create-folder')">{{ $t('common.createFolder') }}</ContextMenuItem>
+            <ContextMenuItem @click="$emit('delete')">{{ $t('common.delete') }}</ContextMenuItem>
       <ContextMenuSeparator />
-      <ContextMenuItem @click="$emit('rename')">Переименовать</ContextMenuItem>
+            <ContextMenuItem @click="$emit('rename')">{{ $t('common.rename') }}</ContextMenuItem>
       <ContextMenuSeparator />
-      <ContextMenuItem @click="$emit('cut')">Вырезать</ContextMenuItem>
-      <ContextMenuItem @click="$emit('copy')">Копировать</ContextMenuItem>
+            <ContextMenuItem @click="$emit('cut')">{{ $t('common.cut') }}</ContextMenuItem>
+            <ContextMenuItem @click="$emit('copy')">{{ $t('common.copy') }}</ContextMenuItem>
       <ContextMenuSeparator />
-      <ContextMenuItem v-if="props.copied" @click="$emit('epaste')">Вставить</ContextMenuItem>
+            <ContextMenuItem v-if="props.copied" @click="$emit('epaste')">{{ $t('common.epaste') }}</ContextMenuItem>
     </ContextMenuContent>
   </ContextMenu>
 </template>
-<style></style>
+<style></style>  

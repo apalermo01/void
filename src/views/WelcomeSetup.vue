@@ -22,13 +22,23 @@ import { delayedSetup } from '@/lib/logic/account-setup';
 let username = ref('');
 
 
+// TODO: same translation setup as Welcome Animation
+// const placeholders: Array<string> = [
+//   'Как мне тебя называть?',
+//   'Может Господин?',
+//   'Мастер?',
+//   'internet explorer?',
+//   'Может просто Андрей?',
+//   'Или может Саша?',
+//   'BrawlStarser228?'
+// ]
 const placeholders: Array<string> = [
-  'Как мне тебя называть?',
-  'Может Господин?',
-  'Мастер?',
+  'What should I call you?',
+  'Maybe Sir?',
+  'Master?',
   'internet explorer?',
-  'Может просто Андрей?',
-  'Или может Саша?',
+  'Maybe just Andrey?',
+  'Or maybe Sasha?',
   'BrawlStarser228?'
 ]
 
@@ -38,7 +48,7 @@ const placeholders: Array<string> = [
   <div class="form-container">
     <LampEffect>
       <div class="input-wrapper">
-        <h1 class="text-rosepine-text text-4xl">Как мне тебя называть?</h1>
+        <h1 class="text-rosepine-text text-4xl">{{ $t('welcomeSetup.namePrompt') }}</h1>
         <VanishingInput class="user-input" v-model="username" :placeholders="placeholders"
           @submit="delayedSetup(username, $router)" />
       </div>

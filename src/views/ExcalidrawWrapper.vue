@@ -55,7 +55,7 @@ const initializeApp = async () => {
     const module = await import('@excalidraw/excalidraw');
     ExcalidrawReact.value = applyReactInVue(module.Excalidraw);
   } catch (error) {
-    initializationError.value = `Ошибка загрузки: ${error instanceof Error ? error.message : String(error)}`;
+    initializationError.value = `Ошибка загрузки: ${error instanceof Error ? error.message : String(error)}`; // TODO: add i18n interpolation
   }
 };
 

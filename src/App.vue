@@ -70,12 +70,12 @@ onMounted(async () => {
   </main>
   <Alert class="alert" v-if="error != ''" @click="error = ''">
     <OctagonX />
-    <AlertTitle>Ошибка!</AlertTitle>
+      <AlertTitle>{{ $t('notifications.error')}}</AlertTitle>
     <AlertDescription>{{ error }}</AlertDescription>
   </Alert>
   <Alert class="notification" v-if="notification != ''" @click="notification = ''">
     <Check />
-    <AlertTitle>Уведомление</AlertTitle>
+      <AlertTitle>{{ $t('notifications.warning')}}</AlertTitle>
     <AlertDescription>{{ notification }}</AlertDescription>
   </Alert>
 </template>

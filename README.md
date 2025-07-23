@@ -149,6 +149,7 @@ sudo apk add \
 <summary>NixOS</summary>
 
 ```nix
+# shell.nix
 let
   pkgs = import <nixpkgs> { };
 in
@@ -174,7 +175,20 @@ pkgs.mkShell {
     pango
     webkitgtk_4_1
     openssl
+    gcc
+    llvmPackages.clang
+    zlib
+    bzip2
+    lz4
+    zstd
+    rocksdb
   ];
+
+  LIBCLANG_PATH="${pkgs.libclang.lib}/lib";
+
+  ROCKSDB_LIB_DIR="${pkgs.rocksdb}/lib";
+  ROCKSDB_INCLUDE_DIR="${pkgs.rocksdb}/include";
+  ROCKSDB_LINK_TYPE="static";
 }
 ```
 

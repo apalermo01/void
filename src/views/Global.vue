@@ -28,7 +28,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <h1 class="text-4xl text-center text-accent mt-2">Общие</h1>
+    <h1 class="text-4xl text-center text-accent mt-2">{{ $t('common.general') }}</h1>
   <SettingsHeader value="изменить рабочую директорию" />
   <SettingsComposition>
     <SettingsField :placeholder="workdir" />

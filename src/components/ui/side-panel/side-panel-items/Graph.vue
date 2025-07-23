@@ -5,6 +5,6 @@ import { RouterLink } from "vue-router";
 <template>
     <RouterLink to="#">
         <Spline />
-        <span class="text-lg">Граф</span>
+        <span class="text-lg">{{ $t("common.graph") }}</span>
     </RouterLink>
 </template>
