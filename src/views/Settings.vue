@@ -39,7 +39,7 @@ async function get_settings(name: string): Promise<Component> {
   if (!name || name === 'Global') return Global;
   const loader = componentMap[name];
   if (!loader) {
-    console.warn(`Компонент '${name}' не найден`);
+    console.warn(`Component '${name}' not found`);
     return Global;
   }
   const mod = await loader();

@@ -113,7 +113,7 @@ Copyright 2025 The VOID Authors. All Rights Reserved.
       </g>
     </svg>
     <BlurReveal delay="0.2" duration="0.75">
-      <h2 class="reveal-text text-rosepine-gold">{{ text }}</h2>
+      <h2 class="reveal-text text-rosepine-gold">{{ $t('loader.loader') }}</h2>
     </BlurReveal>
   </div>
 </template>
@@ -121,7 +121,6 @@ Copyright 2025 The VOID Authors. All Rights Reserved.
 import { ref } from 'vue';
 import BlurReveal from '@/components/ui/blur-reveal/BlurReveal.vue';
 
-const text = "Пришел. Увидел. Записал."
 
 </script>
 <style scoped>

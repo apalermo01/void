@@ -14,7 +14,7 @@ Copyright 2025 The VOID Authors. All Rights Reserved.
   limitations under the License.
 -->
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { applyReactInVue } from 'veaury';
 import { appDataDir, join } from '@tauri-apps/api/path';
 import { restore, serializeAsJSON } from '@excalidraw/excalidraw';
@@ -55,11 +55,11 @@ const initializeApp = async () => {
     const module = await import('@excalidraw/excalidraw');
     ExcalidrawReact.value = applyReactInVue(module.Excalidraw);
   } catch (error) {
-    initializationError.value = `Ошибка загрузки: ${error instanceof Error ? error.message : String(error)}`;
+    initializationError.value = `Ошибка загрузки: ${error instanceof Error ? error.message : String(error)}`; // TODO: add i18n interpolation
   }
 };
 
-onMounted(async () => {
+async function createExcalidrawInstance() {
   if (props.url != undefined) {
     let path = decodeURIComponent(atob(props.url));
     let content = await read_canvas(decodeURIComponent(atob(props.url)));
@@ -84,7 +84,15 @@ onMounted(async () => {
     file_path.value = useExplorerStore().current + '/' + path.split('/')[path.split('/').length - 1];
   }
   await initializeApp();
+}
+
+onMounted(async () => {
+  await createExcalidrawInstance();
 });
+
+watch(() => props.url, async () => {
+  createExcalidrawInstance();
+})
 
 
 const handleChange = (elements: ExcalidrawElement[], appState: AppState, files?: BinaryFiles) => {

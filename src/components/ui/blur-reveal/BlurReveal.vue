@@ -1,21 +1,11 @@
 <template>
-  <div
-    ref="container"
-    :class="props.class"
-  >
-    <Motion
-      v-for="(child, index) in children"
-      :key="index"
-      ref="childElements"
-      as="div"
-      :initial="getInitial()"
-      :in-view="getAnimate()"
-      :transition="{
+  <div ref="container" :class="props.class">
+    <Motion v-for="(child, index) in children" :key="index" ref="childElements" as="div" :initial="getInitial()"
+      :in-view="getAnimate()" :transition="{
         duration: props.duration,
-        easing: 'easeInOut',
+        ease: 'easeInOut',
         delay: props.delay * index,
-      }"
-    >
+      }">
       <component :is="child" />
     </Motion>
   </div>

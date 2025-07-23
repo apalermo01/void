@@ -62,13 +62,13 @@ onMounted(async () => {
 </script>
 <template>
   <div class="w-full h-full flex flex-col gap-2 items-center overflow-auto">
-    <h1 class="text-4xl text-[var(--destructive)] text-shadow-2xs">Расширения и кастомизация</h1>
-    <p>Собери свой void!</p>
+        <h1 class="text-4xl text-[var(--destructive)] text-shadow-2xs">{{ $t('plugins.pluginHeader')}}</h1>
+        <p> {{ $t('plugins.collect') }} void!</p>
   </div>
   <SettingsHeader value="установить расширения" />
   <SettingsHeader value="изменить тему" />
   <SettingsComposition>
-    <h2>Хочется больше свободы?</h2>
+    <h2> {{ $t('plugins.moreFreedom') }}</h2>
     <SettingsButton name="Установить расширения" @click="async () => { getThemesMarketplace() }" />
   </SettingsComposition>
   <SettingsComposition>

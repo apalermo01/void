@@ -1,7 +1,7 @@
 <template>
   <RouterLink to="/canvas">
     <Palette />
-    <span class="text-lg">Canvas</span>
+        <span class="text-lg">{{ $t('common.canvas') }}</span>
   </RouterLink>
 </template>
 <script setup lang="ts">

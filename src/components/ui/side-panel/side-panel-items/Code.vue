@@ -5,6 +5,6 @@ import { RouterLink } from "vue-router";
 <template>
     <RouterLink to="/code">
         <Terminal />
-        <span class="text-lg">Neovim</span>
+        <span class="text-lg">{{ $t('common.neovim') }}</span>
     </RouterLink>
 </template>
