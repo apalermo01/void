@@ -8,7 +8,10 @@
         "explorer": "Explorer",
         "settings": "Settings",
         "tools": "Tools",
-        "sideRepos": "Custom Repositories"
+        "sideRepos": "Custom Repositories",
+        "general": "General",
+        "download": "Download",
+        "letsGo": "Let's Go"
     },
     "contextMenu": {
         "createFile": "Create File",

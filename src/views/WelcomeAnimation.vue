@@ -61,7 +61,7 @@ window.addEventListener("resize", () => {
       <span class="pi pi-angle-left arrow" @click="index = prev_slide(index, welcome_info.length)"></span>
       <InteractiveHoverButton class="lessgo-button" text="Поехали!" v-if="index == welcome_info.length - 1"
         @click="move_to_account($router)">
-        Поехали!
+        {{ $t('general.letsGo') }}!
       </InteractiveHoverButton>
       <span class="pi pi-angle-right arrow" @click="index = next_slide(index, welcome_info)"></span>
     </div>

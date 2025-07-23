@@ -8,7 +8,10 @@
         "explorer": "Проводник",
         "settings": "астройки",
         "tools": "Инструменты",
-        "sideRepos": "астомные репозитории"
+        "sideRepos": "астомные репозитории",
+        "general": "Общие",
+        "download": "Загрузить",
+        "letsGo": "Поехали"
     },
     "contextMenu": {
         "createFile": "Создать файл",
