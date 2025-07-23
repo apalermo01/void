@@ -15,22 +15,24 @@ Copyright 2025 The VOID Authors. All Rights Reserved.
 -->
 <template>
   <div class="w-full h-full overflow-auto">
-    <code-mirror v-model="content" ref="Editor" class="editor"></code-mirror>
+    <CodeMirror :extensions="extensions" v-model="content" ref="Editor" class="editor" />
   </div>
 </template>
 <script setup lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
+import { onMounted, ref, shallowRef } from 'vue';
 import CodeMirror from 'vue-codemirror6';
 import { invoke } from '@tauri-apps/api/core';
+import { headingPlugin } from '@/components/editor/headers/headers';
+import { pageBreaker } from '@/components/editor/page-breaker/page-breaker';
+import { calloutPlugin } from '@/components/editor/callout/callout';
+import { inlinePlugin } from '@/components/editor/inline/inline';
+import { quotePlugin } from '@/components/editor/quote/quote';
+import { todoPlugin } from '@/components/editor/todo/todo';
 let props = defineProps({
   url: String
 });
 let content = ref('');
-defineComponent({
-  components: { CodeMirror }, setup() {
-    return { content };
-  }
-});
+const extensions = shallowRef([headingPlugin, inlinePlugin, pageBreaker, calloutPlugin, quotePlugin, todoPlugin]);
 
 onMounted(async () => {
   if (!props.url) { return }
