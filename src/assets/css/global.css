@@ -405,3 +405,12 @@
   margin-right: 0.4rem;
   cursor: pointer;
 }
+
+.cm-callout-hidden-line {
+  display: none;
+}
+
+.cm-bullet-marker {
+  margin-right: 0.5em;
+  color: var(--primary-color, #AD6768);
+}

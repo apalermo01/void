@@ -41,14 +41,28 @@ class TodoCheckboxInline extends WidgetType {
     checkbox.type = 'checkbox';
     checkbox.checked = this.checked;
     checkbox.className = 'cm-todo-checkbox';
-
     checkbox.onclick = this.onToggle;
-
     return checkbox;
   }
 }
 
-const todoExtension = ViewPlugin.fromClass(
+class BulletWidget extends WidgetType {
+  constructor() {
+    super();
+  }
+
+  toDOM(): HTMLElement {
+    const bullet = document.createElement('span');
+    bullet.className = 'cm-bullet-point';
+    bullet.textContent = '•';
+    bullet.style.color = '#666';
+    bullet.style.fontWeight = 'bold';
+    bullet.style.marginRight = '0.5em';
+    return bullet;
+  }
+}
+
+const listExtension = ViewPlugin.fromClass(
   class {
     decorations: DecorationSet;
 
@@ -71,14 +85,15 @@ const todoExtension = ViewPlugin.fromClass(
 
         while (pos <= to) {
           const line = view.state.doc.lineAt(pos);
-          const match = /([-*]\s\[( |x)])\s/.exec(line.text);
+          console.log('Processing line:', JSON.stringify(line.text));
 
-          if (match && match.index !== undefined) {
-            const checked = match[2] === 'x';
-            const offset = match.index;
+          const todoMatch = /([-*]\s\[( |x)])\s/.exec(line.text);
+          if (todoMatch && todoMatch.index !== undefined) {
+            console.log('Todo match found');
+            const checked = todoMatch[2] === 'x';
+            const offset = todoMatch.index;
             const prefixStart = line.from + offset;
-            const prefixEnd = prefixStart + match[1].length;
-
+            const prefixEnd = prefixStart + todoMatch[1].length;
             const cursorInside = cursorPos >= prefixStart && cursorPos <= prefixEnd;
 
             if (!cursorInside) {
@@ -105,6 +120,41 @@ const todoExtension = ViewPlugin.fromClass(
                 })
               );
             }
+          } else {
+            const bulletMatch = /^([ \t]*)-\s/.exec(line.text);
+            console.log('Bullet match result:', bulletMatch);
+            if (bulletMatch && bulletMatch.index !== undefined) {
+              const indent = bulletMatch[1];
+              const restOfLine = line.text.substring(bulletMatch[0].length);
+              console.log('Rest of line:', JSON.stringify(restOfLine));
+
+              if (!restOfLine.match(/^\[[ x]\]/)) {
+                console.log('Not a todo item, adding bullet decoration');
+                const bulletStart = line.from + indent.length;
+                const bulletEnd = bulletStart + 1;
+                const cursorInside = cursorPos >= bulletStart && cursorPos <= bulletEnd;
+                console.log('Cursor pos:', cursorPos, 'bulletStart:', bulletStart, 'bulletEnd:', bulletEnd);
+                console.log('Cursor inside:', cursorInside);
+
+                if (!cursorInside) {
+                  console.log('Adding bullet decoration');
+                  builder.add(
+                    bulletStart,
+                    bulletEnd,
+                    Decoration.replace({
+                      widget: new BulletWidget(),
+                      inclusive: false
+                    })
+                  );
+                } else {
+                  console.log('Cursor inside, not adding decoration');
+                }
+              } else {
+                console.log('This is a todo item, skipping');
+              }
+            } else {
+              console.log('No bullet match');
+            }
           }
 
           pos = line.to + 1;
@@ -120,21 +170,24 @@ const todoExtension = ViewPlugin.fromClass(
 );
 
 function handleEnter(view: EditorView): boolean {
+  console.log('Combined handleEnter called');
   const { state } = view;
   const { head } = state.selection.main;
   const line = state.doc.lineAt(head);
-  const match = /^([ \t]*)([-*]\s\[[ x]])\s(.*)$/.exec(line.text);
+  console.log('Line text:', JSON.stringify(line.text));
 
-  if (match) {
-    const indent = match[1];
-    const prefix = match[2];
-    const content = match[3];
+  const todoMatch = /^([ \t]*)([-*]\s\[[ x]])\s(.*)$/.exec(line.text);
+  if (todoMatch) {
+    console.log('Todo match found');
+    const indent = todoMatch[1];
+    const prefix = todoMatch[2];
+    const content = todoMatch[3];
 
     if (content.trim() === '') {
       if (indent.length > 0) {
         return indentLess(view);
       } else {
-        const removeEnd = line.from + match[0].length;
+        const removeEnd = line.from + todoMatch[0].length;
         view.dispatch({
           changes: {
             from: line.from,
@@ -162,6 +215,52 @@ function handleEnter(view: EditorView): boolean {
     });
     return true;
   }
+
+  const bulletMatch = /^([ \t]*)(-)(\s)(.*)$/.exec(line.text);
+  if (bulletMatch) {
+    const content = bulletMatch[4];
+    // Убеждаемся, что это не todo item
+    if (!content.match(/^\[[ x]\]/)) {
+      console.log('Bullet match found');
+      const indent = bulletMatch[1];
+      const prefix = bulletMatch[2];
+      const space = bulletMatch[3];
+
+      if (content.trim() === '') {
+        if (indent.length > 0) {
+          return indentLess(view);
+        } else {
+          const removeEnd = line.from + bulletMatch[0].length;
+          view.dispatch({
+            changes: {
+              from: line.from,
+              to: removeEnd,
+              insert: ''
+            },
+            selection: { anchor: line.from },
+            scrollIntoView: true
+          });
+          return true;
+        }
+      }
+
+      const insertText = `\n${indent}${prefix}${space}`;
+      const cursorPos = head + insertText.length;
+
+      view.dispatch({
+        changes: {
+          from: head,
+          to: head,
+          insert: insertText
+        },
+        selection: { anchor: cursorPos },
+        scrollIntoView: true
+      });
+      return true;
+    }
+  }
+
+  console.log('No match, using default Enter behavior');
   return insertNewlineAndIndent(view);
 }
 
@@ -173,13 +272,21 @@ function handleShiftTab(view: EditorView): boolean {
   return indentLess(view);
 }
 
-const todoKeymap = keymap.of([
+const listKeymap = keymap.of([
   { key: 'Enter', run: handleEnter },
   { key: 'Tab', run: handleTab },
   { key: 'Shift-Tab', run: handleShiftTab },
 ]);
 
-export const todoPlugin: Extension = [
-  todoExtension,
-  todoKeymap
+const listTheme = EditorView.baseTheme({
+  '.cm-bullet-point': {
+    userSelect: 'none',
+    pointerEvents: 'none'
+  }
+});
+
+export const combinedListPlugin: Extension = [
+  listExtension,
+  listKeymap,
+  listTheme
 ];
