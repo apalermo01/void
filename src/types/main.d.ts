@@ -1,5 +1,8 @@
 import 'vue-i18n';
 declare module 'vue-i18n';
+declare module 'markdown-it-attrs';
+declare module 'markdown-it-container';
+declare module 'markdown-it-task-lists';
 
 declare module 'vue-virtual-scroller';
 
