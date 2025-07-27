@@ -13,110 +13,129 @@ Copyright 2025 The VOID Authors. All Rights Reserved.
   See the License for the specific language governing permissions and
   limitations under the License.
 */
-import { Decoration, DecorationSet, EditorView, ViewPlugin, ViewUpdate, WidgetType } from '@codemirror/view';
+import {
+  Decoration,
+  DecorationSet,
+  EditorView,
+  WidgetType,
+} from '@codemirror/view';
+import {
+  StateField,
+  EditorState,
+  RangeSetBuilder
+} from '@codemirror/state';
 
 class CalloutWidget extends WidgetType {
-  constructor(private readonly tag: string, private readonly body: string, private readonly header: string) {
+  constructor(
+    private readonly tag: string,
+    private readonly header: string,
+    private readonly body: string
+  ) {
     super();
   }
-  toDOM(view: EditorView): HTMLElement {
-    let el = document.createElement('div');
-    el.classList.add('cm-callout');
-    el.classList.add(`cm-callout-${this.tag.toLowerCase()}`)
-    let header = document.createElement('div');
-    header.classList.add('cm-callout-tag');
-    if (this.header != '') {
-      header.textContent = this.header;
-    }
-    else {
-      header.textContent = this.tag;
-    }
-    let body = document.createElement('div');
-    body.classList.add('cm-callout-body');
-    body.textContent = this.body;
-    el.appendChild(header);
-    el.appendChild(body);
-    return el;
+
+  toDOM(): HTMLElement {
+    const box = document.createElement('div');
+    box.className = `cm-callout callout-${this.tag.toLowerCase()}`;
+
+    const headerEl = document.createElement('div');
+    headerEl.className = 'callout-header';
+    headerEl.textContent = this.header || this.tag;
+
+    const bodyEl = document.createElement('div');
+    bodyEl.className = 'callout-body';
+    bodyEl.textContent = this.body;
+
+    box.appendChild(headerEl);
+    box.appendChild(bodyEl);
+    return box;
+  }
+
+  ignoreEvent(): boolean {
+    return false;
   }
 }
 
-export const calloutPlugin = ViewPlugin.fromClass(
-  class {
-    decorations: DecorationSet;
-    constructor(view: EditorView) {
-      this.decorations = this.build(view);
+function parseCallouts(state: EditorState): {
+  from: number;
+  to: number;
+  tag: string;
+  header: string;
+  body: string;
+}[] {
+  const lines = state.doc.toString().split('\n');
+  const result = [];
+  let i = 0;
+
+  const headerRegex = /^>\s*\[!(?<tag>[A-Z]+)\](?<header>.*)/;
+  const bodyRegex = /^>\s(?!\[)(?<body>.*)/;
+
+  while (i < lines.length) {
+    const headerMatch = lines[i].match(headerRegex);
+    if (!headerMatch?.groups) {
+      i++;
+      continue;
     }
-    update(update: ViewUpdate) {
-      if (
-        update.docChanged ||
-        update.viewportChanged ||
-        update.selectionSet
-      ) {
-        this.decorations = this.build(update.view);
-      }
+
+    const tag = headerMatch.groups.tag;
+    const header = headerMatch.groups.header.trim();
+    const bodyLines = [];
+    const fromLine = i;
+    let toLine = i;
+
+    for (let j = i + 1; j < lines.length; j++) {
+      const bodyMatch = lines[j].match(bodyRegex);
+      if (!bodyMatch?.groups) break;
+      bodyLines.push(bodyMatch.groups.body);
+      toLine = j;
     }
-    build(view: EditorView): DecorationSet {
-      console.log('[callout] building');
-      const doc = view.state.doc;
-      const cursor = view.state.selection.main.head;
 
-      const headerRegexp = /^>\s*\[!(?<tag>[A-Z]+)\](?<header>.*)/;
-      const bodyRegexp = /^>\s(?!\[)(?<body>.*)/;
+    const from = state.doc.line(fromLine + 1).from;
+    const to = state.doc.line(toLine + 1).to;
 
-      const decorations = [];
+    result.push({
+      from,
+      to,
+      tag,
+      header,
+      body: bodyLines.join('\n')
+    });
 
-      let i = 1;
-      while (i <= doc.lines) {
-        const line = doc.line(i);
-        const headerMatch = line.text.match(headerRegexp);
+    i = toLine + 1;
+  }
 
-        if (headerMatch?.groups) {
-          const tag = headerMatch.groups.tag;
-          const header = headerMatch.groups.header.trim();
-          const from = line.from;
-          let to = line.to;
+  return result;
+}
 
-          let body = '';
-          let j = i + 1;
+function buildCalloutDecorations(state: EditorState): DecorationSet {
+  const builder = new RangeSetBuilder<Decoration>();
+  const callouts = parseCallouts(state);
+  const sel = state.selection.main;
 
-          while (j <= doc.lines) {
-            const bodyLine = doc.line(j);
-            const bodyMatch = bodyLine.text.match(bodyRegexp);
-
-            if (bodyMatch?.groups) {
-              body += bodyMatch.groups.body + '\n';
-              to = bodyLine.to;
-              j++;
-            } else {
-              break;
-            }
-          }
-
-          if (cursor >= from && cursor <= to) {
-            i = j;
-            continue;
-          }
-
-          decorations.push(
-            Decoration.widget({
-              widget: new CalloutWidget(tag, body.trim(), header),
-              side: -1,
-            }).range(from)
-          );
-
-          for (let k = i; k < j; k++) {
-            const lineToHide = doc.line(k);
-            decorations.push(
-              Decoration.line({ class: 'cm-callout-hidden-line' }).range(lineToHide.from)
-            );
-          }
-
-          i = j;
-        } else {
-          i++;
-        }
-      }
-
-      return Decoration.set(decorations, true);
+  for (const { from, to, tag, header, body } of callouts) {
+    const inside = sel.from >= from && sel.from <= to;
+    if (!inside) {
+      builder.add(from, to, Decoration.replace({
+        widget: new CalloutWidget(tag, header, body),
+        side: 1
+      }));
     }
-  }, { decorations: v => v.decorations });
+  }
+
+  return builder.finish();
+}
+
+const calloutDecorationField = StateField.define<DecorationSet>({
+  create: buildCalloutDecorations,
+  update(deco, tr) {
+    if (tr.docChanged || tr.selection) {
+      return buildCalloutDecorations(tr.state);
+    }
+    return deco;
+  },
+  provide: f => EditorView.decorations.from(f)
+});
+
+export const calloutPlugin = [
+  calloutDecorationField,
+];
