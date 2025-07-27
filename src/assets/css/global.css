@@ -288,7 +288,7 @@
   background: #ecfdf5;
 }
 
-.callout {
+.cm-callout {
   border-left: 4px solid #ccc;
   padding: 8px 12px;
   margin: 8px 0;
@@ -296,29 +296,36 @@
   border-radius: 6px;
 }
 
-.callout-header {
+.cm-callout-tag {
   font-weight: bold;
   margin-bottom: 4px;
 }
 
-.callout-warning {
+.cm-callout-warning {
   border-left-color: #f59e0b;
   background: #fff7ed;
 }
 
-.callout-note {
+.cm-callout-note {
   border-left-color: #3b82f6;
   background: #eff6ff;
 }
 
-.callout-tip {
+.cm-callout-tip {
   border-left-color: #10b981;
   background: #ecfdf5;
 }
 
-.callout-danger {
+.cm-callout-danger {
   border-left-color: #ef4444;
   background: #fef2f2;
+}
+
+.cm-callout-hidden-line {
+  opacity: 0;
+  height: 0;
+  font-size: 0;
+  pointer-events: none;
 }
 
 .cm-editor.cm-focused {

@@ -85,11 +85,9 @@ const listExtension = ViewPlugin.fromClass(
 
         while (pos <= to) {
           const line = view.state.doc.lineAt(pos);
-          console.log('Processing line:', JSON.stringify(line.text));
 
           const todoMatch = /([-*]\s\[( |x)])\s/.exec(line.text);
           if (todoMatch && todoMatch.index !== undefined) {
-            console.log('Todo match found');
             const checked = todoMatch[2] === 'x';
             const offset = todoMatch.index;
             const prefixStart = line.from + offset;
@@ -122,22 +120,16 @@ const listExtension = ViewPlugin.fromClass(
             }
           } else {
             const bulletMatch = /^([ \t]*)-\s/.exec(line.text);
-            console.log('Bullet match result:', bulletMatch);
             if (bulletMatch && bulletMatch.index !== undefined) {
               const indent = bulletMatch[1];
               const restOfLine = line.text.substring(bulletMatch[0].length);
-              console.log('Rest of line:', JSON.stringify(restOfLine));
 
               if (!restOfLine.match(/^\[[ x]\]/)) {
-                console.log('Not a todo item, adding bullet decoration');
                 const bulletStart = line.from + indent.length;
                 const bulletEnd = bulletStart + 1;
                 const cursorInside = cursorPos >= bulletStart && cursorPos <= bulletEnd;
-                console.log('Cursor pos:', cursorPos, 'bulletStart:', bulletStart, 'bulletEnd:', bulletEnd);
-                console.log('Cursor inside:', cursorInside);
 
                 if (!cursorInside) {
-                  console.log('Adding bullet decoration');
                   builder.add(
                     bulletStart,
                     bulletEnd,
@@ -147,13 +139,10 @@ const listExtension = ViewPlugin.fromClass(
                     })
                   );
                 } else {
-                  console.log('Cursor inside, not adding decoration');
                 }
               } else {
-                console.log('This is a todo item, skipping');
               }
             } else {
-              console.log('No bullet match');
             }
           }
 
@@ -170,15 +159,12 @@ const listExtension = ViewPlugin.fromClass(
 );
 
 function handleEnter(view: EditorView): boolean {
-  console.log('Combined handleEnter called');
   const { state } = view;
   const { head } = state.selection.main;
   const line = state.doc.lineAt(head);
-  console.log('Line text:', JSON.stringify(line.text));
 
   const todoMatch = /^([ \t]*)([-*]\s\[[ x]])\s(.*)$/.exec(line.text);
   if (todoMatch) {
-    console.log('Todo match found');
     const indent = todoMatch[1];
     const prefix = todoMatch[2];
     const content = todoMatch[3];
@@ -221,7 +207,6 @@ function handleEnter(view: EditorView): boolean {
     const content = bulletMatch[4];
     // Убеждаемся, что это не todo item
     if (!content.match(/^\[[ x]\]/)) {
-      console.log('Bullet match found');
       const indent = bulletMatch[1];
       const prefix = bulletMatch[2];
       const space = bulletMatch[3];
@@ -260,7 +245,6 @@ function handleEnter(view: EditorView): boolean {
     }
   }
 
-  console.log('No match, using default Enter behavior');
   return insertNewlineAndIndent(view);
 }
 

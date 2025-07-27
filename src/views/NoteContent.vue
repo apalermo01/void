@@ -27,11 +27,12 @@ import { pageBreaker } from '@/components/editor/page-breaker/page-breaker';
 import { inlinePlugin } from '@/components/editor/inline/inline';
 import { quotePlugin } from '@/components/editor/quote/quote';
 import { combinedListPlugin } from '@/components/editor/lists/lists';
+import { calloutPlugin } from '@/components/editor/callout/callout';
 let props = defineProps({
   url: String
 });
 let content = ref('');
-const extensions = shallowRef([headingPlugin, inlinePlugin, pageBreaker, quotePlugin, combinedListPlugin]);
+const extensions = shallowRef([calloutPlugin, quotePlugin, headingPlugin, inlinePlugin, pageBreaker, combinedListPlugin]);
 
 onMounted(async () => {
   if (!props.url) { return }
