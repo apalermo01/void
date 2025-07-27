@@ -28,11 +28,12 @@ import { inlinePlugin } from '@/components/editor/inline/inline';
 import { quotePlugin } from '@/components/editor/quote/quote';
 import { combinedListPlugin } from '@/components/editor/lists/lists';
 import { calloutPlugin } from '@/components/editor/callout/callout';
+import { hashtagField } from '@/components/editor/tags/tags';
 let props = defineProps({
   url: String
 });
 let content = ref('');
-const extensions = shallowRef([calloutPlugin, quotePlugin, headingPlugin, inlinePlugin, pageBreaker, combinedListPlugin]);
+const extensions = shallowRef([calloutPlugin, quotePlugin, headingPlugin, inlinePlugin, pageBreaker, combinedListPlugin, hashtagField]);
 
 onMounted(async () => {
   if (!props.url) { return }
