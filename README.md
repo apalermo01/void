@@ -223,10 +223,16 @@ If you have any suggestions, feel free to contact me on Telegram [@iomanip](http
 
 ## 💵 Support the Project
 
-You can support the project on [Boosty](https://boosty.to/transhumanistdream) and in the future on ~~[Patreon](...)~~
+You can support the project on [Boosty](https://boosty.to/void_project) and in the future on ~~[Patreon](...)~~
 
 If this project can replace my job, I can devote more time to its development and release it faster.
 Everyone who supports the project will be mentioned on the official site and in the "Sponsors" section of the app.
+
+## Socials
+You can check our updates in 
+[Telegram](https://t.me/void_project_tg)
+[Reddit](https://reddit.com/r/void_project)
+[X](https://x.com/void_project_x)
 
 ## 📄 License
 
