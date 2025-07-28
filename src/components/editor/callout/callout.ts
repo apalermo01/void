@@ -1,12 +1,8 @@
-/*
-Copyright 2025 The VOID Authors. All Rights Reserved.
-
+/* Copyright 2025 The VOID Authors. All Rights Reserved.
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-
       http://www.apache.org/licenses/LICENSE-2.0
-
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,18 +14,32 @@ import {
   DecorationSet,
   EditorView,
   WidgetType,
+  ViewUpdate
 } from '@codemirror/view';
 import {
   StateField,
   EditorState,
-  RangeSetBuilder
+  RangeSetBuilder,
+  StateEffect,
+  Extension
 } from '@codemirror/state';
+import { EditorView as NestedEditorView } from 'codemirror';
+import { quotePlugin } from '../quote/quote';
+import { inlinePlugin } from '../inline/inline';
+import { combinedListPlugin } from '../lists/lists';
+import { hashtagField } from '../tags/tags';
+import { keymap } from '@codemirror/view';
+
+const updateCalloutEffect = StateEffect.define<DecorationSet>();
 
 class CalloutWidget extends WidgetType {
   constructor(
     private readonly tag: string,
     private readonly header: string,
-    private readonly body: string
+    private readonly body: string,
+    private readonly from: number,
+    private readonly to: number,
+    private readonly outerView: EditorView
   ) {
     super();
   }
@@ -44,7 +54,44 @@ class CalloutWidget extends WidgetType {
 
     const bodyEl = document.createElement('div');
     bodyEl.className = 'callout-body';
-    bodyEl.textContent = this.body;
+
+    const nestedView = new NestedEditorView({
+      doc: this.body,
+      parent: bodyEl,
+      extensions: [
+        calloutExtension,
+        quotePlugin,
+        inlinePlugin,
+        combinedListPlugin,
+        hashtagField,
+        NestedEditorView.editable.of(false),
+        NestedEditorView.updateListener.of((update: ViewUpdate) => {
+          if (update.docChanged) {
+            const newText = update.state.doc.toString();
+            this.outerView.dispatch({
+              changes: {
+                from: this.from,
+                to: this.to,
+                insert:
+                  `> [!${this.tag}] ${this.header}\n` +
+                  newText
+                    .split('\n')
+                    .map(line => `> ${line}`)
+                    .join('\n')
+              }
+            });
+          }
+        })
+      ]
+    });
+
+    requestAnimationFrame(() => {
+      nestedView.dispatch({
+        effects: updateCalloutEffect.of(
+          buildCalloutDecorations(nestedView.state, nestedView)
+        )
+      });
+    });
 
     box.appendChild(headerEl);
     box.appendChild(bodyEl);
@@ -107,7 +154,7 @@ function parseCallouts(state: EditorState): {
   return result;
 }
 
-function buildCalloutDecorations(state: EditorState): DecorationSet {
+function buildCalloutDecorations(state: EditorState, view: EditorView): DecorationSet {
   const builder = new RangeSetBuilder<Decoration>();
   const callouts = parseCallouts(state);
   const sel = state.selection.main;
@@ -115,10 +162,14 @@ function buildCalloutDecorations(state: EditorState): DecorationSet {
   for (const { from, to, tag, header, body } of callouts) {
     const inside = sel.from >= from && sel.from <= to;
     if (!inside) {
-      builder.add(from, to, Decoration.replace({
-        widget: new CalloutWidget(tag, header, body),
-        side: 1
-      }));
+      builder.add(
+        from,
+        to,
+        Decoration.replace({
+          widget: new CalloutWidget(tag, header, body, from, to, view),
+          side: 1
+        })
+      );
     }
   }
 
@@ -126,16 +177,88 @@ function buildCalloutDecorations(state: EditorState): DecorationSet {
 }
 
 const calloutDecorationField = StateField.define<DecorationSet>({
-  create: buildCalloutDecorations,
+  create() {
+    return Decoration.none;
+  },
   update(deco, tr) {
-    if (tr.docChanged || tr.selection) {
-      return buildCalloutDecorations(tr.state);
+    for (const e of tr.effects) {
+      if (e.is(updateCalloutEffect)) return e.value;
     }
     return deco;
   },
-  provide: f => EditorView.decorations.from(f)
+  provide(field) {
+    return EditorView.decorations.from(field);
+  }
 });
 
-export const calloutPlugin = [
+function handleEnterForCallout(view: EditorView): boolean {
+  const { state } = view;
+  const { head } = state.selection.main;
+  const line = state.doc.lineAt(head);
+  const text = line.text;
+
+  const match = text.match(/^((?:>\s*)+)(.*)/);
+  if (!match) return false;
+
+  const rawPrefix = match[1];
+  const content = match[2];
+
+  const depth = (rawPrefix.replace(/\s/g, '').match(/>/g) || []).length;
+  const cleanPrefix = Array(depth).fill('> ').join('');
+
+  if (content.trim() === '') {
+    if (depth > 1) {
+      const reducedPrefix = Array(depth - 1).fill('> ').join('');
+      view.dispatch({
+        changes: {
+          from: line.from,
+          to: line.to,
+          insert: reducedPrefix
+        },
+        selection: { anchor: line.from + reducedPrefix.length },
+        scrollIntoView: true
+      });
+    } else {
+      view.dispatch({
+        changes: {
+          from: line.from,
+          to: line.to,
+          insert: ''
+        },
+        selection: { anchor: line.from },
+        scrollIntoView: true
+      });
+    }
+    return true;
+  }
+
+  const insertText = `\n${cleanPrefix}`;
+  view.dispatch({
+    changes: {
+      from: head,
+      to: head,
+      insert: insertText
+    },
+    selection: { anchor: head + insertText.length },
+    scrollIntoView: true
+  });
+
+  return true;
+}
+
+const calloutKeymap = keymap.of([
+  { key: 'Enter', run: handleEnterForCallout }
+]);
+export const calloutExtension: Extension = [
   calloutDecorationField,
+  calloutKeymap,
+  EditorView.updateListener.of((update) => {
+    if (update.docChanged || update.selectionSet || update.viewportChanged) {
+      const view = update.view;
+      const decorations = buildCalloutDecorations(view.state, view);
+      view.dispatch({
+        effects: updateCalloutEffect.of(decorations)
+      });
+    }
+  })
 ];
