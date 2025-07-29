@@ -373,3 +373,28 @@
   margin-right: 0.5em;
   color: var(--primary-color, #AD6768);
 }
+
+.cm-code {
+  position: relative;
+}
+
+.cm-code .shiki {
+  padding: 1em;
+  border-radius: 12px;
+  min-height: 3em;
+}
+
+.cm-code .cm-code-button {
+  position: absolute;
+  top: 0.5em;
+  right: 0.5em;
+  width: 1.5em;
+  height: 1.5em;
+}
+
+.cm-code .cm-code-lang {
+  position: absolute;
+  top: 0.5em;
+  right: 0.5em;
+  color: rgb(128, 128, 128);
+}

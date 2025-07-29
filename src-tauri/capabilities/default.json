@@ -10,6 +10,7 @@
     "opener:default",
     "dialog:default",
     "fs:default",
-    "fs:allow-watch"
+    "fs:allow-watch",
+    "clipboard-manager:allow-write-text"
   ]
 }

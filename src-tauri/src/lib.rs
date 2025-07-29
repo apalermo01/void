@@ -28,6 +28,7 @@ pub fn run() {
     let video_state = init_video_server();
 
     tauri::Builder::default()
+        .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_fs::init())
         .setup(|app| {
             tauri::async_runtime::block_on(async {
