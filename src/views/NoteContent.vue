@@ -27,11 +27,15 @@ import { pageBreaker } from '@/components/editor/page-breaker/page-breaker';
 import { inlinePlugin } from '@/components/editor/inline/inline';
 import { quotePlugin } from '@/components/editor/quote/quote';
 import { combinedListPlugin } from '@/components/editor/lists/lists';
+import { calloutExtension } from '@/components/editor/callout/callout';
+import { hashtagField } from '@/components/editor/tags/tags';
+import { CodeBlockPlugin } from '@/components/editor/code-block/codeblock';
+
 let props = defineProps({
   url: String
 });
 let content = ref('');
-const extensions = shallowRef([headingPlugin, inlinePlugin, pageBreaker, quotePlugin, combinedListPlugin]);
+const extensions = shallowRef([CodeBlockPlugin, calloutExtension, quotePlugin, headingPlugin, inlinePlugin, pageBreaker, combinedListPlugin, hashtagField]);
 
 onMounted(async () => {
   if (!props.url) { return }

@@ -248,15 +248,7 @@
   scrollbar-width: none;
 }
 
-.callout-hidden {
-  display: none !important;
-  height: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  overflow: hidden;
-}
-
-.callout {
+.cm-callout {
   border: 4px solid #ccc;
   background: #f9f9f9;
   padding: 8px 12px;
@@ -286,39 +278,6 @@
 .callout-tip {
   border-color: #10b981;
   background: #ecfdf5;
-}
-
-.callout {
-  border-left: 4px solid #ccc;
-  padding: 8px 12px;
-  margin: 8px 0;
-  background: #f9f9f9;
-  border-radius: 6px;
-}
-
-.callout-header {
-  font-weight: bold;
-  margin-bottom: 4px;
-}
-
-.callout-warning {
-  border-left-color: #f59e0b;
-  background: #fff7ed;
-}
-
-.callout-note {
-  border-left-color: #3b82f6;
-  background: #eff6ff;
-}
-
-.callout-tip {
-  border-left-color: #10b981;
-  background: #ecfdf5;
-}
-
-.callout-danger {
-  border-left-color: #ef4444;
-  background: #fef2f2;
 }
 
 .cm-editor.cm-focused {
