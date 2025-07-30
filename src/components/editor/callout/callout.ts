@@ -21,7 +21,8 @@ import {
   EditorState,
   RangeSetBuilder,
   StateEffect,
-  Extension
+  Extension,
+  Facet
 } from '@codemirror/state';
 import { EditorView as NestedEditorView } from 'codemirror';
 import { quotePlugin } from '../quote/quote';
@@ -59,6 +60,7 @@ class CalloutWidget extends WidgetType {
       doc: this.body,
       parent: bodyEl,
       extensions: [
+        IsNestedEditor.of(true),
         calloutExtension,
         quotePlugin,
         inlinePlugin,
@@ -162,15 +164,27 @@ function buildCalloutDecorations(state: EditorState, view: EditorView): Decorati
   for (const { from, to, tag, header, body } of callouts) {
     const inside = sel.from >= from && sel.from <= to;
     if (!inside) {
-      builder.add(
-        from,
-        to,
-        Decoration.replace({
-          widget: new CalloutWidget(tag, header, body, from, to, view),
-          block: true,
-          side: 1
-        })
-      );
+      if (view.state.facet(IsNestedEditor) || (sel.from < view.state.doc.lineAt(from - 1).from || sel.from > view.state.doc.lineAt(to + 1).to)) {
+        builder.add(
+          from,
+          to,
+          Decoration.replace({
+            widget: new CalloutWidget(tag, header, body, from, to, view),
+            block: true,
+            side: 1
+          })
+        );
+      }
+      else {
+        builder.add(
+          from,
+          to,
+          Decoration.replace({
+            widget: new CalloutWidget(tag, header, body, from, to, view),
+            side: 1
+          })
+        );
+      }
     }
   }
 
@@ -263,3 +277,8 @@ export const calloutExtension: Extension = [
     }
   })
 ];
+
+
+const IsNestedEditor = Facet.define<boolean, boolean>({
+  combine: values => values.length ? values[0] : false
+});

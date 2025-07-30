@@ -7,11 +7,10 @@ class CodeBlockWidget extends WidgetType {
   constructor(private readonly lang: string, private readonly code: string) {
     super()
   }
-  toDOM(): HTMLElement {
+  toDOM(view: EditorView): HTMLElement {
     let el = document.createElement('div');
     let copyButton = document.createElement('div');
     let language = document.createElement('div');
-    el.style.display = 'block';
     language.textContent = this.lang;
     language.className = 'cm-code-lang';
     copyButton.className = 'cm-code-button';
@@ -39,6 +38,13 @@ class CodeBlockWidget extends WidgetType {
     }, null);
     el.className = 'cm-code';
     el.style.display = 'block';
+    el.addEventListener('click', (e) => {
+      const isInteractive = (e.target as HTMLElement)?.closest('.cm-code');
+      if (isInteractive) {
+        e.stopPropagation(); // важно
+        setTimeout(() => view.focus(), 0); // вернуть фокус редактору
+      }
+    });
     return el;
   }
   ignoreEvent(event: Event): boolean {
@@ -76,12 +82,36 @@ function parseCodeblock(state: EditorState): DecorationSet {
       }
 
       if (to > from && (state.selection.main.head < from || state.selection.main.head > to)) {
-        decoration.add(from, to, Decoration.replace({ widget: new CodeBlockWidget(lang, code), block: true, side: 1 }));
+        if (state.selection.main.head < doc.lineAt(from - 1).from || state.selection.main.head > doc.lineAt(to + 1).to) {
+          decoration.add(
+            from,
+            to,
+            Decoration.replace(
+              {
+                widget: new CodeBlockWidget(lang, code),
+                block: true,
+                side: 1
+              }
+            )
+          );
+        }
+        else {
+          decoration.add(
+            from,
+            to,
+            Decoration.replace(
+              {
+                widget: new CodeBlockWidget(lang, code),
+                side: 1
+              }
+            )
+          );
+        }
+        lang = '';
+        code = '';
+        from = 1;
+        to = 1;
       }
-      lang = '';
-      code = '';
-      from = 1;
-      to = 1;
     }
   }
   return decoration.finish();

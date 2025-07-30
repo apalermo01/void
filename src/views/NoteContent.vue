@@ -30,7 +30,6 @@ import { combinedListPlugin } from '@/components/editor/lists/lists';
 import { calloutExtension } from '@/components/editor/callout/callout';
 import { hashtagField } from '@/components/editor/tags/tags';
 import { CodeBlockPlugin } from '@/components/editor/code-block/codeblock';
-import { autoScrollOnInput } from '@/components/editor/scroll/scroll';
 
 let props = defineProps({
   url: String
