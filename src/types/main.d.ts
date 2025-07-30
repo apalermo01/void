@@ -6,8 +6,3 @@ declare module 'vue-plyr' {
   export default VuePlyr;
 }
 
-declare module '@vue/runtime-core' {
-  interface ComponentCustomProperties {
-    $t: (key: string, ...args: any[]) => string;
-  }
-}
