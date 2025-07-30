@@ -15,7 +15,7 @@ Copyright 2025 The VOID Authors. All Rights Reserved.
 -->
 <template>
   <div class="w-full h-full overflow-auto">
-    <CodeMirror :extensions="extensions" v-model="content" ref="Editor" class="editor" />
+    <CodeMirror :extensions="extensions" v-model="content" ref="Editor" class="editor h-full" />
   </div>
 </template>
 <script setup lang="ts">
@@ -24,15 +24,18 @@ import CodeMirror from 'vue-codemirror6';
 import { invoke } from '@tauri-apps/api/core';
 import { headingPlugin } from '@/components/editor/headers/headers';
 import { pageBreaker } from '@/components/editor/page-breaker/page-breaker';
-import { calloutPlugin } from '@/components/editor/callout/callout';
 import { inlinePlugin } from '@/components/editor/inline/inline';
 import { quotePlugin } from '@/components/editor/quote/quote';
-import { todoPlugin } from '@/components/editor/todo/todo';
+import { combinedListPlugin } from '@/components/editor/lists/lists';
+import { calloutExtension } from '@/components/editor/callout/callout';
+import { hashtagField } from '@/components/editor/tags/tags';
+import { CodeBlockPlugin } from '@/components/editor/code-block/codeblock';
+
 let props = defineProps({
   url: String
 });
 let content = ref('');
-const extensions = shallowRef([headingPlugin, inlinePlugin, pageBreaker, calloutPlugin, quotePlugin, todoPlugin]);
+const extensions = shallowRef([CodeBlockPlugin, calloutExtension, quotePlugin, headingPlugin, inlinePlugin, pageBreaker, combinedListPlugin, hashtagField]);
 
 onMounted(async () => {
   if (!props.url) { return }
@@ -41,9 +44,9 @@ onMounted(async () => {
 </script>
 <style>
 .editor {
-  margin: 3em;
   border: none;
   outline: none;
+  margin: 3em;
 }
 
 :focus {

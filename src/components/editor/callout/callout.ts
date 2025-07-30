@@ -1,12 +1,8 @@
-/*
-Copyright 2025 The VOID Authors. All Rights Reserved.
-
+/* Copyright 2025 The VOID Authors. All Rights Reserved.
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-
       http://www.apache.org/licenses/LICENSE-2.0
-
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,60 +11,93 @@ Copyright 2025 The VOID Authors. All Rights Reserved.
 */
 import {
   Decoration,
+  DecorationSet,
   EditorView,
   WidgetType,
-  keymap
+  ViewUpdate
 } from '@codemirror/view';
 import {
   StateField,
+  EditorState,
   RangeSetBuilder,
-  EditorState
+  StateEffect,
+  Extension,
+  Facet
 } from '@codemirror/state';
+import { EditorView as NestedEditorView } from 'codemirror';
+import { quotePlugin } from '../quote/quote';
+import { inlinePlugin } from '../inline/inline';
+import { combinedListPlugin } from '../lists/lists';
+import { hashtagField } from '../tags/tags';
+import { keymap } from '@codemirror/view';
 
-import { headingPlugin } from '@/components/editor/headers/headers';
-import { pageBreaker } from '@/components/editor/page-breaker/page-breaker';
-import { inlinePlugin } from '@/components/editor/inline/inline';
-import { quotePlugin } from '@/components/editor/quote/quote';
-import { todoPlugin } from '@/components/editor/todo/todo';
+const updateCalloutEffect = StateEffect.define<DecorationSet>();
 
 class CalloutWidget extends WidgetType {
   constructor(
     private readonly tag: string,
+    private readonly header: string,
     private readonly body: string,
-    private readonly level: number = 0
+    private readonly from: number,
+    private readonly to: number,
+    private readonly outerView: EditorView
   ) {
     super();
   }
 
   toDOM(): HTMLElement {
-    const outer = document.createElement('div');
-    outer.className = `callout callout-${this.tag.toLowerCase()} callout-level-${this.level}`;
+    const box = document.createElement('div');
+    box.className = `cm-callout callout-${this.tag.toLowerCase()}`;
 
-    const header = document.createElement('div');
-    header.className = 'callout-header';
-    header.textContent = this.tag;
-    outer.appendChild(header);
+    const headerEl = document.createElement('div');
+    headerEl.className = 'callout-header';
+    headerEl.textContent = this.header || this.tag;
 
-    const nestedState = EditorState.create({
+    const bodyEl = document.createElement('div');
+    bodyEl.className = 'callout-body';
+
+    const nestedView = new NestedEditorView({
       doc: this.body,
+      parent: bodyEl,
       extensions: [
-        EditorView.editable.of(false),
-        EditorView.lineWrapping,
-        calloutPlugin,
+        IsNestedEditor.of(true),
+        calloutExtension,
         quotePlugin,
-        headingPlugin,
-        pageBreaker,
         inlinePlugin,
-        todoPlugin
+        combinedListPlugin,
+        hashtagField,
+        NestedEditorView.editable.of(false),
+        NestedEditorView.updateListener.of((update: ViewUpdate) => {
+          if (update.docChanged) {
+            const newText = update.state.doc.toString();
+            this.outerView.dispatch({
+              changes: {
+                from: this.from,
+                to: this.to,
+                insert:
+                  `> [!${this.tag}] ${this.header}\n` +
+                  newText
+                    .split('\n')
+                    .map(line => `> ${line}`)
+                    .join('\n')
+              }
+            });
+          }
+        })
       ]
     });
 
-    new EditorView({
-      state: nestedState,
-      parent: outer
+    requestAnimationFrame(() => {
+      nestedView.dispatch({
+        effects: updateCalloutEffect.of(
+          buildCalloutDecorations(nestedView.state, nestedView)
+        )
+      });
     });
 
-    return outer;
+    box.appendChild(headerEl);
+    box.appendChild(bodyEl);
+    return box;
   }
 
   ignoreEvent(): boolean {
@@ -76,49 +105,49 @@ class CalloutWidget extends WidgetType {
   }
 }
 
-function parseCallout(state: EditorState): {
+function parseCallouts(state: EditorState): {
   from: number;
   to: number;
   tag: string;
+  header: string;
   body: string;
-  level: number;
 }[] {
   const lines = state.doc.toString().split('\n');
   const result = [];
   let i = 0;
 
+  const headerRegex = /^>\s*\[!(?<tag>[A-Z]+)\](?<header>.*)/;
+  const bodyRegex = /^>\s(?!\[)(?<body>.*)/;
+
   while (i < lines.length) {
-    const line = lines[i];
-    const match = line.match(/^(\s*)> \[!(\w+)]/);
-    if (!match) {
+    const headerMatch = lines[i].match(headerRegex);
+    if (!headerMatch?.groups) {
       i++;
       continue;
     }
 
-    const indent = match[1];
-    const tag = match[2];
-    const level = indent.length / 2;
+    const tag = headerMatch.groups.tag;
+    const header = headerMatch.groups.header.trim();
+    const bodyLines = [];
     const fromLine = i;
     let toLine = i;
-    const bodyLines: string[] = [];
 
     for (let j = i + 1; j < lines.length; j++) {
-      const nextLine = lines[j];
-      if (!nextLine.startsWith(indent + '> ')) break;
-
-      bodyLines.push(nextLine.slice(indent.length + 2));
+      const bodyMatch = lines[j].match(bodyRegex);
+      if (!bodyMatch?.groups) break;
+      bodyLines.push(bodyMatch.groups.body);
       toLine = j;
     }
 
     const from = state.doc.line(fromLine + 1).from;
-    const to = state.doc.line(toLine + 1)?.to ?? state.doc.length;
+    const to = state.doc.line(toLine + 1).to;
 
     result.push({
       from,
       to,
       tag,
-      body: bodyLines.join('\n'),
-      level
+      header,
+      body: bodyLines.join('\n')
     });
 
     i = toLine + 1;
@@ -127,78 +156,129 @@ function parseCallout(state: EditorState): {
   return result;
 }
 
-function buildCalloutDecorations(state: EditorState) {
+function buildCalloutDecorations(state: EditorState, view: EditorView): DecorationSet {
   const builder = new RangeSetBuilder<Decoration>();
-  const callouts = parseCallout(state);
+  const callouts = parseCallouts(state);
   const sel = state.selection.main;
 
-  for (const { from, to, tag, body, level } of callouts) {
+  for (const { from, to, tag, header, body } of callouts) {
     const inside = sel.from >= from && sel.from <= to;
     if (!inside) {
-      builder.add(from, to, Decoration.replace({
-        widget: new CalloutWidget(tag, body, level),
-        side: 1
-      }));
+      if (view.state.facet(IsNestedEditor) || (sel.from < view.state.doc.lineAt(from - 1).from || sel.from > view.state.doc.lineAt(to + 1).to)) {
+        builder.add(
+          from,
+          to,
+          Decoration.replace({
+            widget: new CalloutWidget(tag, header, body, from, to, view),
+            block: true,
+            side: 1
+          })
+        );
+      }
+      else {
+        builder.add(
+          from,
+          to,
+          Decoration.replace({
+            widget: new CalloutWidget(tag, header, body, from, to, view),
+            side: 1
+          })
+        );
+      }
     }
   }
 
   return builder.finish();
 }
 
-const calloutDecorationField = StateField.define({
-  create: buildCalloutDecorations,
+const calloutDecorationField = StateField.define<DecorationSet>({
+  create() {
+    return Decoration.none;
+  },
   update(deco, tr) {
-    if (tr.docChanged || tr.selection) {
-      return buildCalloutDecorations(tr.state);
+    for (const e of tr.effects) {
+      if (e.is(updateCalloutEffect)) return e.value;
     }
     return deco;
   },
-  provide: f => EditorView.decorations.from(f)
+  provide(field) {
+    return EditorView.decorations.from(field);
+  }
 });
 
-function getCalloutLevel(state: EditorState, pos: number): number {
-  const line = state.doc.lineAt(pos);
-  const match = line.text.match(/^(\s*)> /);
-  return match ? match[1].length / 2 : 0;
+function handleEnterForCallout(view: EditorView): boolean {
+  const { state } = view;
+  const { head } = state.selection.main;
+  const line = state.doc.lineAt(head);
+  const text = line.text;
+
+  const match = text.match(/^((?:>\s*)+)(.*)/);
+  if (!match) return false;
+
+  const rawPrefix = match[1];
+  const content = match[2];
+
+  const depth = (rawPrefix.replace(/\s/g, '').match(/>/g) || []).length;
+  const cleanPrefix = Array(depth).fill('> ').join('');
+
+  if (content.trim() === '') {
+    if (depth > 1) {
+      const reducedPrefix = Array(depth - 1).fill('> ').join('');
+      view.dispatch({
+        changes: {
+          from: line.from,
+          to: line.to,
+          insert: reducedPrefix
+        },
+        selection: { anchor: line.from + reducedPrefix.length },
+        scrollIntoView: true
+      });
+    } else {
+      view.dispatch({
+        changes: {
+          from: line.from,
+          to: line.to,
+          insert: ''
+        },
+        selection: { anchor: line.from },
+        scrollIntoView: true
+      });
+    }
+    return true;
+  }
+
+  const insertText = `\n${cleanPrefix}`;
+  view.dispatch({
+    changes: {
+      from: head,
+      to: head,
+      insert: insertText
+    },
+    selection: { anchor: head + insertText.length },
+    scrollIntoView: true
+  });
+
+  return true;
 }
 
-const continueCalloutOnEnter = keymap.of([{
-  key: 'Enter',
-  run(view) {
-    const { state, dispatch } = view;
-    const { from } = state.selection.main;
-    const line = state.doc.lineAt(from);
-    const trimmed = line.text.trim();
-
-    if (trimmed.startsWith('>')) {
-      if (/^(\s*)>\s*$/.test(trimmed)) {
-        const level = getCalloutLevel(state, from);
-        const indent = '  '.repeat(Math.max(0, level - 1));
-        const newPrefix = level > 0 ? `${indent}> ` : '';
-
-        dispatch(state.update({
-          changes: { from: line.from, to: line.to, insert: newPrefix },
-          selection: { anchor: line.from + newPrefix.length },
-          userEvent: 'input'
-        }));
-        return true;
-      }
-
-      const prefixMatch = line.text.match(/^(\s*> ?)/);
-      const prefix = prefixMatch?.[1] ?? '> ';
-      dispatch(state.update({
-        changes: { from, to: from, insert: `\n${prefix}` },
-        selection: { anchor: from + 1 + prefix.length },
-        userEvent: 'input'
-      }));
-      return true;
-    }
-
-    return false;
-  }
-}]);
-
-export const calloutPlugin = [
+const calloutKeymap = keymap.of([
+  { key: 'Enter', run: handleEnterForCallout }
+]);
+export const calloutExtension: Extension = [
   calloutDecorationField,
-  continueCalloutOnEnter,
+  calloutKeymap,
+  EditorView.updateListener.of((update) => {
+    if (update.docChanged || update.selectionSet || update.viewportChanged) {
+      const view = update.view;
+      const decorations = buildCalloutDecorations(view.state, view);
+      view.dispatch({
+        effects: updateCalloutEffect.of(decorations)
+      });
+    }
+  })
 ];
+
+
+const IsNestedEditor = Facet.define<boolean, boolean>({
+  combine: values => values.length ? values[0] : false
+});

@@ -20,6 +20,8 @@ import SettingsButton from "@/components/ui/settings/SettingsButton.vue";
 import SettingsHeader from "@/components/ui/settings/SettingsHeader.vue";
 import SettingsField from "@/components/ui/settings/SettingsField.vue";
 import SettingsComposition from "@/components/ui/settings/SettingsComposition.vue";
+import { useI18n } from 'vue-i18n';
+let { t } = useI18n();
 let workdir = ref("");
 onMounted(async () => {
   workdir.value = await getWorkdir();
@@ -28,10 +30,10 @@ onMounted(async () => {
 </script>
 
 <template>
-    <h1 class="text-4xl text-center text-accent mt-2">{{ $t('common.general') }}</h1>
-  <SettingsHeader value="изменить рабочую директорию" />
+  <h1 class="text-4xl text-center text-accent mt-2">{{ $t('common.general') }}</h1>
+  <SettingsHeader :value="t('settingsHeaders.changeWorkdir')" />
   <SettingsComposition>
     <SettingsField :placeholder="workdir" />
-    <SettingsButton @click="async () => { workdir = await changeWorkdir(); }" name="Изменить" />
+    <SettingsButton @click="async () => { workdir = await changeWorkdir(); }" :name="t('settingsButtons.change')" />
   </SettingsComposition>
 </template>

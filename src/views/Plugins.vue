@@ -25,6 +25,8 @@ import SettingsPopup from "@/components/ui/settings/SettingsPopup.vue";
 import { listen } from '@tauri-apps/api/event';
 import { useThemeStore } from '@/lib/logic/themestore';
 import SettingsSeparator from '@/components/ui/settings/SettingsSeparator.vue';
+import { useI18n } from 'vue-i18n';
+let { t } = useI18n();
 let showPopup = ref(false);
 let listOfThemes = ref();
 let theme = ref("");
@@ -62,19 +64,19 @@ onMounted(async () => {
 </script>
 <template>
   <div class="w-full h-full flex flex-col gap-2 items-center overflow-auto">
-        <h1 class="text-4xl text-[var(--destructive)] text-shadow-2xs">{{ $t('plugins.pluginHeader')}}</h1>
-        <p> {{ $t('plugins.collect') }} void!</p>
+    <h1 class="text-4xl text-[var(--destructive)] text-shadow-2xs">{{ $t('plugins.pluginHeader') }}</h1>
+    <p> {{ $t('plugins.collect') }} void!</p>
   </div>
-  <SettingsHeader value="установить расширения" />
-  <SettingsHeader value="изменить тему" />
+  <SettingsHeader :value="t('settingsHeaders.installPlugins')" />
+  <SettingsHeader :value="t('settingsHeaders.selectTheme')" />
   <SettingsComposition>
     <h2> {{ $t('plugins.moreFreedom') }}</h2>
-    <SettingsButton name="Установить расширения" @click="async () => { getThemesMarketplace() }" />
+    <SettingsButton :name="t('settingsButtons.installPlugins')" @click="async () => { getThemesMarketplace() }" />
   </SettingsComposition>
   <SettingsComposition>
     <SettingsSelector selectorPlaceholder="Темы" :currentVal="theme" :valList="listOfThemes" v-model="theme" />
   </SettingsComposition>
-  <SettingsHeader value="Установленные темы" />
+  <SettingsHeader :value="t('settingsHeaders.installedThemes')" />
   <div class="installed-themes-table">
     <SettingsComposition v-for="theme in listOfThemes">
       <SettingsField :placeholder="theme" />

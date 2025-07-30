@@ -22,23 +22,25 @@ import SelectItem from '@/components/ui/select/SelectItem.vue';
 import SelectLabel from '@/components/ui/select/SelectLabel.vue';
 import SelectTrigger from '@/components/ui/select/SelectTrigger.vue';
 import SelectValue from '@/components/ui/select/SelectValue.vue';
+import { useI18n } from 'vue-i18n';
+let { t } = useI18n();
 </script>
 <template>
   <Select>
     <SelectTrigger>
-      <SelectValue placeholder="Настройки" />
+      <SelectValue :placeholder="t('settingsSelector.settingsLabel')" />
     </SelectTrigger>
     <SelectContent>
       <SelectGroup>
         <SelectLabel>{{ $t('settingsSelector.settingsLabel') }}</SelectLabel>
         <SelectItem value="Global">
-            {{ $t('settingsSelector.general') }}
+          {{ $t('settingsSelector.general') }}
         </SelectItem>
         <SelectItem value="Plugins">
-            {{ $t('common.extAndCustomization') }}
+          {{ $t('common.extAndCustomization') }}
         </SelectItem>
         <SelectItem value="SideRepos">
-           {{ $t('settingsSelector.customRepos') }}
+          {{ $t('settingsSelector.sideRepos') }}
         </SelectItem>
       </SelectGroup>
     </SelectContent>

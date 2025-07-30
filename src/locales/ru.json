@@ -1,68 +1,77 @@
 {
-    "common": {
-        "extAndCustomization": "Расширения и кастомизация",
-        "home": "Домой",
-        "graph": "Граф",
-        "neovim": "неовим",
-        "canvas": "Холст",
-        "explorer": "Проводник",
-        "settings": "астройки",
-        "tools": "Инструменты",
-        "sideRepos": "астомные репозитории",
-        "general": "Общие",
-        "download": "Загрузить",
-        "letsGo": "Поехали"
-    },
-    "contextMenu": {
-        "createFile": "Создать файл",
-        "createFolder": "Создать папку",
-        "delete": "Удалить файл/папку",
-        "rename": "Переименовать",
-        "cut": "Вырезать",
-        "copy": "Копировать",
-        "epaste": "Вставить"
-    },
-    "notifications": {
-        "error": "Ошибка",
-        "warning": "Уведомление"
-    },
-    "excalidrawWrapper": {
-        "loadingError": "Ошибка загрузки"
-    },
-    "home": {
-        "welcome": "Добро пожаловать"
-    },
-    "journalContent": {
-        "loadingMsg": "Загрузка"
-    },
-    "loader": {
-        "loader": "Пришел. Увидел. Записал."
-    },
-    "plugins": {
-        "pluginHeader": "Расширения и кастомизация",
-        "collect": "Собери свой",
-        "moreFreedom": "Хочется больше свободы?"
-    },
-
-    "settingsSelector": {
-        "settingssLabel": "Настройки",
-        "general": "Общие",
-        "sideRepos": "астомные репозитории"
-    },
-    "unsupportedContent": {
-        "filetypeNotSupportedMsg": "Этот тип файлов не поддерживается!"
-    },
-    "videoContent": {
-        "vidErrMsg": "Ошибка загрузки видео"
-    }, 
-    "welcomeAnimation": {
-        "msg1": "Добро пожаловать в VOID путник!",
-        "msg2": "Это мое новое творение которое я создал как сайд-проект.",
-        "msg3": "Основная суть - создать второй мозг который не будет так сложен в настройке как obsidian или notion.",
-        "msg4": "Но главное - оставить все такую же гибкость настройки и использования!",
-        "msg5": "Надеюсь тебе понравится!"
-    },
-    "welcomeSetup": {
-        "namePrompt": "Как мне тебя называть?"
-    }
+  "common": {
+    "home": "Домой",
+    "graph": "Граф",
+    "terminal": "Терминал",
+    "canvas": "Холст",
+    "explorer": "Проводник",
+    "settings": "Настройки",
+    "tools": "Инструменты",
+    "general": "Общие",
+    "download": "Загрузить",
+    "letsGo": "Поехали"
+  },
+  "contextMenu": {
+    "createFile": "Создать файл",
+    "createFolder": "Создать папку",
+    "delete": "Удалить файл/папку",
+    "rename": "Переименовать",
+    "cut": "Вырезать",
+    "copy": "Копировать",
+    "epaste": "Вставить"
+  },
+  "notifications": {
+    "error": "Ошибка",
+    "warning": "Уведомление"
+  },
+  "excalidrawWrapper": {
+    "loadingError": "Ошибка загрузки"
+  },
+  "home": {
+    "welcome": "Добро пожаловать"
+  },
+  "journalContent": {
+    "loadingMsg": "Загрузка"
+  },
+  "loader": {
+    "loader": "Пришел. Увидел. Записал."
+  },
+  "plugins": {
+    "pluginHeader": "Расширения и кастомизация",
+    "collect": "Собери свой",
+    "moreFreedom": "Хочется больше свободы?"
+  },
+  "settingsSelector": {
+    "settingssLabel": "Настройки",
+    "general": "Общие",
+    "sideRepos": "Кастомные репозитории"
+  },
+  "settingsHeaders": {
+    "installedRepos": "Установленные репозитории",
+    "changeWorkdir": "Изменить рабочую директорию",
+    "installPlugins": "установить расширения",
+    "selectTheme": "выбрать тему",
+    "installedThemes": "установленные темы"
+  },
+  "settingsButtons": {
+    "change": "Изменить",
+    "installPlugins": "Установить расширения",
+    "add": "Добавить"
+  },
+  "unsupportedContent": {
+    "filetypeNotSupportedMsg": "Этот тип файлов не поддерживается!"
+  },
+  "videoContent": {
+    "vidErrMsg": "Ошибка загрузки видео"
+  },
+  "welcomeAnimation": {
+    "msg1": "Добро пожаловать в VOID путник!",
+    "msg2": "Это мое новое творение которое я создал как сайд-проект.",
+    "msg3": "Основная суть - создать второй мозг который не будет так сложен в настройке как obsidian или notion.",
+    "msg4": "Но главное - оставить все такую же гибкость настройки и использования!",
+    "msg5": "Надеюсь тебе понравится!"
+  },
+  "welcomeSetup": {
+    "namePrompt": "Как мне тебя называть?"
+  }
 }
