@@ -11,6 +11,7 @@ class CodeBlockWidget extends WidgetType {
     let el = document.createElement('div');
     let copyButton = document.createElement('div');
     let language = document.createElement('div');
+    el.style.display = 'block';
     language.textContent = this.lang;
     language.className = 'cm-code-lang';
     copyButton.className = 'cm-code-button';
@@ -37,6 +38,7 @@ class CodeBlockWidget extends WidgetType {
       el.appendChild(language);
     }, null);
     el.className = 'cm-code';
+    el.style.display = 'block';
     return el;
   }
   ignoreEvent(event: Event): boolean {
@@ -74,7 +76,7 @@ function parseCodeblock(state: EditorState): DecorationSet {
       }
 
       if (to > from && (state.selection.main.head < from || state.selection.main.head > to)) {
-        decoration.add(from, to, Decoration.replace({ widget: new CodeBlockWidget(lang, code), side: 1 }));
+        decoration.add(from, to, Decoration.replace({ widget: new CodeBlockWidget(lang, code), block: true, side: 1 }));
       }
       lang = '';
       code = '';

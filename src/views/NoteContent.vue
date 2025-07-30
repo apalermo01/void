@@ -15,7 +15,7 @@ Copyright 2025 The VOID Authors. All Rights Reserved.
 -->
 <template>
   <div class="w-full h-full overflow-auto">
-    <CodeMirror :extensions="extensions" v-model="content" ref="Editor" class="editor" />
+    <CodeMirror :extensions="extensions" v-model="content" ref="Editor" class="editor h-full" />
   </div>
 </template>
 <script setup lang="ts">
@@ -30,6 +30,7 @@ import { combinedListPlugin } from '@/components/editor/lists/lists';
 import { calloutExtension } from '@/components/editor/callout/callout';
 import { hashtagField } from '@/components/editor/tags/tags';
 import { CodeBlockPlugin } from '@/components/editor/code-block/codeblock';
+import { autoScrollOnInput } from '@/components/editor/scroll/scroll';
 
 let props = defineProps({
   url: String
@@ -44,9 +45,9 @@ onMounted(async () => {
 </script>
 <style>
 .editor {
-  margin: 3em;
   border: none;
   outline: none;
+  margin: 3em;
 }
 
 :focus {

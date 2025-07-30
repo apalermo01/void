@@ -167,6 +167,7 @@ function buildCalloutDecorations(state: EditorState, view: EditorView): Decorati
         to,
         Decoration.replace({
           widget: new CalloutWidget(tag, header, body, from, to, view),
+          block: true,
           side: 1
         })
       );

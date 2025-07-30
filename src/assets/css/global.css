@@ -280,6 +280,11 @@
   background: #ecfdf5;
 }
 
+.cm-editor {
+  height: calc(100% - 6em);
+  overflow: visible;
+}
+
 .cm-editor.cm-focused {
   outline: none !important;
   border: none !important;
