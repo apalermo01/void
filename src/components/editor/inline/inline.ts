@@ -50,5 +50,5 @@ export const inlinePlugin = createUnifiedInlinePlugin([
     marker: 'linecode',
     openingLength: 1,
     closingLength: 1,
-  }
+  },
 ]);
