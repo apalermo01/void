@@ -37,7 +37,6 @@ class CodeBlockWidget extends WidgetType {
       el.appendChild(language);
     }, null);
     el.className = 'cm-code';
-    el.style.display = 'block';
     el.addEventListener('click', (e) => {
       const isInteractive = (e.target as HTMLElement)?.closest('.cm-code');
       if (isInteractive) {
@@ -63,6 +62,7 @@ function parseCodeblock(state: EditorState): DecorationSet {
   const headerRegexp = /```(?<lang>\w+)/;
   const closeRegexp = /```/;
   for (let i = 1; i <= doc.lines; i++) {
+    code = '';
     let match = doc.line(i).text.match(headerRegexp);
     if (match == null || match.groups == undefined) {
       continue;
