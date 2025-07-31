@@ -14,7 +14,7 @@ Copyright 2025 The VOID Authors. All Rights Reserved.
   limitations under the License.
 -->
 <template>
-  <div class="w-full h-full overflow-auto">
+  <div class="w-full h-full overflow-hidden">
     <CodeMirror :extensions="extensions" v-model="content" ref="Editor" class="editor h-full" />
   </div>
 </template>
