@@ -15,8 +15,8 @@ Copyright 2025 The VOID Authors. All Rights Reserved.
 -->
 
 <template>
-  <div class="w-full h-full rounded-2xl overflow-hidden ">
-    <div ref="terminalContainer" class="w-full h-full rounded-2xl ml-2 mt-0.5"></div>
+  <div class="w-[calc(100%+2px)] h-[calc(100%+2px)] m-[-1px] bg-black">
+    <div ref="terminalContainer" class="w-full h-full"></div>
   </div>
 </template>
 
@@ -170,6 +170,5 @@ onUnmounted(() => {
 <style scoped>
 .term {
   font-family: 'JetBrains', monospace;
-  border-radius: 15.5px;
 }
 </style>

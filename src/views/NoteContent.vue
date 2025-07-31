@@ -19,9 +19,8 @@ Copyright 2025 The VOID Authors. All Rights Reserved.
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, ref, shallowRef } from 'vue';
+import { onMounted, ref, shallowRef, watch } from 'vue';
 import CodeMirror from 'vue-codemirror6';
-import { invoke } from '@tauri-apps/api/core';
 import { headingPlugin } from '@/components/editor/headers/headers';
 import { pageBreaker } from '@/components/editor/page-breaker/page-breaker';
 import { inlinePlugin } from '@/components/editor/inline/inline';
@@ -30,6 +29,7 @@ import { combinedListPlugin } from '@/components/editor/lists/lists';
 import { calloutExtension } from '@/components/editor/callout/callout';
 import { hashtagField } from '@/components/editor/tags/tags';
 import { CodeBlockPlugin } from '@/components/editor/code-block/codeblock';
+import { get_note, write_note } from '@/lib/logic/md-notes';
 
 let props = defineProps({
   url: String
@@ -37,9 +37,14 @@ let props = defineProps({
 let content = ref('');
 const extensions = shallowRef([CodeBlockPlugin, calloutExtension, quotePlugin, headingPlugin, inlinePlugin, pageBreaker, combinedListPlugin, hashtagField]);
 
+watch(content, async () => {
+  if (!props.url) { return }
+  await write_note(decodeURIComponent(atob(props.url)), content.value);
+})
+
 onMounted(async () => {
   if (!props.url) { return }
-  content.value = await invoke('get_note_content', { path: decodeURIComponent(atob(props.url)) });
+  content.value = await get_note(decodeURIComponent(atob(props.url)));
 })
 </script>
 <style>
@@ -51,14 +56,5 @@ onMounted(async () => {
 
 :focus {
   outline: none;
-}
-
-.tiptap h1 {
-  color: var(--destructive);
-  font-size: 2em;
-}
-
-.tiptap li {
-  padding-left: 1em;
 }
 </style>
