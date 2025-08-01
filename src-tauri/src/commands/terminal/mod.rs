@@ -50,7 +50,12 @@ impl PtyController {
                 })
                 .unwrap();
 
+            #[cfg(target_os = "macos")]
             let shell = std::env::var("SHELL").map_err(|e| e.to_string()).unwrap();
+            #[cfg(target_os = "linux")]
+            let shell = std::env::var("SHELL").map_err(|e| e.to_string()).unwrap();
+            #[cfg(target_os = "windows")]
+            let shell = String::from("cmd.exe");
             let mut command = CommandBuilder::new(&shell);
             command.arg("-i");
             command.env("TERM", "xterm-256color");
