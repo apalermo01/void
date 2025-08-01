@@ -50,7 +50,8 @@ impl PtyController {
                 })
                 .unwrap();
 
-            let mut command = CommandBuilder::new("zsh");
+            let shell = std::env::var("SHELL").map_err(|e| e.to_string()).unwrap();
+            let mut command = CommandBuilder::new(&shell);
             command.arg("-i");
             command.env("TERM", "xterm-256color");
 

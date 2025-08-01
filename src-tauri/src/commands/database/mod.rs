@@ -15,8 +15,6 @@
  */
 mod entities;
 
-use std::process::Command;
-
 pub use entities::*;
 use once_cell::sync::OnceCell;
 use surrealdb::{Surreal, engine::local::RocksDb};
