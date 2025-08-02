@@ -14,17 +14,17 @@ let props = defineProps({
       <slot />
     </ContextMenuTrigger>
     <ContextMenuContent>
-            <ContextMenuItem @click="$emit('create-file')">{{ $t('common.createFile') }}</ContextMenuItem>
-            <ContextMenuItem @click="$emit('create-folder')">{{ $t('common.createFolder') }}</ContextMenuItem>
-            <ContextMenuItem @click="$emit('delete')">{{ $t('common.delete') }}</ContextMenuItem>
+      <ContextMenuItem @click="$emit('create-file')">{{ $t('contextMenu.createFile') }}</ContextMenuItem>
+      <ContextMenuItem @click="$emit('create-folder')">{{ $t('contextMenu.createFolder') }}</ContextMenuItem>
+      <ContextMenuItem @click="$emit('delete')">{{ $t('contextMenu.delete') }}</ContextMenuItem>
       <ContextMenuSeparator />
-            <ContextMenuItem @click="$emit('rename')">{{ $t('common.rename') }}</ContextMenuItem>
+      <ContextMenuItem @click="$emit('rename')">{{ $t('contextMenu.rename') }}</ContextMenuItem>
       <ContextMenuSeparator />
-            <ContextMenuItem @click="$emit('cut')">{{ $t('common.cut') }}</ContextMenuItem>
-            <ContextMenuItem @click="$emit('copy')">{{ $t('common.copy') }}</ContextMenuItem>
+      <ContextMenuItem @click="$emit('cut')">{{ $t('contextMenu.cut') }}</ContextMenuItem>
+      <ContextMenuItem @click="$emit('copy')">{{ $t('contextMenu.copy') }}</ContextMenuItem>
       <ContextMenuSeparator />
-            <ContextMenuItem v-if="props.copied" @click="$emit('epaste')">{{ $t('common.epaste') }}</ContextMenuItem>
+      <ContextMenuItem v-if="props.copied" @click="$emit('epaste')">{{ $t('contextMenu.epaste') }}</ContextMenuItem>
     </ContextMenuContent>
   </ContextMenu>
 </template>
-<style></style>  
+<style></style>
