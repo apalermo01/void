@@ -19,7 +19,6 @@ pub enum MainConfigFields {
     Name(String),
     FirstRun(String),
     Workdir(String),
-    NvimPath(String),
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -27,12 +26,11 @@ pub struct MainConfig {
     name: String,
     first_run: String,
     workdir: String,
-    nvim_path: String,
 }
 
 impl EntityControl<MainConfigFields, MainConfig> for MainConfig {
     fn new(input: Vec<MainConfigFields>, app: tauri::AppHandle) -> Result<MainConfig, EntityError> {
-        if input.len() != 4 {
+        if input.len() != 3 {
             return Err(EntityError::WrongInputLength);
         }
         let name = match input.first() {
@@ -63,21 +61,10 @@ impl EntityControl<MainConfigFields, MainConfig> for MainConfig {
             }
         };
 
-        let nvim_path = match input.get(3) {
-            Some(MainConfigFields::NvimPath(path)) => path.clone(),
-            _ => {
-                return Err(MainConfig::throw_error(
-                    app,
-                    "Ошибка при инициализации поля NvimPath",
-                ));
-            }
-        };
-
         Ok(MainConfig {
             name,
             first_run,
             workdir,
-            nvim_path,
         })
     }
 
@@ -86,7 +73,6 @@ impl EntityControl<MainConfigFields, MainConfig> for MainConfig {
             "name" => Ok(self.name.clone()),
             "first_run" => Ok(self.first_run.clone().to_string()),
             "workdir" => Ok(self.workdir.clone()),
-            "nvim_path" => Ok(self.nvim_path.clone()),
             _ => Err(EntityError::NotFound),
         }
     }

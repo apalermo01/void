@@ -1,3 +1,18 @@
+/*
+Copyright 2025 The VOID Authors. All Rights Reserved.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
 import { EditorState, RangeSetBuilder, StateField } from '@codemirror/state';
 import { Decoration, DecorationSet, EditorView, WidgetType } from '@codemirror/view';
 import { codeToHtml } from 'shiki';
@@ -37,7 +52,6 @@ class CodeBlockWidget extends WidgetType {
       el.appendChild(language);
     }, null);
     el.className = 'cm-code';
-    el.style.display = 'block';
     el.addEventListener('click', (e) => {
       const isInteractive = (e.target as HTMLElement)?.closest('.cm-code');
       if (isInteractive) {
@@ -63,6 +77,7 @@ function parseCodeblock(state: EditorState): DecorationSet {
   const headerRegexp = /```(?<lang>\w+)/;
   const closeRegexp = /```/;
   for (let i = 1; i <= doc.lines; i++) {
+    code = '';
     let match = doc.line(i).text.match(headerRegexp);
     if (match == null || match.groups == undefined) {
       continue;

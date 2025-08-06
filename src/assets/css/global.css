@@ -403,3 +403,9 @@
   right: 0.5em;
   color: rgb(128, 128, 128);
 }
+
+.cm-code pre {
+  margin: 0;
+  pointer-events: none;
+  user-select: none;
+}

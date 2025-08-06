@@ -1,7 +1,6 @@
-
 import { createRouter, createWebHistory } from "vue-router";
-import Dashboard from "../views/Dashboard.vue";
-import WelcomeAnimation from "../views/WelcomeAnimation.vue";
+import Dashboard from "@/views/Dashboard.vue";
+import WelcomeAnimation from "@/views/WelcomeAnimation.vue";
 import WelcomeSetup from "@/views/WelcomeSetup.vue";
 import Settings from "@/views/Settings.vue";
 import Home from "@/views/Home.vue";
